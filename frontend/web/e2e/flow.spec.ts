@@ -18,7 +18,7 @@ test("upload, analyze, recommend, delete", async ({ page }) => {
   if (SHOTS) await page.screenshot({ path: `${SHOTS}/2-hasil-analisis.png`, fullPage: true });
 
   await page.getByLabel("Jenis rambut").selectOption("wavy");
-  await page.getByLabel("Kategori gaya").selectOption("wanita");
+  await page.getByLabel("Gaya rambut").selectOption("wanita");
   await page.getByRole("button", { name: "Tampilkan rekomendasi" }).click();
   await expect(page.getByText(/^4\. Rekomendasi/)).toBeVisible();
   await expect(page.locator("ol > li")).toHaveCount(5);
@@ -28,7 +28,7 @@ test("upload, analyze, recommend, delete", async ({ page }) => {
   await expect(page.getByText("Data Anda di server")).toBeVisible();
   await page.getByRole("button", { name: "Hapus analisis & foto" }).click();
   await expect(page.getByText("Data Anda di server")).toHaveCount(0);
-  await expect(page.getByText("Analisis, foto, dan rekomendasi Anda sudah dihapus dari server.")).toBeVisible();
+  await expect(page.getByRole("status")).toHaveText("Analisis, foto, dan rekomendasi Anda sudah dihapus dari server.");
   if (SHOTS) await page.screenshot({ path: `${SHOTS}/4-dihapus.png` });
 });
 
