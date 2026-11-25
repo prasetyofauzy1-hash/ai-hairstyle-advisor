@@ -12,7 +12,7 @@ from ml.recommendation import rules as R
 from ml.recommendation.catalog import (GENDERS, HAIR_TYPES, LABELS_ID, LENGTHS, MAINTENANCE, THICKNESSES, Hairstyle,
                                        load_catalog)
 
-SCORE_NOTE = "Skor adalah jumlah poin dari aturan yang tercantum, bukan persentase kecocokan atau probabilitas."
+SCORE_NOTE = "Poin mengikuti panduan penataan rambut, bukan persentase kecocokan atau jaminan hasil."
 NO_IMAGE_NOTE = "Gambar referensi belum tersedia."
 
 
@@ -53,7 +53,7 @@ class Recommendation:
     def explanation(self) -> str:
         good = [r for _, p, r in self.terms if p > 0]
         bad = [r for _, p, r in self.terms if p < 0]
-        text = " ".join(good) if good else "Tidak ada aturan khusus yang menguntungkan; gaya ini lolos filter dan netral."
+        text = " ".join(good) if good else "Gaya ini sesuai dengan pilihan yang Anda masukkan, tetapi panduan kami tidak memberi alasan kecocokan tambahan."
         if bad:
             text += " Perlu diperhatikan: " + " ".join(bad)
         return text
@@ -63,7 +63,7 @@ class Recommendation:
             "rank": rank, "id": self.style.id, "name": self.style.name, "description": self.style.description,
             "reference_image": self.style.reference_image,
             "reference_image_note": None if self.style.reference_image else NO_IMAGE_NOTE,
-            "score": self.score, "score_unit": "poin aturan",
+            "score": self.score, "score_unit": "poin",
             "score_breakdown": [{"rule": n, "points": p, "reason": r} for n, p, r in self.terms],
             "explanation": self.explanation(),
             "advantages": list(self.style.advantages), "styling_tips": list(self.style.styling_tips),
@@ -113,8 +113,8 @@ def recommend(p: UserProfile, top_k: int = 5, catalog=None) -> dict:
     styles = [s for s in (catalog or load_catalog()) if passes_filters(s, p)]
     notes = [SCORE_NOTE]
     if p.face_shape == "diamond":
-        notes.append("Model terlatih belum mengenali bentuk wajah Wajik (Diamond); bentuk ini hanya dari aturan dasar atau "
-                     "input manual, jadi perlakukan hasilnya dengan hati-hati.")
+        notes.append("Model terlatih belum bisa mengenali bentuk Wajik (diamond), jadi bentuk ini berasal dari pilihan Anda atau "
+                     "aturan ukuran wajah, bukan dari perkiraan model. Perlakukan hasilnya dengan hati-hati.")
     if p.preferred_length is None:
         recs = [score(s, p) for s in styles]
     else:
@@ -127,13 +127,13 @@ def recommend(p: UserProfile, top_k: int = 5, catalog=None) -> dict:
             if len(recs) >= top_k:
                 break
         if any(r.style.length != p.preferred_length for r in recs):
-            notes.append("Gaya dengan panjang yang Anda pilih kurang dari lima, jadi gaya dengan panjang lain ikut "
-                         "ditampilkan dengan pengurangan poin.")
+            notes.append("Gaya dengan panjang yang Anda pilih kurang dari lima, jadi kami juga menampilkan gaya dengan "
+                         "panjang lain (poinnya dikurangi).")
     # Step 3: preferred length first (fallback styles only fill open slots), then score, face-shape points, id.
     recs.sort(key=lambda r: (r.length_distance, -r.score, -R.shape_points(p.face_shape, r.style.effects), r.style.id))
     top = recs[:top_k]
     if len(top) < top_k:
-        notes.append(f"Hanya {len(top)} gaya yang lolos filter untuk profil ini.")
+        notes.append(f"Hanya {len(top)} gaya yang sesuai dengan pilihan Anda.")
     return {
         "face_shape": p.face_shape, "face_shape_label": SHAPE_LABELS_ID[p.face_shape],
         "method": "rule_based_v1", "recommendations": [r.to_dict(k + 1) for k, r in enumerate(top)], "notes": notes,

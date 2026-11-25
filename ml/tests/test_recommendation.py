@@ -158,7 +158,7 @@ def test_output_fields_score_and_determinism():
     assert [r["score"] for r in recs] == sorted((r["score"] for r in recs), reverse=True)  # no length preference
     for r in recs:
         assert r["score"] == sum(x["points"] for x in r["score_breakdown"])
-        assert r["score_unit"] == "poin aturan" and isinstance(r["score"], int)
+        assert r["score_unit"] == "poin" and isinstance(r["score"], int)
         assert "%" not in r["explanation"]
         assert r["reference_image"] is None and r["reference_image_note"]
         assert r["advantages"] and r["styling_tips"] and r["explanation"]

@@ -57,7 +57,7 @@
    ],
    "maintenance": "medium",
    "formal": true,
-   "description": "Pixie dengan poni panjang yang disapu ke satu sisi dan lapisan lembut.",
+   "description": "Pixie dengan poni panjang yang disisir ke samping dan lapisan lembut.",
    "advantages": [
     "Poni samping membingkai wajah tanpa menutup mata",
     "Tetap pendek namun terlihat lembut"
@@ -96,7 +96,7 @@
     "Perawatan harian singkat"
    ],
    "styling_tips": [
-    "Pakai leave-in conditioner atau krim ikal saat rambut masih basah",
+    "Pakai kondisioner tanpa bilas (leave-in) atau krim ikal saat rambut masih basah",
     "Hindari menyisir saat kering agar ikal tidak mengembang berlebihan"
    ]
   },
@@ -122,7 +122,7 @@
    ],
    "maintenance": "medium",
    "formal": true,
-   "description": "Bob satu panjang dengan ujung rata tepat di garis dagu.",
+   "description": "Bob dengan ujung rata tepat di garis dagu.",
    "advantages": [
     "Ujung rata membuat rambut tipis tampak lebih tebal",
     "Tampilan rapi dan modern"
@@ -253,7 +253,7 @@
    ],
    "maintenance": "medium",
    "formal": true,
-   "description": "Bob dengan satu sisi lebih panjang dan belahan samping yang dalam.",
+   "description": "Bob dengan satu sisi lebih panjang dan belahan rambut jauh ke salah satu sisi.",
    "advantages": [
     "Garis asimetris memecah kesan wajah yang lebar",
     "Modern dan mudah dikenali"
@@ -491,7 +491,7 @@
    ],
    "maintenance": "low",
    "formal": true,
-   "description": "Potongan satu panjang sebatas bahu dengan ujung rata.",
+   "description": "Potongan sebatas bahu dengan ujung rata.",
    "advantages": [
     "Ujung rata membuat rambut tampak tebal",
     "Sangat mudah dirawat"
@@ -588,7 +588,7 @@
    ],
    "maintenance": "medium",
    "formal": true,
-   "description": "Rambut panjang lurus satu panjang dengan belahan tengah yang rapi.",
+   "description": "Rambut panjang lurus dengan ujung rata dengan belahan tengah yang rapi.",
    "advantages": [
     "Tampilan rapi dan elegan",
     "Menonjolkan kilau rambut"
@@ -696,7 +696,7 @@
    ],
    "styling_tips": [
     "Blow dry lapisan depan ke arah luar dengan sisir bulat",
-    "Gunakan volumizing mousse di akar"
+    "Gunakan busa penata rambut (mousse) di pangkal agar rambut lebih bervolume"
    ]
   },
   {
@@ -793,7 +793,7 @@
     "Perawatan harian ringan"
    ],
    "styling_tips": [
-    "Gunakan leave-in dan minyak untuk kelembapan",
+    "Gunakan kondisioner tanpa bilas dan minyak untuk kelembapan",
     "Bentuk ikal dengan finger coil bila perlu"
    ]
   },
@@ -1088,7 +1088,7 @@
    ],
    "maintenance": "low",
    "formal": true,
-   "description": "Samping taper fade, ikal alami dibiarkan di bagian atas.",
+   "description": "Rambut di samping dipangkas makin pendek ke bawah (taper fade); ikal alami dibiarkan di bagian atas.",
    "advantages": [
     "Menonjolkan ikal alami",
     "Rapi tanpa banyak produk"
@@ -1346,7 +1346,7 @@
    ],
    "maintenance": "low",
    "formal": false,
-   "description": "Rambut sebatas leher hingga bahu yang disapu ke belakang secara alami.",
+   "description": "Rambut sebatas leher hingga bahu yang disisir ke belakang secara alami.",
    "advantages": [
     "Santai dan maskulin",
     "Tidak perlu fade"
@@ -1419,7 +1419,7 @@
    ],
    "styling_tips": [
     "Gunakan sisir afro (pick) untuk membentuk",
-    "Lembapkan dengan leave-in setiap hari"
+    "Lembapkan dengan kondisioner tanpa bilas setiap hari"
    ]
   },
   {
@@ -1510,7 +1510,7 @@
    ],
    "maintenance": "medium",
    "formal": true,
-   "description": "Rambut atas sedang disapu ke satu sisi, samping taper.",
+   "description": "Rambut atas sepanjang sedang disisir ke samping; rambut samping dipangkas makin pendek ke bawah (taper).",
    "advantages": [
     "Rapi namun tidak kaku",
     "Melunakkan dahi lebar"
@@ -1647,7 +1647,7 @@
    "formal": false,
    "description": "Rambut dipilin dua helai saat basah lalu dibuka setelah kering, menghasilkan ikal teratur sebahu.",
    "advantages": [
-    "Ikal tampak rapi dan terdefinisi",
+    "Bentuk ikal terlihat jelas dan rapi",
     "Bisa diulang tanpa panas dari catokan"
    ],
    "styling_tips": [
@@ -1783,7 +1783,7 @@
    ],
    "styling_tips": [
     "Buat pilinan dengan sponge brush atau twist comb",
-    "Lembapkan dengan leave-in agar pilinan tidak kering"
+    "Lembapkan dengan kondisioner tanpa bilas agar pilinan tidak kering"
    ]
   },
   {
@@ -1810,7 +1810,7 @@
    ],
    "maintenance": "high",
    "formal": true,
-   "description": "Rambut keriting rapat yang dibentuk menjadi locs panjang.",
+   "description": "Rambut keriting rapat yang dibentuk menjadi untaian rambut panjang berpilin (locs).",
    "advantages": [
     "Tekstur alami terjaga dalam jangka panjang",
     "Bisa diikat, dikepang, atau diurai"

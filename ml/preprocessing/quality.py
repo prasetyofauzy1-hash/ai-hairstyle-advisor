@@ -25,16 +25,16 @@ class QualityThresholds:
 
 
 MESSAGES = {
-    "image_too_small": "Resolusi foto terlalu kecil. Gunakan foto minimal 256 piksel di sisi terpendek.",
+    "image_too_small": "Resolusi foto terlalu kecil. Sisi terpendek foto harus minimal 256 piksel.",
     "no_face": "Wajah tidak terdeteksi. Pastikan wajah terlihat jelas dan menghadap kamera.",
     "multiple_faces": "Terdeteksi lebih dari satu wajah dengan ukuran serupa. Gunakan foto dengan satu wajah saja.",
-    "face_too_small": "Wajah terlalu kecil di dalam foto. Dekatkan kamera atau potong foto di sekitar wajah.",
+    "face_too_small": "Wajah terlalu kecil di dalam foto. Coba ambil foto lebih dekat, tetapi pastikan seluruh wajah terlihat.",
     "face_cut_off": "Sebagian wajah terpotong di tepi foto. Pastikan seluruh wajah, termasuk dagu, terlihat.",
     "blurry": "Foto terlalu buram. Gunakan foto yang lebih tajam.",
     "too_dark": "Foto terlalu gelap. Gunakan pencahayaan yang lebih terang dan merata.",
     "too_bright": "Foto terlalu terang. Hindari cahaya langsung yang berlebihan.",
     "head_turned": "Kepala terlalu menoleh ke samping. Hadapkan wajah lurus ke kamera.",
-    "head_tilted_vertically": "Kepala terlalu menunduk atau mendongak. Posisikan wajah sejajar dengan kamera.",
+    "head_tilted_vertically": "Kepala terlalu menunduk atau mendongak. Sejajarkan kamera dengan mata dan lihat lurus ke depan.",
     "head_tilted": "Kepala terlalu miring. Tegakkan posisi kepala.",
     "forehead_covered": "Dahi sebagian tertutup rambut, sehingga pengukuran dahi kurang akurat.",
 }
