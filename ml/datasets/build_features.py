@@ -70,15 +70,18 @@ def _process(args: tuple[Path, str, str, str]) -> tuple[dict, np.ndarray]:
     return row, emb
 
 
-def build(root: Path, out: Path, workers: int = 4) -> list[dict]:
-    items = [(root, *it) for it in list_images(root)]
+def analyze_items(items: list[tuple[Path, str, str, str]], workers: int = 4) -> tuple[list[dict], np.ndarray]:
+    """Run the Phase 2 pipeline on (root, relative path, label, split) items; returns feature rows and embeddings."""
     for name in MODELS:  # download once here, so workers never race on the same temp file
         ensure_model(name)
     with ProcessPoolExecutor(max_workers=workers, initializer=_init,
                              mp_context=multiprocessing.get_context("spawn")) as pool:
         results = list(pool.map(_process, items, chunksize=16))
-    rows = [r for r, _ in results]
-    embeddings = np.stack([e for _, e in results])
+    return [r for r, _ in results], np.stack([e for _, e in results])
+
+
+def build(root: Path, out: Path, workers: int = 4) -> list[dict]:
+    rows, embeddings = analyze_items([(root, *it) for it in list_images(root)], workers)
     for row, g in zip(rows, identity_groups(embeddings)):
         row["identity_group"] = int(g)
     out.mkdir(parents=True, exist_ok=True)

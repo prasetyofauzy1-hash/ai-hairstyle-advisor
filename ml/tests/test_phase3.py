@@ -89,3 +89,40 @@ def test_confusion_matrix_keeps_predictions_outside_labels():
     m = metrics(np.array(["oval", "round", "oval"]), np.array(["oval", "diamond", "round"]), ["oval", "round"])
     assert m["confusion_labels"] == ["oval", "round", "diamond"]
     assert np.sum(m["confusion_matrix"]) == 3
+
+
+def _synthetic_ffhq(tmp_path, n_train=40, n_test=15):
+    rng = np.random.default_rng(2)
+    shapes = ["diamond", "oval", "round", "oblong"]
+    rows = []
+    for i in range(n_train + n_test):
+        split = "train" if i < n_train else "test"
+        label = shapes[i % 4] if split == "train" else shapes[1 + i % 3]
+        centre = np.array([1.1 + 0.05 * shapes.index(label), 0.85, 0.8, 1.05, 0.4, 145.0 + shapes.index(label)])
+        rows.append({"ffhq_id": f"{i:05d}", "image": f"{i:05d}.png", "label": label, "source_split": split, "passed": True,
+                     "issues": "", **dict(zip(FEATURE_NAMES, centre + rng.normal(scale=0.01, size=6))),
+                     "label_source": "ai_pseudo_label" if split == "train" else "human",
+                     "identity_group": 0 if i in (0, n_train) else i})
+    path = tmp_path / "ffhq.csv"
+    pd.DataFrame(rows).to_csv(path, index=False)
+    return path
+
+
+def test_ffhq_run_never_trains_on_human_test_and_drops_identity_overlap(tmp_path):
+    from ml.training.train_face_shape_ffhq import ARTIFACT, COMBINED, KAGGLE_ONLY
+    from ml.training.train_face_shape_ffhq import run as run_ffhq
+
+    kaggle = _synthetic_features(tmp_path)
+    run(kaggle, tmp_path / "base", tmp_path / "model")
+    report = run_ffhq(kaggle, _synthetic_ffhq(tmp_path), tmp_path / "out", tmp_path / "model",
+                      tmp_path / "model" / "face_shape_kaggle_niten19.joblib")
+    d = report["data"]
+    assert d["ffhq_train_dropped_for_identity_overlap_with_test"] == 1 and d["ffhq_train_used"] == 39
+    assert d["ffhq_human_test_used"] == 15
+    assert report["configs"][COMBINED]["train_size"] == report["configs"][KAGGLE_ONLY]["train_size"] + 39
+    assert "diamond" in report["configs"][COMBINED]["labels"]
+    assert set(report["current_model"]["ffhq_human_test"]["per_class"]) == {"oblong", "oval", "round"}
+    assert report["phase2_rule_baseline"]["ffhq_human_test"]["macro_f1"] >= 0
+    assert (tmp_path / "out" / "README.md").exists()
+    assert (tmp_path / "out" / "confusion_matrices_ffhq_human_test.png").exists()
+    assert "diamond" in LearnedFaceShapeClassifier(tmp_path / "model" / ARTIFACT).labels

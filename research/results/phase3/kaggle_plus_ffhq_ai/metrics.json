@@ -1,0 +1,2626 @@
+{
+  "kaggle_features_csv_sha256": "3d2a25b7303806e27f15f3431c1bab345bc678c8fcf87d5144136779b289fec7",
+  "ffhq_features_csv_sha256": "106b158b2e19a7efe23447bbb1ed34950970c314ed06952a1e095b478131b56c",
+  "features": [
+    "length_to_width",
+    "forehead_to_cheekbone",
+    "jaw_to_cheekbone",
+    "forehead_to_jaw",
+    "chin_to_jaw",
+    "jaw_angle_deg"
+  ],
+  "seed": 42,
+  "protocol": "identity-aware stratified Kaggle hold-out (1 of 5 folds), shared by both configurations; 5-fold identity-aware stratified CV on each training set; FFHQ human test never trained on",
+  "selection_rule": "highest CV macro-F1 among RF, SVM, XGBoost and MLP; no test set was used for selection",
+  "macro_f1_on_ffhq_human_test": "unweighted mean F1 over the shapes in the human labels (oblong, oval, round); predictions of other shapes count as errors",
+  "data": {
+    "kaggle_used": 3244,
+    "kaggle_train": 2562,
+    "kaggle_test": 682,
+    "kaggle_test_class_counts": {
+      "heart": 154,
+      "oblong": 117,
+      "oval": 129,
+      "round": 193,
+      "square": 89
+    },
+    "ffhq_rows": 468,
+    "ffhq_rows_by_split": {
+      "test": 104,
+      "train": 364
+    },
+    "ffhq_passed_quality_gates_by_split": {
+      "test": 101,
+      "train": 343
+    },
+    "ffhq_rejection_reasons": {
+      "too_bright": 24,
+      "eyes_covered": 4
+    },
+    "ffhq_train_dropped_for_identity_overlap_with_test": 55,
+    "ffhq_train_used": 288,
+    "ffhq_train_class_counts": {
+      "diamond": 3,
+      "heart": 18,
+      "oblong": 51,
+      "oval": 84,
+      "round": 100,
+      "square": 32
+    },
+    "ffhq_human_test_used": 101,
+    "ffhq_human_test_class_counts": {
+      "oblong": 11,
+      "oval": 62,
+      "round": 28
+    }
+  },
+  "phase2_rule_baseline": {
+    "kaggle_test": {
+      "accuracy": 0.34017595307917886,
+      "macro_precision": 0.4977836442518352,
+      "macro_recall": 0.3444158464567042,
+      "macro_f1": 0.3253342013820305,
+      "per_class": {
+        "heart": {
+          "precision": 0.22033898305084745,
+          "recall": 0.08441558441558442,
+          "f1": 0.12206572769953052,
+          "support": 154
+        },
+        "oblong": {
+          "precision": 0.7142857142857143,
+          "recall": 0.1282051282051282,
+          "f1": 0.21739130434782608,
+          "support": 117
+        },
+        "oval": {
+          "precision": 0.24235294117647058,
+          "recall": 0.7984496124031008,
+          "f1": 0.37184115523465705,
+          "support": 129
+        },
+        "round": {
+          "precision": 0.7865168539325843,
+          "recall": 0.3626943005181347,
+          "f1": 0.49645390070921985,
+          "support": 193
+        },
+        "square": {
+          "precision": 0.5254237288135594,
+          "recall": 0.34831460674157305,
+          "f1": 0.4189189189189189,
+          "support": 89
+        }
+      },
+      "confusion_labels": [
+        "heart",
+        "oblong",
+        "oval",
+        "round",
+        "square",
+        "diamond"
+      ],
+      "confusion_matrix": [
+        [
+          13,
+          1,
+          124,
+          9,
+          0,
+          7
+        ],
+        [
+          19,
+          15,
+          76,
+          0,
+          0,
+          7
+        ],
+        [
+          7,
+          4,
+          103,
+          7,
+          0,
+          8
+        ],
+        [
+          20,
+          1,
+          71,
+          70,
+          28,
+          3
+        ],
+        [
+          0,
+          0,
+          51,
+          3,
+          31,
+          4
+        ]
+      ],
+      "accuracy_95ci": [
+        0.3064516129032258,
+        0.37390029325513197
+      ],
+      "macro_f1_95ci": [
+        0.28835042778269737,
+        0.36016523004332957
+      ]
+    },
+    "ffhq_human_test": {
+      "accuracy": 0.42574257425742573,
+      "macro_precision": 0.43842659014825447,
+      "macro_recall": 0.3659055997765675,
+      "macro_f1": 0.39119015829583353,
+      "per_class": {
+        "oblong": {
+          "precision": 0.25,
+          "recall": 0.18181818181818182,
+          "f1": 0.21052631578947367,
+          "support": 11
+        },
+        "oval": {
+          "precision": 0.6829268292682927,
+          "recall": 0.45161290322580644,
+          "f1": 0.5436893203883495,
+          "support": 62
+        },
+        "round": {
+          "precision": 0.38235294117647056,
+          "recall": 0.4642857142857143,
+          "f1": 0.41935483870967744,
+          "support": 28
+        }
+      },
+      "confusion_labels": [
+        "oblong",
+        "oval",
+        "round",
+        "diamond",
+        "heart",
+        "square"
+      ],
+      "confusion_matrix": [
+        [
+          2,
+          7,
+          1,
+          0,
+          1,
+          0
+        ],
+        [
+          6,
+          28,
+          20,
+          1,
+          0,
+          7
+        ],
+        [
+          0,
+          6,
+          13,
+          1,
+          0,
+          8
+        ]
+      ],
+      "accuracy_95ci": [
+        0.33663366336633666,
+        0.5148514851485149
+      ],
+      "macro_f1_95ci": [
+        0.28782668458743527,
+        0.5029141678143265
+      ]
+    },
+    "ffhq_human_test_forehead_occluded": 15
+  },
+  "current_model": {
+    "file": "face_shape_kaggle_niten19.joblib",
+    "model_name": "mlp",
+    "trained_on": "niten19",
+    "train_size": 2660,
+    "features_csv_sha256": "5faf59598413cee10f4adfac8f5e1c995373fc40c0e6e9550ffed7004845d88e",
+    "kaggle_test": null,
+    "ffhq_human_test": {
+      "accuracy": 0.22772277227722773,
+      "macro_precision": 0.42058823529411765,
+      "macro_recall": 0.38954056695992173,
+      "macro_f1": 0.32127728901922453,
+      "per_class": {
+        "oblong": {
+          "precision": 0.35,
+          "recall": 0.6363636363636364,
+          "f1": 0.45161290322580644,
+          "support": 11
+        },
+        "oval": {
+          "precision": 0.5,
+          "recall": 0.03225806451612903,
+          "f1": 0.06060606060606061,
+          "support": 62
+        },
+        "round": {
+          "precision": 0.4117647058823529,
+          "recall": 0.5,
+          "f1": 0.45161290322580644,
+          "support": 28
+        }
+      },
+      "confusion_labels": [
+        "oblong",
+        "oval",
+        "round",
+        "heart",
+        "square"
+      ],
+      "confusion_matrix": [
+        [
+          7,
+          0,
+          1,
+          3,
+          0
+        ],
+        [
+          13,
+          2,
+          19,
+          18,
+          10
+        ],
+        [
+          0,
+          2,
+          14,
+          4,
+          8
+        ]
+      ],
+      "accuracy_95ci": [
+        0.1485148514851485,
+        0.31683168316831684
+      ],
+      "macro_f1_95ci": [
+        0.212456301203277,
+        0.4067134259811715
+      ]
+    }
+  },
+  "configs": {
+    "kaggle_only": {
+      "train_size": 2562,
+      "labels": [
+        "heart",
+        "oblong",
+        "oval",
+        "round",
+        "square"
+      ],
+      "class_counts": {
+        "heart": 510,
+        "oblong": 500,
+        "oval": 511,
+        "round": 451,
+        "square": 590
+      },
+      "selected_model": "mlp",
+      "models": {
+        "majority_class": {
+          "best_params": {},
+          "cv_macro_f1_mean": 0.06249953256109073,
+          "cv_macro_f1_std": 0.021120365361553806,
+          "kaggle_test": {
+            "accuracy": 0.13049853372434017,
+            "macro_precision": 0.026099706744868036,
+            "macro_recall": 0.2,
+            "macro_f1": 0.046173800259403375,
+            "per_class": {
+              "heart": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 154
+              },
+              "oblong": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 117
+              },
+              "oval": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 129
+              },
+              "round": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 193
+              },
+              "square": {
+                "precision": 0.13049853372434017,
+                "recall": 1.0,
+                "f1": 0.23086900129701687,
+                "support": 89
+              }
+            },
+            "confusion_labels": [
+              "heart",
+              "oblong",
+              "oval",
+              "round",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                0,
+                0,
+                0,
+                0,
+                154
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                117
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                129
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                193
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                89
+              ]
+            ],
+            "accuracy_95ci": [
+              0.10557184750733138,
+              0.15542521994134897
+            ],
+            "macro_f1_95ci": [
+              0.03819628647214854,
+              0.053807106598984765
+            ]
+          },
+          "ffhq_human_test": {
+            "accuracy": 0.0,
+            "macro_precision": 0.0,
+            "macro_recall": 0.0,
+            "macro_f1": 0.0,
+            "per_class": {
+              "oblong": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 11
+              },
+              "oval": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 62
+              },
+              "round": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 28
+              }
+            },
+            "confusion_labels": [
+              "oblong",
+              "oval",
+              "round",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                0,
+                0,
+                0,
+                11
+              ],
+              [
+                0,
+                0,
+                0,
+                62
+              ],
+              [
+                0,
+                0,
+                0,
+                28
+              ]
+            ],
+            "accuracy_95ci": [
+              0.0,
+              0.0
+            ],
+            "macro_f1_95ci": [
+              0.0,
+              0.0
+            ]
+          }
+        },
+        "rule_based_v0": {
+          "best_params": {},
+          "cv_macro_f1_mean": 0.32970146614623264,
+          "cv_macro_f1_std": 0.034094952472814376,
+          "kaggle_test": {
+            "accuracy": 0.3357771260997067,
+            "macro_precision": 0.4882684077213698,
+            "macro_recall": 0.3400961165853646,
+            "macro_f1": 0.320929608212578,
+            "per_class": {
+              "heart": {
+                "precision": 0.21311475409836064,
+                "recall": 0.08441558441558442,
+                "f1": 0.12093023255813953,
+                "support": 154
+              },
+              "oblong": {
+                "precision": 0.6521739130434783,
+                "recall": 0.1282051282051282,
+                "f1": 0.21428571428571427,
+                "support": 117
+              },
+              "oval": {
+                "precision": 0.23953488372093024,
+                "recall": 0.7984496124031008,
+                "f1": 0.3685152057245081,
+                "support": 129
+              },
+              "round": {
+                "precision": 0.8192771084337349,
+                "recall": 0.35233160621761656,
+                "f1": 0.4927536231884058,
+                "support": 193
+              },
+              "square": {
+                "precision": 0.5172413793103449,
+                "recall": 0.33707865168539325,
+                "f1": 0.40816326530612246,
+                "support": 89
+              }
+            },
+            "confusion_labels": [
+              "heart",
+              "oblong",
+              "oval",
+              "round",
+              "square",
+              "diamond"
+            ],
+            "confusion_matrix": [
+              [
+                13,
+                1,
+                128,
+                8,
+                0,
+                4
+              ],
+              [
+                19,
+                15,
+                76,
+                0,
+                0,
+                7
+              ],
+              [
+                6,
+                6,
+                103,
+                4,
+                1,
+                9
+              ],
+              [
+                23,
+                1,
+                71,
+                68,
+                27,
+                3
+              ],
+              [
+                0,
+                0,
+                52,
+                3,
+                30,
+                4
+              ]
+            ],
+            "accuracy_95ci": [
+              0.3020527859237537,
+              0.3680351906158358
+            ],
+            "macro_f1_95ci": [
+              0.28377035737074724,
+              0.35376557647525253
+            ]
+          },
+          "ffhq_human_test": {
+            "accuracy": 0.43564356435643564,
+            "macro_precision": 0.4443089430894309,
+            "macro_recall": 0.37781036168132937,
+            "macro_f1": 0.39955336020742255,
+            "per_class": {
+              "oblong": {
+                "precision": 0.25,
+                "recall": 0.18181818181818182,
+                "f1": 0.21052631578947367,
+                "support": 11
+              },
+              "oval": {
+                "precision": 0.6829268292682927,
+                "recall": 0.45161290322580644,
+                "f1": 0.5436893203883495,
+                "support": 62
+              },
+              "round": {
+                "precision": 0.4,
+                "recall": 0.5,
+                "f1": 0.4444444444444444,
+                "support": 28
+              }
+            },
+            "confusion_labels": [
+              "oblong",
+              "oval",
+              "round",
+              "diamond",
+              "heart",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                2,
+                7,
+                1,
+                0,
+                1,
+                0
+              ],
+              [
+                6,
+                28,
+                20,
+                1,
+                0,
+                7
+              ],
+              [
+                0,
+                6,
+                14,
+                1,
+                0,
+                7
+              ]
+            ],
+            "accuracy_95ci": [
+              0.3465346534653465,
+              0.5247524752475248
+            ],
+            "macro_f1_95ci": [
+              0.29520918039485644,
+              0.5103320745102183
+            ]
+          }
+        },
+        "rule_prototypes_fitted": {
+          "best_params": {},
+          "cv_macro_f1_mean": 0.47076885686308517,
+          "cv_macro_f1_std": 0.05582542329718633,
+          "kaggle_test": {
+            "accuracy": 0.43255131964809385,
+            "macro_precision": 0.441090119486394,
+            "macro_recall": 0.4554649633811737,
+            "macro_f1": 0.41129160746857973,
+            "per_class": {
+              "heart": {
+                "precision": 0.3943089430894309,
+                "recall": 0.6298701298701299,
+                "f1": 0.485,
+                "support": 154
+              },
+              "oblong": {
+                "precision": 0.4368932038834951,
+                "recall": 0.38461538461538464,
+                "f1": 0.4090909090909091,
+                "support": 117
+              },
+              "oval": {
+                "precision": 0.33962264150943394,
+                "recall": 0.13953488372093023,
+                "f1": 0.1978021978021978,
+                "support": 129
+              },
+              "round": {
+                "precision": 0.6435643564356436,
+                "recall": 0.33678756476683935,
+                "f1": 0.4421768707482993,
+                "support": 193
+              },
+              "square": {
+                "precision": 0.39106145251396646,
+                "recall": 0.7865168539325843,
+                "f1": 0.5223880597014925,
+                "support": 89
+              }
+            },
+            "confusion_labels": [
+              "heart",
+              "oblong",
+              "oval",
+              "round",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                97,
+                25,
+                17,
+                6,
+                9
+              ],
+              [
+                57,
+                45,
+                6,
+                1,
+                8
+              ],
+              [
+                46,
+                30,
+                18,
+                16,
+                19
+              ],
+              [
+                44,
+                3,
+                8,
+                65,
+                73
+              ],
+              [
+                2,
+                0,
+                4,
+                13,
+                70
+              ]
+            ],
+            "accuracy_95ci": [
+              0.3944281524926686,
+              0.4692448680351906
+            ],
+            "macro_f1_95ci": [
+              0.37370412707836015,
+              0.4465878417880008
+            ]
+          },
+          "ffhq_human_test": {
+            "accuracy": 0.18811881188118812,
+            "macro_precision": 0.5612121212121212,
+            "macro_recall": 0.3537913699204022,
+            "macro_f1": 0.28558404558404554,
+            "per_class": {
+              "oblong": {
+                "precision": 0.32,
+                "recall": 0.7272727272727273,
+                "f1": 0.4444444444444444,
+                "support": 11
+              },
+              "oval": {
+                "precision": 1.0,
+                "recall": 0.04838709677419355,
+                "f1": 0.09230769230769231,
+                "support": 62
+              },
+              "round": {
+                "precision": 0.36363636363636365,
+                "recall": 0.2857142857142857,
+                "f1": 0.32,
+                "support": 28
+              }
+            },
+            "confusion_labels": [
+              "oblong",
+              "oval",
+              "round",
+              "heart",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                8,
+                0,
+                1,
+                2,
+                0
+              ],
+              [
+                17,
+                3,
+                13,
+                13,
+                16
+              ],
+              [
+                0,
+                0,
+                8,
+                4,
+                16
+              ]
+            ],
+            "accuracy_95ci": [
+              0.1188118811881188,
+              0.26732673267326734
+            ],
+            "macro_f1_95ci": [
+              0.1911206102356791,
+              0.37829168940670255
+            ]
+          }
+        },
+        "random_forest": {
+          "best_params": {
+            "max_depth": null,
+            "min_samples_leaf": 1,
+            "n_estimators": 300
+          },
+          "cv_macro_f1_mean": 0.49388154502790416,
+          "cv_macro_f1_std": 0.033424116484628376,
+          "kaggle_test": {
+            "accuracy": 0.4868035190615836,
+            "macro_precision": 0.5110101957605216,
+            "macro_recall": 0.5118480989127379,
+            "macro_f1": 0.48507787069174596,
+            "per_class": {
+              "heart": {
+                "precision": 0.5232558139534884,
+                "recall": 0.5844155844155844,
+                "f1": 0.5521472392638037,
+                "support": 154
+              },
+              "oblong": {
+                "precision": 0.5476190476190477,
+                "recall": 0.39316239316239315,
+                "f1": 0.4577114427860697,
+                "support": 117
+              },
+              "oval": {
+                "precision": 0.32919254658385094,
+                "recall": 0.4108527131782946,
+                "f1": 0.36551724137931035,
+                "support": 129
+              },
+              "round": {
+                "precision": 0.7272727272727273,
+                "recall": 0.37305699481865284,
+                "f1": 0.4931506849315068,
+                "support": 193
+              },
+              "square": {
+                "precision": 0.42771084337349397,
+                "recall": 0.797752808988764,
+                "f1": 0.5568627450980392,
+                "support": 89
+              }
+            },
+            "confusion_labels": [
+              "heart",
+              "oblong",
+              "oval",
+              "round",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                90,
+                15,
+                38,
+                5,
+                6
+              ],
+              [
+                31,
+                46,
+                33,
+                1,
+                6
+              ],
+              [
+                33,
+                19,
+                53,
+                12,
+                12
+              ],
+              [
+                14,
+                4,
+                32,
+                72,
+                71
+              ],
+              [
+                4,
+                0,
+                5,
+                9,
+                71
+              ]
+            ],
+            "accuracy_95ci": [
+              0.4501466275659824,
+              0.5234604105571847
+            ],
+            "macro_f1_95ci": [
+              0.44725853048410347,
+              0.5206840883229912
+            ]
+          },
+          "ffhq_human_test": {
+            "accuracy": 0.24752475247524752,
+            "macro_precision": 0.5564373897707231,
+            "macro_recall": 0.4305613741097612,
+            "macro_f1": 0.3698529411764706,
+            "per_class": {
+              "oblong": {
+                "precision": 0.42857142857142855,
+                "recall": 0.8181818181818182,
+                "f1": 0.5625,
+                "support": 11
+              },
+              "oval": {
+                "precision": 0.8333333333333334,
+                "recall": 0.08064516129032258,
+                "f1": 0.14705882352941177,
+                "support": 62
+              },
+              "round": {
+                "precision": 0.4074074074074074,
+                "recall": 0.39285714285714285,
+                "f1": 0.4,
+                "support": 28
+              }
+            },
+            "confusion_labels": [
+              "oblong",
+              "oval",
+              "round",
+              "heart",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                9,
+                0,
+                1,
+                1,
+                0
+              ],
+              [
+                12,
+                5,
+                15,
+                15,
+                15
+              ],
+              [
+                0,
+                1,
+                11,
+                3,
+                13
+              ]
+            ],
+            "accuracy_95ci": [
+              0.16831683168316833,
+              0.33663366336633666
+            ],
+            "macro_f1_95ci": [
+              0.2546515209191265,
+              0.4659571515476054
+            ]
+          }
+        },
+        "svm_rbf": {
+          "best_params": {
+            "svc__C": 3,
+            "svc__gamma": 0.1
+          },
+          "cv_macro_f1_mean": 0.4966849196017969,
+          "cv_macro_f1_std": 0.04411443382247134,
+          "kaggle_test": {
+            "accuracy": 0.5205278592375366,
+            "macro_precision": 0.5399078499912737,
+            "macro_recall": 0.5421174277786216,
+            "macro_f1": 0.5090377803064177,
+            "per_class": {
+              "heart": {
+                "precision": 0.5722222222222222,
+                "recall": 0.6688311688311688,
+                "f1": 0.6167664670658682,
+                "support": 154
+              },
+              "oblong": {
+                "precision": 0.5066666666666667,
+                "recall": 0.3247863247863248,
+                "f1": 0.3958333333333333,
+                "support": 117
+              },
+              "oval": {
+                "precision": 0.44966442953020136,
+                "recall": 0.5193798449612403,
+                "f1": 0.48201438848920863,
+                "support": 129
+              },
+              "round": {
+                "precision": 0.7731958762886598,
+                "recall": 0.38860103626943004,
+                "f1": 0.5172413793103449,
+                "support": 193
+              },
+              "square": {
+                "precision": 0.39779005524861877,
+                "recall": 0.8089887640449438,
+                "f1": 0.5333333333333333,
+                "support": 89
+              }
+            },
+            "confusion_labels": [
+              "heart",
+              "oblong",
+              "oval",
+              "round",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                103,
+                14,
+                22,
+                4,
+                11
+              ],
+              [
+                37,
+                38,
+                32,
+                1,
+                9
+              ],
+              [
+                19,
+                21,
+                67,
+                11,
+                11
+              ],
+              [
+                12,
+                2,
+                26,
+                75,
+                78
+              ],
+              [
+                9,
+                0,
+                2,
+                6,
+                72
+              ]
+            ],
+            "accuracy_95ci": [
+              0.48240469208211145,
+              0.5586510263929618
+            ],
+            "macro_f1_95ci": [
+              0.4704427514893826,
+              0.5474283974297475
+            ]
+          },
+          "ffhq_human_test": {
+            "accuracy": 0.16831683168316833,
+            "macro_precision": 0.37857142857142856,
+            "macro_recall": 0.33651026392961875,
+            "macro_f1": 0.2541763791763792,
+            "per_class": {
+              "oblong": {
+                "precision": 0.2857142857142857,
+                "recall": 0.7272727272727273,
+                "f1": 0.41025641025641024,
+                "support": 11
+              },
+              "oval": {
+                "precision": 0.5,
+                "recall": 0.03225806451612903,
+                "f1": 0.06060606060606061,
+                "support": 62
+              },
+              "round": {
+                "precision": 0.35,
+                "recall": 0.25,
+                "f1": 0.2916666666666667,
+                "support": 28
+              }
+            },
+            "confusion_labels": [
+              "oblong",
+              "oval",
+              "round",
+              "heart",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                8,
+                0,
+                1,
+                2,
+                0
+              ],
+              [
+                18,
+                2,
+                12,
+                14,
+                16
+              ],
+              [
+                2,
+                2,
+                7,
+                3,
+                14
+              ]
+            ],
+            "accuracy_95ci": [
+              0.09900990099009901,
+              0.24752475247524752
+            ],
+            "macro_f1_95ci": [
+              0.16094996676278508,
+              0.34063937937686994
+            ]
+          }
+        },
+        "xgboost": {
+          "best_params": {
+            "learning_rate": 0.05,
+            "max_depth": 3,
+            "n_estimators": 200,
+            "subsample": 0.8
+          },
+          "cv_macro_f1_mean": 0.49879313967522554,
+          "cv_macro_f1_std": 0.03337568449988447,
+          "kaggle_test": {
+            "accuracy": 0.5351906158357771,
+            "macro_precision": 0.5559791272018424,
+            "macro_recall": 0.558034149377089,
+            "macro_f1": 0.5326495521995719,
+            "per_class": {
+              "heart": {
+                "precision": 0.5853658536585366,
+                "recall": 0.6233766233766234,
+                "f1": 0.6037735849056604,
+                "support": 154
+              },
+              "oblong": {
+                "precision": 0.5862068965517241,
+                "recall": 0.4358974358974359,
+                "f1": 0.5,
+                "support": 117
+              },
+              "oval": {
+                "precision": 0.3875,
+                "recall": 0.4806201550387597,
+                "f1": 0.4290657439446367,
+                "support": 129
+              },
+              "round": {
+                "precision": 0.7757009345794392,
+                "recall": 0.43005181347150256,
+                "f1": 0.5533333333333333,
+                "support": 193
+              },
+              "square": {
+                "precision": 0.4451219512195122,
+                "recall": 0.8202247191011236,
+                "f1": 0.5770750988142292,
+                "support": 89
+              }
+            },
+            "confusion_labels": [
+              "heart",
+              "oblong",
+              "oval",
+              "round",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                96,
+                12,
+                30,
+                6,
+                10
+              ],
+              [
+                28,
+                51,
+                32,
+                0,
+                6
+              ],
+              [
+                24,
+                21,
+                62,
+                12,
+                10
+              ],
+              [
+                11,
+                3,
+                31,
+                83,
+                65
+              ],
+              [
+                5,
+                0,
+                5,
+                6,
+                73
+              ]
+            ],
+            "accuracy_95ci": [
+              0.4970674486803519,
+              0.5718475073313783
+            ],
+            "macro_f1_95ci": [
+              0.494926186765693,
+              0.5706875771765473
+            ]
+          },
+          "ffhq_human_test": {
+            "accuracy": 0.22772277227722773,
+            "macro_precision": 0.5261904761904762,
+            "macro_recall": 0.376483731322441,
+            "macro_f1": 0.33319577229062064,
+            "per_class": {
+              "oblong": {
+                "precision": 0.35,
+                "recall": 0.6363636363636364,
+                "f1": 0.45161290322580644,
+                "support": 11
+              },
+              "oval": {
+                "precision": 0.8,
+                "recall": 0.06451612903225806,
+                "f1": 0.11940298507462686,
+                "support": 62
+              },
+              "round": {
+                "precision": 0.42857142857142855,
+                "recall": 0.42857142857142855,
+                "f1": 0.42857142857142855,
+                "support": 28
+              }
+            },
+            "confusion_labels": [
+              "oblong",
+              "oval",
+              "round",
+              "heart",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                7,
+                0,
+                1,
+                3,
+                0
+              ],
+              [
+                13,
+                4,
+                15,
+                16,
+                14
+              ],
+              [
+                0,
+                1,
+                12,
+                3,
+                12
+              ]
+            ],
+            "accuracy_95ci": [
+              0.1485148514851485,
+              0.31683168316831684
+            ],
+            "macro_f1_95ci": [
+              0.2280615627785886,
+              0.4335814367017725
+            ]
+          }
+        },
+        "mlp": {
+          "best_params": {
+            "mlpclassifier__alpha": 0.01,
+            "mlpclassifier__hidden_layer_sizes": [
+              64,
+              32
+            ]
+          },
+          "cv_macro_f1_mean": 0.5034162201647728,
+          "cv_macro_f1_std": 0.05304297501435679,
+          "kaggle_test": {
+            "accuracy": 0.5469208211143695,
+            "macro_precision": 0.565339683574248,
+            "macro_recall": 0.5714090757201407,
+            "macro_f1": 0.5361054069934452,
+            "per_class": {
+              "heart": {
+                "precision": 0.580110497237569,
+                "recall": 0.6818181818181818,
+                "f1": 0.6268656716417911,
+                "support": 154
+              },
+              "oblong": {
+                "precision": 0.5609756097560976,
+                "recall": 0.39316239316239315,
+                "f1": 0.4623115577889447,
+                "support": 117
+              },
+              "oval": {
+                "precision": 0.46218487394957986,
+                "recall": 0.4263565891472868,
+                "f1": 0.4435483870967742,
+                "support": 129
+              },
+              "round": {
+                "precision": 0.8037383177570093,
+                "recall": 0.44559585492227977,
+                "f1": 0.5733333333333334,
+                "support": 193
+              },
+              "square": {
+                "precision": 0.41968911917098445,
+                "recall": 0.9101123595505618,
+                "f1": 0.574468085106383,
+                "support": 89
+              }
+            },
+            "confusion_labels": [
+              "heart",
+              "oblong",
+              "oval",
+              "round",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                105,
+                12,
+                21,
+                2,
+                14
+              ],
+              [
+                38,
+                46,
+                22,
+                0,
+                11
+              ],
+              [
+                26,
+                22,
+                55,
+                14,
+                12
+              ],
+              [
+                10,
+                2,
+                20,
+                86,
+                75
+              ],
+              [
+                2,
+                0,
+                1,
+                5,
+                81
+              ]
+            ],
+            "accuracy_95ci": [
+              0.5087976539589443,
+              0.5835777126099707
+            ],
+            "macro_f1_95ci": [
+              0.4989171516099516,
+              0.5728448686439316
+            ]
+          },
+          "ffhq_human_test": {
+            "accuracy": 0.22772277227722773,
+            "macro_precision": 0.4665286404416839,
+            "macro_recall": 0.376483731322441,
+            "macro_f1": 0.31932773109243695,
+            "per_class": {
+              "oblong": {
+                "precision": 0.30434782608695654,
+                "recall": 0.6363636363636364,
+                "f1": 0.4117647058823529,
+                "support": 11
+              },
+              "oval": {
+                "precision": 0.6666666666666666,
+                "recall": 0.06451612903225806,
+                "f1": 0.11764705882352941,
+                "support": 62
+              },
+              "round": {
+                "precision": 0.42857142857142855,
+                "recall": 0.42857142857142855,
+                "f1": 0.42857142857142855,
+                "support": 28
+              }
+            },
+            "confusion_labels": [
+              "oblong",
+              "oval",
+              "round",
+              "heart",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                7,
+                0,
+                1,
+                3,
+                0
+              ],
+              [
+                16,
+                4,
+                15,
+                14,
+                13
+              ],
+              [
+                0,
+                2,
+                12,
+                3,
+                11
+              ]
+            ],
+            "accuracy_95ci": [
+              0.1485148514851485,
+              0.30717821782178195
+            ],
+            "macro_f1_95ci": [
+              0.21473276326611643,
+              0.4106685324360037
+            ]
+          }
+        }
+      }
+    },
+    "kaggle_plus_ffhq_ai": {
+      "train_size": 2850,
+      "labels": [
+        "diamond",
+        "heart",
+        "oblong",
+        "oval",
+        "round",
+        "square"
+      ],
+      "class_counts": {
+        "diamond": 3,
+        "heart": 528,
+        "oblong": 551,
+        "oval": 595,
+        "round": 551,
+        "square": 622
+      },
+      "selected_model": "mlp",
+      "models": {
+        "majority_class": {
+          "best_params": {},
+          "cv_macro_f1_mean": 0.043027670562623944,
+          "cv_macro_f1_std": 0.02148852280097195,
+          "kaggle_test": {
+            "accuracy": 0.13049853372434017,
+            "macro_precision": 0.026099706744868036,
+            "macro_recall": 0.2,
+            "macro_f1": 0.046173800259403375,
+            "per_class": {
+              "heart": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 154
+              },
+              "oblong": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 117
+              },
+              "oval": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 129
+              },
+              "round": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 193
+              },
+              "square": {
+                "precision": 0.13049853372434017,
+                "recall": 1.0,
+                "f1": 0.23086900129701687,
+                "support": 89
+              }
+            },
+            "confusion_labels": [
+              "heart",
+              "oblong",
+              "oval",
+              "round",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                0,
+                0,
+                0,
+                0,
+                154
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                117
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                129
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                193
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                89
+              ]
+            ],
+            "accuracy_95ci": [
+              0.10557184750733138,
+              0.15542521994134897
+            ],
+            "macro_f1_95ci": [
+              0.03819628647214854,
+              0.053807106598984765
+            ]
+          },
+          "ffhq_human_test": {
+            "accuracy": 0.0,
+            "macro_precision": 0.0,
+            "macro_recall": 0.0,
+            "macro_f1": 0.0,
+            "per_class": {
+              "oblong": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 11
+              },
+              "oval": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 62
+              },
+              "round": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 28
+              }
+            },
+            "confusion_labels": [
+              "oblong",
+              "oval",
+              "round",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                0,
+                0,
+                0,
+                11
+              ],
+              [
+                0,
+                0,
+                0,
+                62
+              ],
+              [
+                0,
+                0,
+                0,
+                28
+              ]
+            ],
+            "accuracy_95ci": [
+              0.0,
+              0.0
+            ],
+            "macro_f1_95ci": [
+              0.0,
+              0.0
+            ]
+          }
+        },
+        "rule_based_v0": {
+          "best_params": {},
+          "cv_macro_f1_mean": 0.3213894487949716,
+          "cv_macro_f1_std": 0.038081524617126404,
+          "kaggle_test": {
+            "accuracy": 0.3357771260997067,
+            "macro_precision": 0.4882684077213698,
+            "macro_recall": 0.3400961165853646,
+            "macro_f1": 0.320929608212578,
+            "per_class": {
+              "heart": {
+                "precision": 0.21311475409836064,
+                "recall": 0.08441558441558442,
+                "f1": 0.12093023255813953,
+                "support": 154
+              },
+              "oblong": {
+                "precision": 0.6521739130434783,
+                "recall": 0.1282051282051282,
+                "f1": 0.21428571428571427,
+                "support": 117
+              },
+              "oval": {
+                "precision": 0.23953488372093024,
+                "recall": 0.7984496124031008,
+                "f1": 0.3685152057245081,
+                "support": 129
+              },
+              "round": {
+                "precision": 0.8192771084337349,
+                "recall": 0.35233160621761656,
+                "f1": 0.4927536231884058,
+                "support": 193
+              },
+              "square": {
+                "precision": 0.5172413793103449,
+                "recall": 0.33707865168539325,
+                "f1": 0.40816326530612246,
+                "support": 89
+              }
+            },
+            "confusion_labels": [
+              "heart",
+              "oblong",
+              "oval",
+              "round",
+              "square",
+              "diamond"
+            ],
+            "confusion_matrix": [
+              [
+                13,
+                1,
+                128,
+                8,
+                0,
+                4
+              ],
+              [
+                19,
+                15,
+                76,
+                0,
+                0,
+                7
+              ],
+              [
+                6,
+                6,
+                103,
+                4,
+                1,
+                9
+              ],
+              [
+                23,
+                1,
+                71,
+                68,
+                27,
+                3
+              ],
+              [
+                0,
+                0,
+                52,
+                3,
+                30,
+                4
+              ]
+            ],
+            "accuracy_95ci": [
+              0.3020527859237537,
+              0.3680351906158358
+            ],
+            "macro_f1_95ci": [
+              0.28377035737074724,
+              0.35376557647525253
+            ]
+          },
+          "ffhq_human_test": {
+            "accuracy": 0.43564356435643564,
+            "macro_precision": 0.4443089430894309,
+            "macro_recall": 0.37781036168132937,
+            "macro_f1": 0.39955336020742255,
+            "per_class": {
+              "oblong": {
+                "precision": 0.25,
+                "recall": 0.18181818181818182,
+                "f1": 0.21052631578947367,
+                "support": 11
+              },
+              "oval": {
+                "precision": 0.6829268292682927,
+                "recall": 0.45161290322580644,
+                "f1": 0.5436893203883495,
+                "support": 62
+              },
+              "round": {
+                "precision": 0.4,
+                "recall": 0.5,
+                "f1": 0.4444444444444444,
+                "support": 28
+              }
+            },
+            "confusion_labels": [
+              "oblong",
+              "oval",
+              "round",
+              "diamond",
+              "heart",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                2,
+                7,
+                1,
+                0,
+                1,
+                0
+              ],
+              [
+                6,
+                28,
+                20,
+                1,
+                0,
+                7
+              ],
+              [
+                0,
+                6,
+                14,
+                1,
+                0,
+                7
+              ]
+            ],
+            "accuracy_95ci": [
+              0.3465346534653465,
+              0.5247524752475248
+            ],
+            "macro_f1_95ci": [
+              0.29520918039485644,
+              0.5103320745102183
+            ]
+          }
+        },
+        "rule_prototypes_fitted": {
+          "best_params": {},
+          "cv_macro_f1_mean": 0.3874256042538297,
+          "cv_macro_f1_std": 0.04547983344718615,
+          "kaggle_test": {
+            "accuracy": 0.42961876832844575,
+            "macro_precision": 0.43880192378522914,
+            "macro_recall": 0.4456063912848337,
+            "macro_f1": 0.416664261621219,
+            "per_class": {
+              "heart": {
+                "precision": 0.3782608695652174,
+                "recall": 0.564935064935065,
+                "f1": 0.453125,
+                "support": 154
+              },
+              "oblong": {
+                "precision": 0.44329896907216493,
+                "recall": 0.36752136752136755,
+                "f1": 0.40186915887850466,
+                "support": 117
+              },
+              "oval": {
+                "precision": 0.3125,
+                "recall": 0.15503875968992248,
+                "f1": 0.20725388601036268,
+                "support": 129
+              },
+              "round": {
+                "precision": 0.652542372881356,
+                "recall": 0.39896373056994816,
+                "f1": 0.49517684887459806,
+                "support": 193
+              },
+              "square": {
+                "precision": 0.4074074074074074,
+                "recall": 0.7415730337078652,
+                "f1": 0.5258964143426295,
+                "support": 89
+              }
+            },
+            "confusion_labels": [
+              "heart",
+              "oblong",
+              "oval",
+              "round",
+              "square",
+              "diamond"
+            ],
+            "confusion_matrix": [
+              [
+                87,
+                22,
+                21,
+                8,
+                8,
+                8
+              ],
+              [
+                58,
+                43,
+                7,
+                1,
+                8,
+                0
+              ],
+              [
+                43,
+                29,
+                20,
+                16,
+                19,
+                2
+              ],
+              [
+                40,
+                3,
+                11,
+                77,
+                61,
+                1
+              ],
+              [
+                2,
+                0,
+                5,
+                16,
+                66,
+                0
+              ]
+            ],
+            "accuracy_95ci": [
+              0.3914956011730205,
+              0.46480938416422285
+            ],
+            "macro_f1_95ci": [
+              0.37980735350214373,
+              0.4507897218966841
+            ]
+          },
+          "ffhq_human_test": {
+            "accuracy": 0.25742574257425743,
+            "macro_precision": 0.5697318007662836,
+            "macro_recall": 0.42406786761625476,
+            "macro_f1": 0.3325098644707497,
+            "per_class": {
+              "oblong": {
+                "precision": 0.27586206896551724,
+                "recall": 0.7272727272727273,
+                "f1": 0.4,
+                "support": 11
+              },
+              "oval": {
+                "precision": 1.0,
+                "recall": 0.08064516129032258,
+                "f1": 0.14925373134328357,
+                "support": 62
+              },
+              "round": {
+                "precision": 0.43333333333333335,
+                "recall": 0.4642857142857143,
+                "f1": 0.4482758620689655,
+                "support": 28
+              }
+            },
+            "confusion_labels": [
+              "oblong",
+              "oval",
+              "round",
+              "heart",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                8,
+                0,
+                1,
+                2,
+                0
+              ],
+              [
+                19,
+                5,
+                16,
+                8,
+                14
+              ],
+              [
+                2,
+                0,
+                13,
+                1,
+                12
+              ]
+            ],
+            "accuracy_95ci": [
+              0.1782178217821782,
+              0.3465346534653465
+            ],
+            "macro_f1_95ci": [
+              0.2339552487661731,
+              0.4216214080085623
+            ]
+          }
+        },
+        "random_forest": {
+          "best_params": {
+            "max_depth": null,
+            "min_samples_leaf": 5,
+            "n_estimators": 300
+          },
+          "cv_macro_f1_mean": 0.44315636458316154,
+          "cv_macro_f1_std": 0.04395247087799441,
+          "kaggle_test": {
+            "accuracy": 0.5073313782991202,
+            "macro_precision": 0.5216613363438878,
+            "macro_recall": 0.5280228228410695,
+            "macro_f1": 0.5052637213819168,
+            "per_class": {
+              "heart": {
+                "precision": 0.5569620253164557,
+                "recall": 0.5714285714285714,
+                "f1": 0.5641025641025641,
+                "support": 154
+              },
+              "oblong": {
+                "precision": 0.5393258426966292,
+                "recall": 0.41025641025641024,
+                "f1": 0.46601941747572817,
+                "support": 117
+              },
+              "oval": {
+                "precision": 0.35625,
+                "recall": 0.4418604651162791,
+                "f1": 0.3944636678200692,
+                "support": 129
+              },
+              "round": {
+                "precision": 0.7155172413793104,
+                "recall": 0.43005181347150256,
+                "f1": 0.5372168284789643,
+                "support": 193
+              },
+              "square": {
+                "precision": 0.44025157232704404,
+                "recall": 0.7865168539325843,
+                "f1": 0.5645161290322581,
+                "support": 89
+              }
+            },
+            "confusion_labels": [
+              "heart",
+              "oblong",
+              "oval",
+              "round",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                88,
+                15,
+                37,
+                8,
+                6
+              ],
+              [
+                29,
+                48,
+                32,
+                1,
+                7
+              ],
+              [
+                24,
+                21,
+                57,
+                15,
+                12
+              ],
+              [
+                10,
+                5,
+                31,
+                83,
+                64
+              ],
+              [
+                7,
+                0,
+                3,
+                9,
+                70
+              ]
+            ],
+            "accuracy_95ci": [
+              0.4691715542521994,
+              0.5439882697947214
+            ],
+            "macro_f1_95ci": [
+              0.46838452659948565,
+              0.5409230806755638
+            ]
+          },
+          "ffhq_human_test": {
+            "accuracy": 0.31683168316831684,
+            "macro_precision": 0.5227272727272728,
+            "macro_recall": 0.46938276776986454,
+            "macro_f1": 0.40663166892675084,
+            "per_class": {
+              "oblong": {
+                "precision": 0.36363636363636365,
+                "recall": 0.7272727272727273,
+                "f1": 0.48484848484848486,
+                "support": 11
+              },
+              "oval": {
+                "precision": 0.75,
+                "recall": 0.14516129032258066,
+                "f1": 0.24324324324324326,
+                "support": 62
+              },
+              "round": {
+                "precision": 0.45454545454545453,
+                "recall": 0.5357142857142857,
+                "f1": 0.4918032786885246,
+                "support": 28
+              }
+            },
+            "confusion_labels": [
+              "oblong",
+              "oval",
+              "round",
+              "heart",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                8,
+                1,
+                1,
+                1,
+                0
+              ],
+              [
+                14,
+                9,
+                17,
+                7,
+                15
+              ],
+              [
+                0,
+                2,
+                15,
+                2,
+                9
+              ]
+            ],
+            "accuracy_95ci": [
+              0.22772277227722773,
+              0.4158415841584158
+            ],
+            "macro_f1_95ci": [
+              0.2944064492548829,
+              0.506647767288597
+            ]
+          }
+        },
+        "svm_rbf": {
+          "best_params": {
+            "svc__C": 3,
+            "svc__gamma": 0.1
+          },
+          "cv_macro_f1_mean": 0.4474459258769395,
+          "cv_macro_f1_std": 0.032438179291850305,
+          "kaggle_test": {
+            "accuracy": 0.5278592375366569,
+            "macro_precision": 0.5408075121988449,
+            "macro_recall": 0.5465133478270298,
+            "macro_f1": 0.5209346779297669,
+            "per_class": {
+              "heart": {
+                "precision": 0.5705128205128205,
+                "recall": 0.577922077922078,
+                "f1": 0.5741935483870968,
+                "support": 154
+              },
+              "oblong": {
+                "precision": 0.5194805194805194,
+                "recall": 0.3418803418803419,
+                "f1": 0.41237113402061853,
+                "support": 117
+              },
+              "oval": {
+                "precision": 0.4069767441860465,
+                "recall": 0.5426356589147286,
+                "f1": 0.46511627906976744,
+                "support": 129
+              },
+              "round": {
+                "precision": 0.7542372881355932,
+                "recall": 0.46113989637305697,
+                "f1": 0.572347266881029,
+                "support": 193
+              },
+              "square": {
+                "precision": 0.4528301886792453,
+                "recall": 0.8089887640449438,
+                "f1": 0.5806451612903226,
+                "support": 89
+              }
+            },
+            "confusion_labels": [
+              "heart",
+              "oblong",
+              "oval",
+              "round",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                89,
+                13,
+                33,
+                9,
+                10
+              ],
+              [
+                35,
+                40,
+                35,
+                1,
+                6
+              ],
+              [
+                15,
+                22,
+                70,
+                13,
+                9
+              ],
+              [
+                9,
+                2,
+                31,
+                89,
+                62
+              ],
+              [
+                8,
+                0,
+                3,
+                6,
+                72
+              ]
+            ],
+            "accuracy_95ci": [
+              0.4897360703812317,
+              0.5645161290322581
+            ],
+            "macro_f1_95ci": [
+              0.48330357686203346,
+              0.5585161150950971
+            ]
+          },
+          "ffhq_human_test": {
+            "accuracy": 0.32673267326732675,
+            "macro_precision": 0.4791269841269841,
+            "macro_recall": 0.5257994693478565,
+            "macro_f1": 0.39523809523809517,
+            "per_class": {
+              "oblong": {
+                "precision": 0.36,
+                "recall": 0.8181818181818182,
+                "f1": 0.5,
+                "support": 11
+              },
+              "oval": {
+                "precision": 0.625,
+                "recall": 0.08064516129032258,
+                "f1": 0.14285714285714285,
+                "support": 62
+              },
+              "round": {
+                "precision": 0.4523809523809524,
+                "recall": 0.6785714285714286,
+                "f1": 0.5428571428571428,
+                "support": 28
+              }
+            },
+            "confusion_labels": [
+              "oblong",
+              "oval",
+              "round",
+              "heart",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                9,
+                0,
+                1,
+                1,
+                0
+              ],
+              [
+                15,
+                5,
+                22,
+                10,
+                10
+              ],
+              [
+                1,
+                3,
+                19,
+                0,
+                5
+              ]
+            ],
+            "accuracy_95ci": [
+              0.2376237623762376,
+              0.4158415841584158
+            ],
+            "macro_f1_95ci": [
+              0.29288187591744463,
+              0.4862277617140046
+            ]
+          }
+        },
+        "xgboost": {
+          "best_params": {
+            "learning_rate": 0.05,
+            "max_depth": 3,
+            "n_estimators": 200,
+            "subsample": 0.8
+          },
+          "cv_macro_f1_mean": 0.4520230136938885,
+          "cv_macro_f1_std": 0.03941264335460616,
+          "kaggle_test": {
+            "accuracy": 0.5381231671554252,
+            "macro_precision": 0.5526781184937388,
+            "macro_recall": 0.5564863699283576,
+            "macro_f1": 0.5355275861675649,
+            "per_class": {
+              "heart": {
+                "precision": 0.609271523178808,
+                "recall": 0.5974025974025974,
+                "f1": 0.6032786885245902,
+                "support": 154
+              },
+              "oblong": {
+                "precision": 0.5604395604395604,
+                "recall": 0.4358974358974359,
+                "f1": 0.49038461538461536,
+                "support": 117
+              },
+              "oval": {
+                "precision": 0.35185185185185186,
+                "recall": 0.4418604651162791,
+                "f1": 0.3917525773195876,
+                "support": 129
+              },
+              "round": {
+                "precision": 0.7768595041322314,
+                "recall": 0.48704663212435234,
+                "f1": 0.5987261146496815,
+                "support": 193
+              },
+              "square": {
+                "precision": 0.46496815286624205,
+                "recall": 0.8202247191011236,
+                "f1": 0.5934959349593496,
+                "support": 89
+              }
+            },
+            "confusion_labels": [
+              "heart",
+              "oblong",
+              "oval",
+              "round",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                92,
+                13,
+                33,
+                6,
+                10
+              ],
+              [
+                23,
+                51,
+                37,
+                0,
+                6
+              ],
+              [
+                23,
+                22,
+                57,
+                15,
+                12
+              ],
+              [
+                9,
+                5,
+                29,
+                94,
+                56
+              ],
+              [
+                4,
+                0,
+                6,
+                6,
+                73
+              ]
+            ],
+            "accuracy_95ci": [
+              0.5,
+              0.576282991202346
+            ],
+            "macro_f1_95ci": [
+              0.49735210131474344,
+              0.5730879031499979
+            ]
+          },
+          "ffhq_human_test": {
+            "accuracy": 0.31683168316831684,
+            "macro_precision": 0.4897435897435897,
+            "macro_recall": 0.4824396034073453,
+            "macro_f1": 0.3863499960514886,
+            "per_class": {
+              "oblong": {
+                "precision": 0.3333333333333333,
+                "recall": 0.7272727272727273,
+                "f1": 0.45714285714285713,
+                "support": 11
+              },
+              "oval": {
+                "precision": 0.7,
+                "recall": 0.11290322580645161,
+                "f1": 0.19444444444444445,
+                "support": 62
+              },
+              "round": {
+                "precision": 0.4358974358974359,
+                "recall": 0.6071428571428571,
+                "f1": 0.5074626865671642,
+                "support": 28
+              }
+            },
+            "confusion_labels": [
+              "oblong",
+              "oval",
+              "round",
+              "heart",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                8,
+                1,
+                1,
+                1,
+                0
+              ],
+              [
+                16,
+                7,
+                21,
+                6,
+                12
+              ],
+              [
+                0,
+                2,
+                17,
+                1,
+                8
+              ]
+            ],
+            "accuracy_95ci": [
+              0.22772277227722773,
+              0.4158415841584158
+            ],
+            "macro_f1_95ci": [
+              0.2818748755532919,
+              0.478574386211783
+            ]
+          }
+        },
+        "mlp": {
+          "best_params": {
+            "mlpclassifier__alpha": 0.001,
+            "mlpclassifier__hidden_layer_sizes": [
+              64,
+              32
+            ]
+          },
+          "cv_macro_f1_mean": 0.45859489411186755,
+          "cv_macro_f1_std": 0.04384539753708604,
+          "kaggle_test": {
+            "accuracy": 0.5219941348973607,
+            "macro_precision": 0.5283024110064783,
+            "macro_recall": 0.5425107412712525,
+            "macro_f1": 0.5169226246571639,
+            "per_class": {
+              "heart": {
+                "precision": 0.5741935483870968,
+                "recall": 0.577922077922078,
+                "f1": 0.5760517799352751,
+                "support": 154
+              },
+              "oblong": {
+                "precision": 0.5,
+                "recall": 0.39316239316239315,
+                "f1": 0.44019138755980863,
+                "support": 117
+              },
+              "oval": {
+                "precision": 0.35333333333333333,
+                "recall": 0.4108527131782946,
+                "f1": 0.37992831541218636,
+                "support": 129
+              },
+              "round": {
+                "precision": 0.7419354838709677,
+                "recall": 0.47668393782383417,
+                "f1": 0.580441640378549,
+                "support": 193
+              },
+              "square": {
+                "precision": 0.4720496894409938,
+                "recall": 0.8539325842696629,
+                "f1": 0.608,
+                "support": 89
+              }
+            },
+            "confusion_labels": [
+              "heart",
+              "oblong",
+              "oval",
+              "round",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                89,
+                14,
+                33,
+                9,
+                9
+              ],
+              [
+                30,
+                46,
+                30,
+                0,
+                11
+              ],
+              [
+                23,
+                29,
+                53,
+                16,
+                8
+              ],
+              [
+                9,
+                3,
+                32,
+                92,
+                57
+              ],
+              [
+                4,
+                0,
+                2,
+                7,
+                76
+              ]
+            ],
+            "accuracy_95ci": [
+              0.4868035190615836,
+              0.5571847507331378
+            ],
+            "macro_f1_95ci": [
+              0.4816824342753953,
+              0.5523403774448017
+            ]
+          },
+          "ffhq_human_test": {
+            "accuracy": 0.27722772277227725,
+            "macro_precision": 0.4696258142705651,
+            "macro_recall": 0.4294791230275101,
+            "macro_f1": 0.34015345268542196,
+            "per_class": {
+              "oblong": {
+                "precision": 0.30434782608695654,
+                "recall": 0.6363636363636364,
+                "f1": 0.4117647058823529,
+                "support": 11
+              },
+              "oval": {
+                "precision": 0.7142857142857143,
+                "recall": 0.08064516129032258,
+                "f1": 0.14492753623188406,
+                "support": 62
+              },
+              "round": {
+                "precision": 0.3902439024390244,
+                "recall": 0.5714285714285714,
+                "f1": 0.463768115942029,
+                "support": 28
+              }
+            },
+            "confusion_labels": [
+              "oblong",
+              "oval",
+              "round",
+              "heart",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                7,
+                0,
+                1,
+                3,
+                0
+              ],
+              [
+                15,
+                5,
+                24,
+                8,
+                10
+              ],
+              [
+                1,
+                2,
+                16,
+                1,
+                8
+              ]
+            ],
+            "accuracy_95ci": [
+              0.19801980198019803,
+              0.36633663366336633
+            ],
+            "macro_f1_95ci": [
+              0.239663899725365,
+              0.43158329074873186
+            ]
+          }
+        }
+      }
+    }
+  },
+  "versions": {
+    "python": "3.12.16",
+    "sklearn": "1.7.2",
+    "xgboost": "3.2.0",
+    "numpy": "2.5.5"
+  }
+}
