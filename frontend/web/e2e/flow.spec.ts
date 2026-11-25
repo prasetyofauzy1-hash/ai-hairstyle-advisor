@@ -54,6 +54,8 @@ test("new photo resets consent; earlier analysis stays deletable", async ({ page
 test("bad file shows Indonesian error", async ({ page }) => {
   await page.goto("/");
   await page.getByLabel("Pilih foto").setInputFiles({ name: "x.jpg", mimeType: "image/jpeg", buffer: Buffer.from("bukan foto") });
-  await page.getByRole("button", { name: "Analisis wajah" }).click();
+  await expect(page.getByText("Kami tidak bisa membuka foto ini.", { exact: false })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Analisis wajah" })).toBeDisabled();
+  await page.getByLabel("Pilih foto").setInputFiles({ name: "x.txt", mimeType: "text/plain", buffer: Buffer.from("teks") });
   await expect(page.getByText("Format foto harus JPEG, PNG, atau WebP.")).toBeVisible();
 });

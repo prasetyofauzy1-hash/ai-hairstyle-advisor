@@ -24,6 +24,14 @@ export type RecRequest = {
   max_maintenance?: string | null; avoid_bangs?: boolean; formal?: boolean; face_shape?: string | null;
 };
 
+async function send(url: string, init: RequestInit): Promise<Response> {
+  try {
+    return await fetch(url, init);
+  } catch {
+    throw new Error("Tidak bisa terhubung ke server. Periksa koneksi internet lalu coba lagi.");
+  }
+}
+
 async function check<T>(r: Response): Promise<T> {
   if (!r.ok) {
     const body = await r.json().catch(() => null);
@@ -37,11 +45,11 @@ export async function createAnalysis(file: File, consent: boolean): Promise<Anal
   const fd = new FormData();
   fd.append("image", file);
   fd.append("consent", String(consent));
-  return check(await fetch("/api/analyses", { method: "POST", body: fd }));
+  return check(await send("/api/analyses", { method: "POST", body: fd }));
 }
 
 export async function getRecommendations(id: string, token: string, req: RecRequest): Promise<Recs> {
-  return check(await fetch(`/api/analyses/${id}/recommendations`, {
+  return check(await send(`/api/analyses/${id}/recommendations`, {
     method: "POST",
     headers: { "Content-Type": "application/json", "X-Analysis-Token": token },
     body: JSON.stringify(req),
@@ -49,13 +57,21 @@ export async function getRecommendations(id: string, token: string, req: RecRequ
 }
 
 export async function deleteAnalysis(id: string, token: string): Promise<void> {
-  return check(await fetch(`/api/analyses/${id}`, { method: "DELETE", headers: { "X-Analysis-Token": token } }));
+  return check(await send(`/api/analyses/${id}`, { method: "DELETE", headers: { "X-Analysis-Token": token } }));
 }
 
 export const SHAPES: Record<string, string> = {
   oval: "Oval", round: "Bulat", square: "Persegi", oblong: "Lonjong", heart: "Hati", diamond: "Wajik (Diamond)",
 };
+export const SHAPE_HINTS: Record<string, string> = {
+  oval: "Oval (sedikit lebih panjang dari lebar, dagu membulat)",
+  round: "Bulat (panjang dan lebar hampir sama, pipi penuh)",
+  square: "Persegi (rahang lebar dan bersudut)",
+  oblong: "Lonjong (lebih panjang dan relatif sempit)",
+  heart: "Hati (dahi lebar, dagu runcing)",
+  diamond: "Wajik (tulang pipi paling lebar, dahi dan dagu sempit)",
+};
 export const HAIR_TYPES: Record<string, string> = { straight: "Lurus", wavy: "Bergelombang", curly: "Keriting", coily: "Keriting rapat" };
 export const THICKNESS: Record<string, string> = { thin: "Tipis", medium: "Sedang", thick: "Tebal" };
 export const LENGTHS: Record<string, string> = { very_short: "Sangat pendek", short: "Pendek", medium: "Sedang", long: "Panjang" };
-export const MAINT: Record<string, string> = { low: "Rendah", medium: "Sedang", high: "Tinggi" };
+export const MAINT: Record<string, string> = { low: "Ringan", medium: "Sedang", high: "Intensif" };
