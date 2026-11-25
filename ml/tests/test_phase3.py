@@ -82,3 +82,10 @@ def test_committed_model_predicts_on_sample(frontal_image, detector):
     pred = LearnedFaceShapeClassifier().predict(features)
     assert pred.shape in pred.scores and pred.calibrated is False
     assert sum(pred.scores.values()) == pytest.approx(1.0)
+
+
+def test_confusion_matrix_keeps_predictions_outside_labels():
+    from ml.training.train_face_shape import metrics
+    m = metrics(np.array(["oval", "round", "oval"]), np.array(["oval", "diamond", "round"]), ["oval", "round"])
+    assert m["confusion_labels"] == ["oval", "round", "diamond"]
+    assert np.sum(m["confusion_matrix"]) == 3
