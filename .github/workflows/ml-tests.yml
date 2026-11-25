@@ -21,6 +21,7 @@ jobs:
         with:
           path: ~/.cache/hairstyle-advisor/models
           key: mediapipe-models-${{ hashFiles('ml/models/download.py') }}
+      - run: sudo apt-get update && sudo apt-get install -y --no-install-recommends libegl1 libgles2 libgl1
       - run: pip install -r ml/requirements.txt
       - run: python -m ml.models.download
       - run: python -m pytest ml/tests -q
