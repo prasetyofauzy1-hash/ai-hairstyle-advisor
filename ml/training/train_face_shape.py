@@ -79,7 +79,7 @@ def candidates() -> list[Candidate]:
         Candidate("rule_prototypes_fitted", RulePrototypes(fitted=True), {}),
         Candidate("random_forest", RandomForestClassifier(random_state=SEED, n_jobs=-1),
                   {"n_estimators": [300], "max_depth": [None, 8], "min_samples_leaf": [1, 5]}),
-        Candidate("svm_rbf", make_pipeline(StandardScaler(), SVC(kernel="rbf", random_state=SEED)),
+        Candidate("svm_rbf", make_pipeline(StandardScaler(), SVC(kernel="rbf", probability=True, random_state=SEED)),
                   {"svc__C": [0.3, 1, 3, 10], "svc__gamma": ["scale", 0.1]}),
         Candidate("xgboost", XGBClassifier(random_state=SEED, n_jobs=4, tree_method="hist", eval_metric="mlogloss"),
                   {"n_estimators": [200, 400], "max_depth": [3, 5], "learning_rate": [0.05], "subsample": [0.8]},
@@ -162,7 +162,8 @@ def run(features_csv: Path, out: Path, model_out: Path | None) -> dict:
         }
         fitted[cand.name] = (search.best_estimator_, cand.encode)
 
-    trainable = [n for n in results if n not in ("majority_class", "rule_based_v0")]
+    # Only the ML models are exported: they have predict_proba and pickle without this script's classes.
+    trainable = [n for n in results if n in ("random_forest", "svm_rbf", "xgboost", "mlp")]
     best_name = max(trainable, key=lambda n: results[n]["cv_macro_f1_mean"])
 
     quality = {
@@ -195,7 +196,7 @@ def run(features_csv: Path, out: Path, model_out: Path | None) -> dict:
         "data": quality,
         "models": results,
         "selected_model": best_name,
-        "selection_rule": "highest CV macro-F1 among trained models; the test set was not used for selection",
+        "selection_rule": "highest CV macro-F1 among RF, SVM, XGBoost and MLP; the test set was not used for selection",
         "versions": {"python": platform.python_version(), "sklearn": sklearn.__version__, "xgboost": xgboost.__version__,
                      "numpy": np.__version__},
     }
