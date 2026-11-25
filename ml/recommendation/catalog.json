@@ -1276,8 +1276,7 @@
     "thick": "ok"
    },
    "effects": [
-    "face_exposed",
-    "length_past_chin"
+    "face_exposed"
    ],
    "maintenance": "medium",
    "formal": true,
