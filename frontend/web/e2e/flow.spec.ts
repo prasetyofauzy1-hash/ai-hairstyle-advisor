@@ -25,9 +25,30 @@ test("upload, analyze, recommend, delete", async ({ page }) => {
   await page.locator("ol > li details").first().evaluate((d) => ((d as HTMLDetailsElement).open = true));
   if (SHOTS) await page.screenshot({ path: `${SHOTS}/3-rekomendasi.png`, fullPage: true });
 
+  await expect(page.getByText("Data Anda di server")).toBeVisible();
   await page.getByRole("button", { name: "Hapus analisis & foto" }).click();
-  await expect(page.getByText("sudah dihapus dari server")).toBeVisible();
+  await expect(page.getByText("Data Anda di server")).toHaveCount(0);
+  await expect(page.getByText("Analisis, foto, dan rekomendasi Anda sudah dihapus dari server.")).toBeVisible();
   if (SHOTS) await page.screenshot({ path: `${SHOTS}/4-dihapus.png` });
+});
+
+test("new photo resets consent; earlier analysis stays deletable", async ({ page }) => {
+  await page.goto("/");
+  await page.getByLabel("Pilih foto").setInputFiles(SAMPLE);
+  await page.getByRole("checkbox").first().check();
+  await page.getByRole("button", { name: "Analisis wajah" }).click();
+  await expect(page.getByText("Perkiraan bentuk wajah")).toBeVisible();
+  await page.getByLabel("Pilih foto").setInputFiles(SAMPLE);
+  await expect(page.getByRole("checkbox").first()).not.toBeChecked();
+  await page.getByRole("button", { name: "Analisis wajah" }).click();
+  await expect(page.getByText("Foto tidak disimpan.")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Hapus", exact: true })).toHaveCount(2);
+  await page.reload();
+  await expect(page.getByRole("button", { name: "Hapus", exact: true })).toHaveCount(2);
+  await page.getByRole("button", { name: "Hapus", exact: true }).first().click();
+  await expect(page.getByRole("button", { name: "Hapus", exact: true })).toHaveCount(1);
+  await page.getByRole("button", { name: "Hapus", exact: true }).first().click();
+  await expect(page.getByText("Data Anda di server")).toHaveCount(0);
 });
 
 test("bad file shows Indonesian error", async ({ page }) => {

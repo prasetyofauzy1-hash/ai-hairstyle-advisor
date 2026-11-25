@@ -1,16 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Analysis, HAIR_TYPES, LENGTHS, MAINT, RecRequest, Recs, SHAPES, THICKNESS,
   createAnalysis, deleteAnalysis, getRecommendations,
 } from "@/lib/api";
 
+type Saved = { id: string; token: string; createdAt: string; imageStored: boolean };
+const SAVED_KEY = "hairstyle-advisor:analyses";
+
 const card = "rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5 sm:p-6 shadow-sm";
-const btn = "rounded-lg bg-[var(--accent)] px-4 py-2.5 text-sm font-medium text-[var(--accent-fg)] disabled:opacity-40";
-const btnGhost = "rounded-lg border border-[var(--border)] px-4 py-2.5 text-sm font-medium";
+const btn = "min-h-11 rounded-lg bg-[var(--accent)] px-4 py-3 text-sm font-medium text-[var(--accent-fg)] disabled:opacity-40";
+const btnGhost = "min-h-11 rounded-lg border border-[var(--border)] px-4 py-3 text-sm font-medium";
 const label = "block text-sm font-medium mb-1";
-const select = "w-full rounded-lg border border-[var(--border)] bg-white px-3 py-2 text-sm";
+const select = "min-h-11 w-full rounded-lg border border-[var(--border)] bg-white px-3 py-2 text-sm";
 
 function Select({ name, value, onChange, options, empty }: {
   name: string; value: string; onChange: (v: string) => void; options: Record<string, string>; empty?: string;
@@ -41,37 +44,64 @@ export default function Home() {
     avoid_bangs: false, formal: false, face_shape: "",
   });
 
+  const [saved, setSaved] = useState<Saved[]>([]);
+  const [errorAt, setErrorAt] = useState<"upload" | "recs">("upload");
+  const [status, setStatus] = useState("");
+  const fileRef = useRef<HTMLInputElement>(null);
+  const analysisRef = useRef<HTMLHeadingElement>(null);
+  const recsRef = useRef<HTMLHeadingElement>(null);
+  const focusAfterRender = (ref: React.RefObject<HTMLElement>) =>
+    requestAnimationFrame(() => { ref.current?.focus(); ref.current?.scrollIntoView({ behavior: "smooth", block: "start" }); });
+
   useEffect(() => () => { if (preview) URL.revokeObjectURL(preview); }, [preview]);
+  useEffect(() => {
+    try { setSaved(JSON.parse(localStorage.getItem(SAVED_KEY) || "[]")); } catch { setSaved([]); }
+  }, []);
+
+  function persist(next: Saved[]) {
+    setSaved(next);
+    localStorage.setItem(SAVED_KEY, JSON.stringify(next));
+  }
 
   function pick(f: File | null) {
-    setFile(f); setAnalysis(null); setRecs(null); setError(null); setDeleted(false);
+    setFile(f); setAnalysis(null); setToken(null); setRecs(null); setError(null); setDeleted(false); setConsent(false);
     setPreview(f ? URL.createObjectURL(f) : null);
   }
 
   async function analyze() {
     if (!file) return;
-    setBusy(true); setError(null); setRecs(null);
+    setBusy(true); setError(null); setErrorAt("upload"); setRecs(null); setStatus("Menganalisis foto...");
     try {
       const a = await createAnalysis(file, consent);
+      setStatus(a.quality.passed ? "Analisis selesai." : "Analisis selesai, tetapi foto belum memenuhi syarat kualitas.");
+      focusAfterRender(analysisRef);
       setAnalysis(a); setToken(a.access_token ?? null);
-    } catch (e) { setError((e as Error).message); } finally { setBusy(false); }
+      if (a.access_token) {
+        persist([{ id: a.id, token: a.access_token, createdAt: new Date().toISOString(), imageStored: a.image_stored }, ...saved]);
+      }
+    } catch (e) { setError((e as Error).message); setStatus(""); } finally { setBusy(false); }
   }
 
   async function recommend() {
     if (!analysis || !token) return;
-    setBusy(true); setError(null);
+    setBusy(true); setError(null); setErrorAt("recs");
     const clean = Object.fromEntries(Object.entries(prefs).map(([k, v]) => [k, v === "" ? null : v])) as RecRequest;
-    try { setRecs(await getRecommendations(analysis.id, token, clean)); }
+    try {
+      const r = await getRecommendations(analysis.id, token, clean);
+      setRecs(r); setStatus(`${r.recommendations.length} rekomendasi siap.`); focusAfterRender(recsRef);
+    }
     catch (e) { setError((e as Error).message); } finally { setBusy(false); }
   }
 
-  async function remove() {
-    if (!analysis || !token) return;
+  async function remove(id: string, tok: string) {
     setBusy(true);
     try {
-      await deleteAnalysis(analysis.id, token);
-      pick(null); setToken(null); setDeleted(true);
-    } catch (e) { setError((e as Error).message); } finally { setBusy(false); }
+      await deleteAnalysis(id, tok);
+      persist(saved.filter((x) => x.id !== id));
+      if (analysis?.id === id) pick(null);
+      setDeleted(true); setStatus("Analisis dan foto sudah dihapus dari server.");
+      requestAnimationFrame(() => { fileRef.current?.focus(); fileRef.current?.closest("section")?.scrollIntoView({ behavior: "smooth", block: "start" }); });
+    } catch (e) { setError((e as Error).message); setStatus(""); } finally { setBusy(false); }
   }
 
   const set = (k: keyof RecRequest) => (v: string | boolean) => setPrefs((p) => ({ ...p, [k]: v }));
@@ -89,27 +119,27 @@ export default function Home() {
         </p>
       </header>
 
-      {deleted && (
-        <div className="mb-6 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-900">
-          Analisis, foto, dan rekomendasi Anda sudah dihapus dari server.
-        </div>
-      )}
-      {error && (
-        <div role="alert" className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900">{error}</div>
-      )}
+      <p role="status" aria-live="polite" className="sr-only">{status}</p>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
         <section className={card}>
           <h2 className="text-lg font-semibold">1. Unggah foto</h2>
-          <label className="mt-4 flex aspect-[4/5] cursor-pointer items-center justify-center overflow-hidden rounded-lg border-2 border-dashed border-[var(--border)] bg-stone-50">
+          {deleted && (
+            <div className="mt-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-900">
+              Analisis, foto, dan rekomendasi Anda sudah dihapus dari server.
+            </div>
+          )}
+          <label className="mt-4 flex aspect-[4/5] cursor-pointer focus-within:ring-2 focus-within:ring-[var(--accent)] focus-within:ring-offset-2 items-center justify-center overflow-hidden rounded-lg border-2 border-dashed border-[var(--border)] bg-stone-50">
             {preview ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={preview} alt="Pratinjau foto" className="h-full w-full object-cover" />
+              <img src={preview} alt="Pratinjau foto" className="h-full w-full object-cover" onError={() => setPreview(null)} />
+            ) : file ? (
+              <span className="px-6 text-center text-sm text-[var(--muted)]">Pratinjau tidak tersedia untuk {file.name}</span>
             ) : (
               <span className="px-6 text-center text-sm text-[var(--muted)]">Klik untuk memilih foto (JPEG, PNG, atau WebP, maks. 8 MB)</span>
             )}
-            <input type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" aria-label="Pilih foto"
-              onChange={(e) => pick(e.target.files?.[0] ?? null)} />
+            <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" aria-label="Pilih foto"
+              onChange={(e) => { pick(e.target.files?.[0] ?? null); e.target.value = ""; }} />
           </label>
           <p className="mt-3 text-xs text-[var(--muted)]">Tips: wajah menghadap kamera, cahaya merata, tanpa kacamata hitam, dahi terlihat.</p>
 
@@ -124,6 +154,9 @@ export default function Home() {
           <button className={`${btn} mt-4 w-full`} disabled={!file || busy} onClick={analyze}>
             {busy && !analysis ? "Menganalisis..." : "Analisis wajah"}
           </button>
+          {error && errorAt === "upload" && (
+            <div role="alert" className="mt-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900">{error}</div>
+          )}
         </section>
 
         <section className="space-y-6">
@@ -134,8 +167,8 @@ export default function Home() {
           {analysis && (
             <div className={card}>
               <div className="flex flex-wrap items-start justify-between gap-3">
-                <h2 className="text-lg font-semibold">2. Hasil analisis</h2>
-                <button className={`${btnGhost} text-red-700`} onClick={remove} disabled={busy}>Hapus analisis & foto</button>
+                <h2 ref={analysisRef} tabIndex={-1} className="scroll-mt-4 text-lg font-semibold outline-none">2. Hasil analisis</h2>
+                <button className={`${btnGhost} text-red-700`} onClick={() => token && remove(analysis.id, token)} disabled={busy}>Hapus analisis & foto</button>
               </div>
               <p className="mt-1 text-xs text-[var(--muted)]">
                 {analysis.image_stored ? "Foto disimpan atas persetujuan Anda." : "Foto tidak disimpan."}
@@ -152,7 +185,7 @@ export default function Home() {
               )}
 
               {!analysis.quality.passed && (
-                <p className="mt-4 text-sm">Foto belum memenuhi syarat kualitas, jadi bentuk wajah tidak diperkirakan. Coba foto lain, atau pilih bentuk wajah secara manual di bawah.</p>
+                <p className="mt-4 text-sm font-medium">Foto belum memenuhi syarat kualitas, jadi bentuk wajah tidak diperkirakan. Coba foto lain, atau pilih bentuk wajah secara manual di bawah.</p>
               )}
 
               {pred && (
@@ -178,7 +211,7 @@ export default function Home() {
               )}
 
               <details className="mt-4 rounded-lg bg-amber-50 p-3 text-sm text-amber-950" open>
-                <summary className="cursor-pointer font-medium">Keterbatasan model</summary>
+                <summary className="flex min-h-11 cursor-pointer items-center font-medium">Keterbatasan model</summary>
                 <ul className="mt-2 list-disc space-y-1 pl-5">{analysis.limitations.map((l) => <li key={l}>{l}</li>)}</ul>
               </details>
             </div>
@@ -196,19 +229,22 @@ export default function Home() {
                 <Select name="Bentuk wajah" value={prefs.face_shape ?? ""} onChange={set("face_shape")} options={SHAPES}
                   empty={pred ? `Ikuti hasil model (${SHAPES[pred.shape]})` : "Pilih bentuk wajah"} />
               </div>
-              <div className="mt-4 flex flex-wrap gap-5 text-sm">
-                <label className="flex items-center gap-2"><input type="checkbox" checked={!!prefs.avoid_bangs} onChange={(e) => set("avoid_bangs")(e.target.checked)} /> Hindari poni</label>
-                <label className="flex items-center gap-2"><input type="checkbox" checked={!!prefs.formal} onChange={(e) => set("formal")(e.target.checked)} /> Untuk acara formal / kantor</label>
+              <div className="mt-4 flex flex-wrap gap-3 text-sm">
+                <label className="flex min-h-11 cursor-pointer items-center gap-3 rounded-lg border border-[var(--border)] px-3"><input type="checkbox" className="h-5 w-5" checked={!!prefs.avoid_bangs} onChange={(e) => set("avoid_bangs")(e.target.checked)} /> Hindari poni</label>
+                <label className="flex min-h-11 cursor-pointer items-center gap-3 rounded-lg border border-[var(--border)] px-3"><input type="checkbox" className="h-5 w-5" checked={!!prefs.formal} onChange={(e) => set("formal")(e.target.checked)} /> Untuk acara formal / kantor</label>
               </div>
               <button className={`${btn} mt-5`} onClick={recommend} disabled={busy || !canRecommend}>
                 {busy ? "Memproses..." : "Tampilkan rekomendasi"}
               </button>
+              {error && errorAt === "recs" && (
+                <div role="alert" className="mt-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900">{error}</div>
+              )}
             </div>
           )}
 
           {recs && (
             <div className={card}>
-              <h2 className="text-lg font-semibold">4. Rekomendasi untuk wajah {recs.face_shape_label}</h2>
+              <h2 ref={recsRef} tabIndex={-1} className="scroll-mt-4 text-lg font-semibold outline-none">4. Rekomendasi untuk wajah {recs.face_shape_label}</h2>
               <p className="mt-1 text-xs text-[var(--muted)]">
                 Bentuk wajah dari {recs.face_shape_source === "model" ? "hasil model" : "pilihan Anda"}.
               </p>
@@ -231,7 +267,7 @@ export default function Home() {
                       <div><p className="font-medium">Tips penataan</p><ul className="list-disc pl-5">{r.styling_tips.map((t) => <li key={t}>{t}</li>)}</ul></div>
                     </div>
                     <details className="mt-3 text-sm">
-                      <summary className="cursor-pointer text-[var(--muted)]">Rincian skor</summary>
+                      <summary className="flex min-h-11 cursor-pointer items-center text-[var(--muted)]">Rincian skor</summary>
                       <ul className="mt-2 space-y-1">
                         {r.score_breakdown.map((t) => (
                           <li key={t.rule} className="flex gap-3"><span className="w-10 shrink-0 text-right tabular-nums">{t.points > 0 ? `+${t.points}` : t.points}</span><span>{t.reason}</span></li>
@@ -247,8 +283,26 @@ export default function Home() {
         </section>
       </div>
 
+      {saved.length > 0 && (
+        <section className={`${card} mt-6`}>
+          <h2 className="text-lg font-semibold">Data Anda di server</h2>
+          <p className="mt-1 text-xs text-[var(--muted)]">Daftar ini hanya ada di peramban ini. Hapus analisis yang tidak Anda perlukan lagi.</p>
+          <ul className="mt-3 divide-y divide-[var(--border)] text-sm">
+            {saved.map((x) => (
+              <li key={x.id} className="flex items-center justify-between gap-3 py-2">
+                <span>
+                  {new Date(x.createdAt).toLocaleString("id-ID")} · {x.imageStored ? "foto disimpan" : "tanpa foto"}
+                  {analysis?.id === x.id && " · sedang ditampilkan"}
+                </span>
+                <button className={`${btnGhost} py-1.5 text-red-700`} onClick={() => remove(x.id, x.token)} disabled={busy}>Hapus</button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
       <footer className="mt-12 border-t border-[var(--border)] pt-4 text-xs text-[var(--muted)]">
-        Hasil bersifat perkiraan untuk riset dan bukan saran profesional. <a className="underline" href="/docs">Dokumentasi API</a>
+        Hasil bersifat perkiraan untuk riset dan bukan saran profesional. <a className="inline-block py-3 underline" href="/docs">Dokumentasi API</a>
       </footer>
     </main>
   );
