@@ -9,7 +9,8 @@ import {
 type Saved = { id: string; token: string; createdAt: string; imageStored: boolean };
 const SAVED_KEY = "hairstyle-advisor:analyses";
 const ACCEPTED = ["image/jpeg", "image/png", "image/webp"];
-const MAX_BYTES = 8 * 1024 * 1024;
+// Mirrors the backend MAX_UPLOAD_BYTES; the server still enforces its own limit.
+const MAX_BYTES = Number(process.env.NEXT_PUBLIC_MAX_UPLOAD_BYTES) || 8 * 1024 * 1024;
 const UNREADABLE = "Kami tidak bisa membuka foto ini. Coba pilih foto lain berformat JPEG, PNG, atau WebP.";
 
 function readSaved(): Saved[] {
@@ -86,8 +87,8 @@ export default function Home() {
   function pick(f: File | null) {
     setAnalysis(null); setToken(null); setRecs(null); setError(null); setErrorAt("upload"); setDeleted(false); setConsent(false);
     setPrefs((p) => ({ ...p, face_shape: "" }));
-    if (f && !ACCEPTED.includes(f.type)) return reject("Format foto harus JPEG, PNG, atau WebP.");
-    if (f && f.size > MAX_BYTES) return reject("Ukuran foto maksimal 8 MB.");
+    if (f && f.type && !ACCEPTED.includes(f.type)) return reject("Format foto harus JPEG, PNG, atau WebP.");
+    if (f && f.size > MAX_BYTES) return reject(`Ukuran foto maksimal ${Math.floor(MAX_BYTES / (1024 * 1024))} MB.`);
     setFile(f);
     setPreview(f ? URL.createObjectURL(f) : null);
   }
