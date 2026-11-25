@@ -19,6 +19,7 @@ import numpy as np
 
 from ml.datasets.identity import FaceEmbedder, identity_groups
 from ml.feature_extraction.geometry import FEATURE_NAMES
+from ml.models.download import MODELS, ensure_model
 from ml.pipeline import FOREHEAD_OCCLUSION_THRESHOLD, FaceAnalyzer
 from ml.preprocessing.image_io import ImageDecodeError, load_image
 
@@ -71,6 +72,8 @@ def _process(args: tuple[Path, str, str, str]) -> tuple[dict, np.ndarray]:
 
 def build(root: Path, out: Path, workers: int = 4) -> list[dict]:
     items = [(root, *it) for it in list_images(root)]
+    for name in MODELS:  # download once here, so workers never race on the same temp file
+        ensure_model(name)
     with ProcessPoolExecutor(max_workers=workers, initializer=_init,
                              mp_context=multiprocessing.get_context("spawn")) as pool:
         results = list(pool.map(_process, items, chunksize=16))
