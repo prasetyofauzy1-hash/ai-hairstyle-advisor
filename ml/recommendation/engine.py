@@ -5,7 +5,7 @@ The score is a sum of rule points, not a percentage or probability. User-facing 
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 
 from ml.classification.rule_based import SHAPE_LABELS_ID, SHAPES
 from ml.recommendation import rules as R
@@ -14,6 +14,9 @@ from ml.recommendation.catalog import (GENDERS, HAIR_TYPES, LABELS_ID, LENGTHS, 
 
 SCORE_NOTE = "Poin mengikuti panduan penataan rambut, bukan persentase kecocokan atau jaminan hasil."
 NO_IMAGE_NOTE = "Gambar referensi belum tersedia."
+FILTER_LABELS = {"gender": "Gaya rambut", "max_maintenance": "Tingkat perawatan", "avoid_bangs": "Hindari poni",
+                 "formal": "Untuk kantor atau acara formal"}
+RELAXED = {"gender": None, "max_maintenance": None, "avoid_bangs": False, "formal": False}
 
 
 @dataclass(frozen=True)
@@ -81,6 +84,10 @@ def passes_filters(style: Hairstyle, p: UserProfile) -> bool:
         return False
     if p.avoid_bangs and style.has_bangs:
         return False
+    if p.formal and not style.formal:
+        return False
+    if style.thickness[p.thickness] == "avoid":
+        return False
     return R.shape_points(p.face_shape, style.effects) >= 0
 
 
@@ -109,12 +116,8 @@ def score(style: Hairstyle, p: UserProfile, length_distance: int = 0) -> Recomme
     return Recommendation(style, sum(t[1] for t in terms), terms, length_distance)
 
 
-def recommend(p: UserProfile, top_k: int = 5, catalog=None) -> dict:
-    styles = [s for s in (catalog or load_catalog()) if passes_filters(s, p)]
-    notes = [SCORE_NOTE]
-    if p.face_shape == "diamond":
-        notes.append("Model terlatih belum bisa mengenali bentuk Wajik (diamond), jadi bentuk ini berasal dari pilihan Anda atau "
-                     "aturan ukuran wajah, bukan dari perkiraan model. Perlakukan hasilnya dengan hati-hati.")
+def _rank(p: UserProfile, top_k: int, catalog) -> list[Recommendation]:
+    styles = [s for s in catalog if passes_filters(s, p)]
     if p.preferred_length is None:
         recs = [score(s, p) for s in styles]
     else:
@@ -123,17 +126,48 @@ def recommend(p: UserProfile, top_k: int = 5, catalog=None) -> dict:
         # Widen the length band only while fewer than top_k styles qualify; each step away costs points.
         for d in range(len(LENGTHS)):
             band = [s for s in styles if abs(LENGTHS.index(s.length) - i) == d]
-            recs += [score(s, p, length_distance=d) for s in band]
+            recs += [r for r in (score(s, p, length_distance=d) for s in band) if r.score >= 0]
             if len(recs) >= top_k:
                 break
-        if any(r.style.length != p.preferred_length for r in recs):
-            notes.append("Gaya dengan panjang yang Anda pilih kurang dari lima, jadi kami juga menampilkan gaya dengan "
-                         "panjang lain (poinnya dikurangi).")
-    # Step 3: preferred length first (fallback styles only fill open slots), then score, face-shape points, id.
-    recs.sort(key=lambda r: (r.length_distance, -r.score, -R.shape_points(p.face_shape, r.style.effects), r.style.id))
-    top = recs[:top_k]
+    # A style the rules score below zero is not recommended at all.
+    recs = [r for r in recs if r.score >= 0]
+    # Step 3: rank by score, then face-shape points, then preferred length, then id.
+    recs.sort(key=lambda r: (-r.score, -R.shape_points(p.face_shape, r.style.effects), r.length_distance, r.style.id))
+    return recs[:top_k]
+
+
+def _limiting_choices(p: UserProfile, n: int, top_k: int, catalog) -> list[str]:
+    out = []
+    for key, relaxed in RELAXED.items():
+        if getattr(p, key) == relaxed:
+            continue
+        m = len(_rank(replace(p, **{key: relaxed}), top_k, catalog))
+        if m > n:
+            out.append(f"{FILTER_LABELS[key]} (tanpa pilihan ini ada {m} gaya)")
+    return out
+
+
+def recommend(p: UserProfile, top_k: int = 5, catalog=None) -> dict:
+    catalog = catalog or load_catalog()
+    notes = [SCORE_NOTE]
+    if p.face_shape == "diamond":
+        notes.append("Model terlatih belum bisa mengenali bentuk Wajik (diamond), jadi bentuk ini berasal dari pilihan Anda atau "
+                     "aturan ukuran wajah, bukan dari perkiraan model. Perlakukan hasilnya dengan hati-hati.")
+    top = _rank(p, top_k, catalog)
+    if p.preferred_length is not None and any(r.style.length != p.preferred_length for r in top):
+        notes.append("Gaya dengan panjang yang Anda pilih kurang dari lima, jadi kami juga menampilkan gaya dengan "
+                     "panjang lain (poinnya dikurangi).")
+    if p.secondary_face_shape is not None and p.secondary_face_shape != p.face_shape:
+        notes.append(f"Urutan juga memperhitungkan wajah {SHAPE_LABELS_ID[p.secondary_face_shape]}, bentuk dengan skor "
+                     f"kedua tertinggi, jadi hasilnya bisa berbeda dari memilih bentuk wajah sendiri.")
+    if top and not any(t[1] > 0 and t[0].startswith("bentuk_wajah:") for r in top for t in r.terms):
+        notes.append(f"Panduan kami tidak punya saran khusus untuk wajah {SHAPE_LABELS_ID[p.face_shape]} di antara gaya "
+                     "ini, jadi urutannya terutama mengikuti jenis rambut dan pilihan Anda.")
     if len(top) < top_k:
-        notes.append(f"Hanya {len(top)} gaya yang sesuai dengan pilihan Anda.")
+        limiting = _limiting_choices(p, len(top), top_k, catalog)
+        head = f"Hanya {len(top)} gaya yang sesuai dengan semua pilihan Anda." if top else \
+            "Hanya 0 gaya yang sesuai dengan semua pilihan Anda."
+        notes.append(head + (" Pilihan yang paling membatasi: " + "; ".join(limiting) + "." if limiting else ""))
     return {
         "face_shape": p.face_shape, "face_shape_label": SHAPE_LABELS_ID[p.face_shape],
         "method": "rule_based_v1", "recommendations": [r.to_dict(k + 1) for k, r in enumerate(top)], "notes": notes,

@@ -23,6 +23,9 @@ Invalid values raise `ValueError`.
 | Hair type | the user's hair type is not listed in the style's `hair_types` (not `ideal` or `ok`) |
 | Maintenance | the style needs more upkeep than `max_maintenance` |
 | Bangs | `avoid_bangs` and the style has `bangs_full` or `bangs_side` |
+| Formal | `formal=True` and the style is not office-appropriate |
+| Thickness | the user's thickness is `avoid` for the style |
+| Negative score | the summed rule points (step 2) are below 0 |
 | Face shape | the face-shape rules below sum to < 0 for this style |
 | Length | with `preferred_length`, only that length is kept; if fewer than 5 styles remain, the band widens one step at a time (see the length rule) |
 
@@ -32,7 +35,7 @@ Invalid values raise `ValueError`.
 |---|---:|---|
 | `bentuk_wajah:<shape>:<effect>` | ±1 each | per style effect in the table below |
 | `jenis_rambut` | +2 | the user's hair type is `ideal` for the style (`ok` gives 0) |
-| `ketebalan` | +1 / -2 | thickness is `ideal` / `avoid` for the style (`ok` gives 0) |
+| `ketebalan` | +1 | thickness is `ideal` for the style (`ok` gives 0; `avoid` is filtered out) |
 | `panjang` | +1 / -1 / -2 | length equals the preference / one step away / two or more steps away (only shown when fewer than 5 exact matches) |
 | `formal` | +1 | `formal=True` and the style is office-appropriate |
 | `bentuk_wajah_kedua` | +1 / -1 | face-shape points for `secondary_face_shape` are > 0 / < 0 |
@@ -78,7 +81,10 @@ Styles carry effect tags (`volume_top`, `volume_sides`, `volume_jaw`, `soft_laye
 
 ## Step 3-4: rank and return
 
-Sort by length distance (exact matches first, so fallback lengths only fill open slots), then score, then face-shape points, then style `id` (so ties are deterministic but alphabetical, not meaningful).
+Sort by score (so shown points always descend; fallback lengths already carry their penalty), then face-shape points,
+then length distance, then style `id` (so ties are deterministic but alphabetical, not meaningful).
+`notes` also say when fewer than 5 styles remain and which single choice limits the result most (with the count
+without it), when the ranking used the model's second-highest shape, and when no returned style has a face-shape rule.
 Return the top 5 with name, description, `reference_image` (currently `null` plus a note), `score` with
 `score_unit: "poin"`, `score_breakdown`, an explanation built from the rules that fired (positive reasons first,
 negatives after "Perlu diperhatikan:"), advantages, styling tips, and `notes` (always includes that the score is rule

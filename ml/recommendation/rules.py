@@ -32,7 +32,7 @@ SHAPE_EFFECT_RULES: dict[str, dict[str, tuple[int, str]]] = {
         "bangs_side": (1, "Poni samping bisa membuat wajah terlihat tidak terlalu panjang."),
         "volume_jaw": (1, "Volume di sekitar rahang bisa membuat wajah panjang tampak lebih seimbang."),
         "volume_top": (-1, "Volume tinggi di atas bisa membuat wajah lonjong tampak makin panjang."),
-        "length_past_chin": (-1, "Rambut panjang yang jatuh lurus ke bawah bisa membuat wajah tampak lebih panjang."),
+        "length_past_chin": (-1, "Rambut yang jatuh panjang melewati dagu bisa membuat wajah tampak lebih panjang."),
         "tight_sides": (-1, "Rambut samping yang tipis bisa membuat wajah lonjong tampak lebih sempit."),
     },
     "heart": {
@@ -52,8 +52,8 @@ SHAPE_EFFECT_RULES: dict[str, dict[str, tuple[int, str]]] = {
 }
 
 HAIR_TYPE_IDEAL = (2, "Panduan ini menyarankan potongan ini untuk rambut {hair}.")
-THICKNESS_IDEAL = (1, "Panduan ini menyarankan potongan ini untuk rambut {thick}.")
-THICKNESS_AVOID = (-2, "Kurang disarankan untuk rambut {thick}; hasilnya bisa kurang bervolume atau sulit diatur.")
+THICKNESS_IDEAL = (1, "Panduan ini menyarankan potongan ini untuk rambut dengan ketebalan {thick}.")
+THICKNESS_AVOID = (-2, "Kurang disarankan untuk rambut dengan ketebalan {thick}; hasilnya bisa kurang bervolume atau sulit diatur.")
 LENGTH_MATCH = (1, "Panjangnya sesuai dengan yang Anda inginkan ({length}).")
 LENGTH_ADJACENT = (-1, "Gaya ini sedikit lebih pendek atau panjang dari pilihan Anda ({length}). Kami menampilkannya karena pilihan dengan panjang tersebut terbatas.")
 LENGTH_OTHER = (-2, "Panjang gaya ini berbeda dari pilihan Anda ({length}). Kami menampilkannya karena pilihan dengan panjang tersebut terbatas.")
