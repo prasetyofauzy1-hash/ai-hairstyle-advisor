@@ -36,3 +36,13 @@
 | TD-22 | Train only on images that pass the Phase 2 quality gates (2,977 of 5,000) | The model sees the same inputs the app accepts; rejection counts are reported | Relaxing gates for the dataset (would train on inputs the app refuses) |
 | TD-23 | Hold out the seeded identity-aware fold whose class mix is closest to the whole set; tune with 5-fold identity-aware CV; select by CV macro-F1 only | Large groups make folds uneven; choosing by labels, not scores, keeps the test set untouched | Random image-level split (leaks identities) |
 | TD-24 | FFHQ subset: attribution / public-domain licenses only, MD5-checked, quality-gated; labels only from ≥ 2 human annotators with kappa, consensus only | Defensible ground truth; AI-made labels would be fabricated | Labeling by one person or by a model |
+
+## Phase 4 decisions
+
+| ID | Decision | Reason | Alternatives rejected |
+|---|---|---|---|
+| TD-25 | Rule-based recommender: metadata filters, then a sum of named ±1/±2 rule points ([rules](recommendation-rules.md)) | Every point is explainable in Indonesian; no preference data exists to learn from | ML ranker (no ratings to train on); compatibility percentages (would be invented numbers) |
+| TD-26 | Styles whose face-shape terms sum below 0 are filtered, not just ranked lower | A style that works against the face shape should not appear in a top 5 | Keeping them with low scores (they fill short lists with poor fits) |
+| TD-27 | Length preference is strict unless fewer than 5 styles match; then nearby lengths are added with a point penalty and a note | Users keep their choice where possible and always see why a different length appears | Hard length filter (empty results for sparse combinations) |
+| TD-28 | `reference_image` is `null` with a note for now | No license-clear hairstyle photos were sourced; unlicensed images are not used | Scraped reference photos |
+

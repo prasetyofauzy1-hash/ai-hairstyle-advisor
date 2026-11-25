@@ -1,0 +1,1825 @@
+{
+ "version": 1,
+ "styles": [
+  {
+   "id": "pixie_cut",
+   "name": "Pixie Cut",
+   "gender": [
+    "wanita"
+   ],
+   "length": "very_short",
+   "hair_types": {
+    "straight": "ideal",
+    "wavy": "ideal",
+    "curly": "ok"
+   },
+   "thickness": {
+    "thin": "ideal",
+    "medium": "ok",
+    "thick": "ok"
+   },
+   "effects": [
+    "face_exposed",
+    "volume_top"
+   ],
+   "maintenance": "medium",
+   "formal": true,
+   "description": "Potongan sangat pendek yang memperlihatkan seluruh wajah, sedikit lebih panjang di bagian atas.",
+   "advantages": [
+    "Cepat kering dan ringan dipakai di cuaca panas",
+    "Menonjolkan mata dan tulang pipi"
+   ],
+   "styling_tips": [
+    "Rapikan setiap 4-6 minggu agar bentuknya terjaga",
+    "Gunakan sedikit pomade atau wax untuk tekstur di bagian atas"
+   ]
+  },
+  {
+   "id": "pixie_side_bangs",
+   "name": "Pixie dengan Poni Samping",
+   "gender": [
+    "wanita"
+   ],
+   "length": "very_short",
+   "hair_types": {
+    "straight": "ideal",
+    "wavy": "ideal"
+   },
+   "thickness": {
+    "thin": "ideal",
+    "medium": "ideal",
+    "thick": "ok"
+   },
+   "effects": [
+    "bangs_side",
+    "volume_top",
+    "soft_layers"
+   ],
+   "maintenance": "medium",
+   "formal": true,
+   "description": "Pixie dengan poni panjang yang disapu ke satu sisi dan lapisan lembut.",
+   "advantages": [
+    "Poni samping membingkai wajah tanpa menutup mata",
+    "Tetap pendek namun terlihat lembut"
+   ],
+   "styling_tips": [
+    "Keringkan poni dengan sisir bulat ke arah samping",
+    "Semprotkan texturizing spray sedikit di bagian atas"
+   ]
+  },
+  {
+   "id": "curly_pixie",
+   "name": "Pixie Keriting",
+   "gender": [
+    "wanita"
+   ],
+   "length": "very_short",
+   "hair_types": {
+    "curly": "ideal",
+    "coily": "ideal",
+    "wavy": "ok"
+   },
+   "thickness": {
+    "thin": "ok",
+    "medium": "ideal",
+    "thick": "ideal"
+   },
+   "effects": [
+    "volume_top",
+    "tight_sides"
+   ],
+   "maintenance": "low",
+   "formal": true,
+   "description": "Pixie untuk rambut keriting: sisi pendek, ikal dibiarkan bervolume di atas.",
+   "advantages": [
+    "Memanfaatkan bentuk ikal alami tanpa banyak catokan",
+    "Perawatan harian singkat"
+   ],
+   "styling_tips": [
+    "Pakai leave-in conditioner atau krim ikal saat rambut masih basah",
+    "Hindari menyisir saat kering agar ikal tidak mengembang berlebihan"
+   ]
+  },
+  {
+   "id": "blunt_bob",
+   "name": "Bob Rata Sebatas Dagu",
+   "gender": [
+    "wanita"
+   ],
+   "length": "short",
+   "hair_types": {
+    "straight": "ideal",
+    "wavy": "ok"
+   },
+   "thickness": {
+    "thin": "ideal",
+    "medium": "ideal",
+    "thick": "ok"
+   },
+   "effects": [
+    "volume_jaw",
+    "sharp_lines"
+   ],
+   "maintenance": "medium",
+   "formal": true,
+   "description": "Bob satu panjang dengan ujung rata tepat di garis dagu.",
+   "advantages": [
+    "Ujung rata membuat rambut tipis tampak lebih tebal",
+    "Tampilan rapi dan modern"
+   ],
+   "styling_tips": [
+    "Catok lurus ujungnya agar garis tetap tegas",
+    "Rapikan setiap 6-8 minggu"
+   ]
+  },
+  {
+   "id": "a_line_bob",
+   "name": "A-Line Bob",
+   "gender": [
+    "wanita"
+   ],
+   "length": "short",
+   "hair_types": {
+    "straight": "ideal",
+    "wavy": "ideal"
+   },
+   "thickness": {
+    "thin": "ok",
+    "medium": "ideal",
+    "thick": "ok"
+   },
+   "effects": [
+    "length_past_chin",
+    "sharp_lines"
+   ],
+   "maintenance": "medium",
+   "formal": true,
+   "description": "Bob yang lebih pendek di belakang dan memanjang ke depan melewati dagu.",
+   "advantages": [
+    "Bagian depan yang lebih panjang memberi kesan wajah lebih ramping",
+    "Cocok untuk tampilan kantor"
+   ],
+   "styling_tips": [
+    "Blow dry dengan sisir bulat ke arah dalam",
+    "Gunakan serum anti-frizz untuk garis yang mulus"
+   ]
+  },
+  {
+   "id": "textured_wavy_bob",
+   "name": "Bob Bertekstur Bergelombang",
+   "gender": [
+    "wanita"
+   ],
+   "length": "short",
+   "hair_types": {
+    "wavy": "ideal",
+    "straight": "ok",
+    "curly": "ok"
+   },
+   "thickness": {
+    "thin": "ok",
+    "medium": "ideal",
+    "thick": "ideal"
+   },
+   "effects": [
+    "volume_jaw",
+    "soft_layers",
+    "textured"
+   ],
+   "maintenance": "low",
+   "formal": false,
+   "description": "Bob sebatas dagu dengan lapisan dan gelombang santai.",
+   "advantages": [
+    "Gelombang melunakkan garis wajah",
+    "Tidak perlu rapi sempurna, cocok untuk gaya santai"
+   ],
+   "styling_tips": [
+    "Gunakan sea salt spray lalu remas rambut saat mengering",
+    "Catok ikal besar pada beberapa bagian bila rambut lurus"
+   ]
+  },
+  {
+   "id": "french_bob",
+   "name": "French Bob dengan Poni",
+   "gender": [
+    "wanita"
+   ],
+   "length": "short",
+   "hair_types": {
+    "straight": "ideal",
+    "wavy": "ok"
+   },
+   "thickness": {
+    "thin": "ok",
+    "medium": "ideal",
+    "thick": "ok"
+   },
+   "effects": [
+    "bangs_full",
+    "volume_jaw"
+   ],
+   "maintenance": "medium",
+   "formal": false,
+   "description": "Bob pendek sekitar tulang pipi hingga dagu dengan poni rata penuh.",
+   "advantages": [
+    "Poni menutup dahi lebar",
+    "Tampilan khas dan berkarakter"
+   ],
+   "styling_tips": [
+    "Keringkan poni lebih dulu agar tidak terbelah",
+    "Potong ulang poni setiap 3-4 minggu"
+   ]
+  },
+  {
+   "id": "asymmetrical_bob",
+   "name": "Bob Asimetris",
+   "gender": [
+    "wanita"
+   ],
+   "length": "short",
+   "hair_types": {
+    "straight": "ideal",
+    "wavy": "ok"
+   },
+   "thickness": {
+    "thin": "ok",
+    "medium": "ideal",
+    "thick": "ok"
+   },
+   "effects": [
+    "side_part",
+    "sharp_lines",
+    "length_past_chin"
+   ],
+   "maintenance": "medium",
+   "formal": true,
+   "description": "Bob dengan satu sisi lebih panjang dan belahan samping yang dalam.",
+   "advantages": [
+    "Garis asimetris memecah kesan wajah yang lebar",
+    "Modern dan mudah dikenali"
+   ],
+   "styling_tips": [
+    "Pertahankan belahan di sisi yang sama setiap hari",
+    "Gunakan catok untuk menegaskan sisi yang panjang"
+   ]
+  },
+  {
+   "id": "lob",
+   "name": "Lob (Long Bob)",
+   "gender": [
+    "wanita"
+   ],
+   "length": "medium",
+   "hair_types": {
+    "straight": "ideal",
+    "wavy": "ideal",
+    "curly": "ok"
+   },
+   "thickness": {
+    "thin": "ok",
+    "medium": "ideal",
+    "thick": "ok"
+   },
+   "effects": [
+    "length_past_chin",
+    "side_part"
+   ],
+   "maintenance": "low",
+   "formal": true,
+   "description": "Bob panjang sebatas bahu dengan belahan samping.",
+   "advantages": [
+    "Mudah diikat namun tetap terlihat rapi saat terurai",
+    "Cocok di hampir semua suasana"
+   ],
+   "styling_tips": [
+    "Ganti arah belahan sesekali untuk volume",
+    "Rapikan ujung setiap 8-10 minggu"
+   ]
+  },
+  {
+   "id": "layered_lob",
+   "name": "Lob Berlapis",
+   "gender": [
+    "wanita"
+   ],
+   "length": "medium",
+   "hair_types": {
+    "straight": "ideal",
+    "wavy": "ideal",
+    "curly": "ok"
+   },
+   "thickness": {
+    "thin": "ok",
+    "medium": "ideal",
+    "thick": "ideal"
+   },
+   "effects": [
+    "length_past_chin",
+    "soft_layers",
+    "side_part"
+   ],
+   "maintenance": "low",
+   "formal": true,
+   "description": "Lob dengan lapisan lembut di sekitar wajah.",
+   "advantages": [
+    "Lapisan menambah gerak tanpa memendekkan rambut",
+    "Melunakkan rahang yang tegas"
+   ],
+   "styling_tips": [
+    "Blow dry lapisan depan menjauhi wajah",
+    "Gunakan mousse ringan di akar untuk volume"
+   ]
+  },
+  {
+   "id": "shag",
+   "name": "Shag Sedang",
+   "gender": [
+    "pria",
+    "wanita"
+   ],
+   "length": "medium",
+   "hair_types": {
+    "wavy": "ideal",
+    "curly": "ideal",
+    "straight": "ok"
+   },
+   "thickness": {
+    "thin": "ok",
+    "medium": "ideal",
+    "thick": "ideal"
+   },
+   "effects": [
+    "soft_layers",
+    "volume_top",
+    "textured",
+    "bangs_side"
+   ],
+   "maintenance": "medium",
+   "formal": false,
+   "description": "Potongan berlapis banyak dengan tekstur acak dan poni tirai.",
+   "advantages": [
+    "Memberi volume pada rambut yang lepek",
+    "Ikal dan gelombang alami terlihat lebih jelas"
+   ],
+   "styling_tips": [
+    "Gunakan krim tekstur dan keringkan dengan diffuser",
+    "Rapikan setiap 8 minggu agar lapisan tetap terbentuk"
+   ]
+  },
+  {
+   "id": "curtain_bangs_medium",
+   "name": "Rambut Sebahu dengan Poni Tirai",
+   "gender": [
+    "wanita"
+   ],
+   "length": "medium",
+   "hair_types": {
+    "straight": "ideal",
+    "wavy": "ideal",
+    "curly": "ok"
+   },
+   "thickness": {
+    "thin": "ok",
+    "medium": "ideal",
+    "thick": "ok"
+   },
+   "effects": [
+    "bangs_side",
+    "soft_layers",
+    "length_past_chin"
+   ],
+   "maintenance": "medium",
+   "formal": true,
+   "description": "Rambut sebahu dengan poni tirai yang terbelah di tengah dan jatuh ke kedua sisi.",
+   "advantages": [
+    "Poni tirai membingkai tulang pipi",
+    "Mudah ditumbuhkan kembali tanpa fase canggung"
+   ],
+   "styling_tips": [
+    "Keringkan poni dengan sisir bulat ke arah luar",
+    "Gunakan dry shampoo pada poni agar tidak cepat berminyak"
+   ]
+  },
+  {
+   "id": "wolf_cut",
+   "name": "Wolf Cut",
+   "gender": [
+    "pria",
+    "wanita"
+   ],
+   "length": "medium",
+   "hair_types": {
+    "straight": "ideal",
+    "wavy": "ideal",
+    "curly": "ok"
+   },
+   "thickness": {
+    "thin": "ok",
+    "medium": "ideal",
+    "thick": "ideal"
+   },
+   "effects": [
+    "volume_top",
+    "volume_sides",
+    "textured",
+    "soft_layers"
+   ],
+   "maintenance": "medium",
+   "formal": false,
+   "description": "Perpaduan shag dan mullet: lapisan bervolume di atas dan samping, lebih tipis di belakang.",
+   "advantages": [
+    "Tampilan bervolume dan berkarakter",
+    "Cocok untuk rambut tebal yang sulit diatur"
+   ],
+   "styling_tips": [
+    "Gunakan texturizing spray dan acak dengan jari",
+    "Hindari conditioner berat di akar"
+   ]
+  },
+  {
+   "id": "curly_shoulder_layers",
+   "name": "Lapisan Keriting Sebahu",
+   "gender": [
+    "wanita"
+   ],
+   "length": "medium",
+   "hair_types": {
+    "curly": "ideal",
+    "coily": "ideal",
+    "wavy": "ok"
+   },
+   "thickness": {
+    "thin": "ok",
+    "medium": "ideal",
+    "thick": "ideal"
+   },
+   "effects": [
+    "volume_sides",
+    "soft_layers",
+    "volume_jaw"
+   ],
+   "maintenance": "medium",
+   "formal": false,
+   "description": "Potongan berlapis untuk rambut keriting sebahu yang dibentuk mengikuti ikal.",
+   "advantages": [
+    "Ikal terbentuk rata tanpa bentuk segitiga",
+    "Volume jatuh di sekitar rahang"
+   ],
+   "styling_tips": [
+    "Gunakan metode basah: krim ikal lalu gel, keringkan dengan diffuser",
+    "Potong oleh penata yang terbiasa dengan rambut keriting"
+   ]
+  },
+  {
+   "id": "medium_blunt",
+   "name": "Rambut Sebahu Rata",
+   "gender": [
+    "wanita"
+   ],
+   "length": "medium",
+   "hair_types": {
+    "straight": "ideal"
+   },
+   "thickness": {
+    "thin": "ideal",
+    "medium": "ideal",
+    "thick": "ok"
+   },
+   "effects": [
+    "sharp_lines",
+    "volume_jaw"
+   ],
+   "maintenance": "low",
+   "formal": true,
+   "description": "Potongan satu panjang sebatas bahu dengan ujung rata.",
+   "advantages": [
+    "Ujung rata membuat rambut tampak tebal",
+    "Sangat mudah dirawat"
+   ],
+   "styling_tips": [
+    "Catok lurus ujung rambut untuk kesan rapi",
+    "Gunakan serum di ujung untuk kilau"
+   ]
+  },
+  {
+   "id": "hush_cut",
+   "name": "Hush Cut",
+   "gender": [
+    "wanita"
+   ],
+   "length": "medium",
+   "hair_types": {
+    "straight": "ideal",
+    "wavy": "ideal"
+   },
+   "thickness": {
+    "thin": "ok",
+    "medium": "ideal",
+    "thick": "ideal"
+   },
+   "effects": [
+    "soft_layers",
+    "bangs_side",
+    "textured"
+   ],
+   "maintenance": "medium",
+   "formal": false,
+   "description": "Gaya Korea dengan lapisan tipis yang ringan dan poni samping halus.",
+   "advantages": [
+    "Membuat rambut tebal terasa lebih ringan",
+    "Membingkai wajah dengan lembut"
+   ],
+   "styling_tips": [
+    "Catok ikal ke arah luar pada lapisan depan",
+    "Gunakan minyak rambut ringan untuk tekstur"
+   ]
+  },
+  {
+   "id": "long_layers",
+   "name": "Rambut Panjang Berlapis",
+   "gender": [
+    "wanita"
+   ],
+   "length": "long",
+   "hair_types": {
+    "straight": "ideal",
+    "wavy": "ideal",
+    "curly": "ok"
+   },
+   "thickness": {
+    "thin": "ok",
+    "medium": "ideal",
+    "thick": "ideal"
+   },
+   "effects": [
+    "length_past_chin",
+    "soft_layers"
+   ],
+   "maintenance": "low",
+   "formal": true,
+   "description": "Rambut panjang dengan lapisan panjang yang dimulai di bawah dagu.",
+   "advantages": [
+    "Mempertahankan panjang sambil menambah gerak",
+    "Mudah diikat atau disanggul"
+   ],
+   "styling_tips": [
+    "Blow dry dengan sisir bulat besar",
+    "Rapikan ujung setiap 10-12 minggu"
+   ]
+  },
+  {
+   "id": "sleek_long_straight",
+   "name": "Panjang Lurus Belah Tengah",
+   "gender": [
+    "wanita"
+   ],
+   "length": "long",
+   "hair_types": {
+    "straight": "ideal"
+   },
+   "thickness": {
+    "thin": "avoid",
+    "medium": "ideal",
+    "thick": "ideal"
+   },
+   "effects": [
+    "length_past_chin",
+    "sharp_lines"
+   ],
+   "maintenance": "medium",
+   "formal": true,
+   "description": "Rambut panjang lurus satu panjang dengan belahan tengah yang rapi.",
+   "advantages": [
+    "Tampilan rapi dan elegan",
+    "Menonjolkan kilau rambut"
+   ],
+   "styling_tips": [
+    "Gunakan pelindung panas sebelum catok",
+    "Gunakan serum anti-frizz di batang rambut"
+   ]
+  },
+  {
+   "id": "long_waves_side_part",
+   "name": "Panjang Bergelombang Belah Samping",
+   "gender": [
+    "wanita"
+   ],
+   "length": "long",
+   "hair_types": {
+    "wavy": "ideal",
+    "straight": "ok",
+    "curly": "ok"
+   },
+   "thickness": {
+    "thin": "ok",
+    "medium": "ideal",
+    "thick": "ok"
+   },
+   "effects": [
+    "length_past_chin",
+    "side_part",
+    "volume_sides",
+    "soft_layers"
+   ],
+   "maintenance": "medium",
+   "formal": true,
+   "description": "Rambut panjang bergelombang besar dengan belahan samping.",
+   "advantages": [
+    "Gelombang menambah lebar di sisi wajah",
+    "Cocok untuk acara formal maupun santai"
+   ],
+   "styling_tips": [
+    "Catok ikal besar lalu sisir dengan jari",
+    "Semprotkan hairspray ringan agar gelombang bertahan"
+   ]
+  },
+  {
+   "id": "long_full_bangs",
+   "name": "Rambut Panjang dengan Poni Rata",
+   "gender": [
+    "wanita"
+   ],
+   "length": "long",
+   "hair_types": {
+    "straight": "ideal",
+    "wavy": "ok"
+   },
+   "thickness": {
+    "thin": "ok",
+    "medium": "ideal",
+    "thick": "ok"
+   },
+   "effects": [
+    "bangs_full",
+    "length_past_chin"
+   ],
+   "maintenance": "medium",
+   "formal": false,
+   "description": "Rambut panjang dengan poni rata penuh di atas alis.",
+   "advantages": [
+    "Poni memendekkan kesan wajah yang panjang",
+    "Menutup dahi lebar"
+   ],
+   "styling_tips": [
+    "Potong poni setiap 3-4 minggu",
+    "Keringkan poni lebih dulu dengan sisir pipih"
+   ]
+  },
+  {
+   "id": "butterfly_cut",
+   "name": "Butterfly Cut",
+   "gender": [
+    "wanita"
+   ],
+   "length": "long",
+   "hair_types": {
+    "straight": "ideal",
+    "wavy": "ideal"
+   },
+   "thickness": {
+    "thin": "avoid",
+    "medium": "ideal",
+    "thick": "ideal"
+   },
+   "effects": [
+    "soft_layers",
+    "volume_sides",
+    "bangs_side",
+    "length_past_chin"
+   ],
+   "maintenance": "high",
+   "formal": false,
+   "description": "Lapisan pendek di sekitar wajah dan lapisan panjang di belakang, seperti sayap.",
+   "advantages": [
+    "Volume besar dengan panjang tetap terjaga",
+    "Lapisan depan membingkai pipi"
+   ],
+   "styling_tips": [
+    "Blow dry lapisan depan ke arah luar dengan sisir bulat",
+    "Gunakan volumizing mousse di akar"
+   ]
+  },
+  {
+   "id": "long_curly_layers",
+   "name": "Keriting Panjang Berlapis",
+   "gender": [
+    "wanita"
+   ],
+   "length": "long",
+   "hair_types": {
+    "curly": "ideal",
+    "coily": "ideal",
+    "wavy": "ok"
+   },
+   "thickness": {
+    "thin": "ok",
+    "medium": "ideal",
+    "thick": "ideal"
+   },
+   "effects": [
+    "volume_sides",
+    "soft_layers",
+    "length_past_chin"
+   ],
+   "maintenance": "medium",
+   "formal": false,
+   "description": "Rambut keriting panjang dengan lapisan agar ikal tidak berat di bawah.",
+   "advantages": [
+    "Ikal tidak menumpuk berbentuk segitiga",
+    "Volume merata"
+   ],
+   "styling_tips": [
+    "Gunakan krim ikal dan diffuser",
+    "Tidur dengan sarung bantal satin untuk mengurangi frizz"
+   ]
+  },
+  {
+   "id": "long_v_layers",
+   "name": "V-Cut Panjang",
+   "gender": [
+    "wanita"
+   ],
+   "length": "long",
+   "hair_types": {
+    "straight": "ideal",
+    "wavy": "ideal"
+   },
+   "thickness": {
+    "thin": "avoid",
+    "medium": "ideal",
+    "thick": "ideal"
+   },
+   "effects": [
+    "length_past_chin",
+    "soft_layers"
+   ],
+   "maintenance": "low",
+   "formal": true,
+   "description": "Rambut panjang yang ujungnya membentuk huruf V di punggung.",
+   "advantages": [
+    "Ujung V terlihat rapi saat terurai",
+    "Mengurangi berat rambut tebal"
+   ],
+   "styling_tips": [
+    "Blow dry ujung ke arah dalam",
+    "Rapikan ujung setiap 10-12 minggu"
+   ]
+  },
+  {
+   "id": "tapered_natural_curls",
+   "name": "Ikal Alami Tapered",
+   "gender": [
+    "wanita"
+   ],
+   "length": "short",
+   "hair_types": {
+    "coily": "ideal",
+    "curly": "ok"
+   },
+   "thickness": {
+    "thin": "ok",
+    "medium": "ideal",
+    "thick": "ideal"
+   },
+   "effects": [
+    "volume_top",
+    "tight_sides"
+   ],
+   "maintenance": "low",
+   "formal": true,
+   "description": "Rambut keriting rapat alami yang lebih pendek di samping dan belakang.",
+   "advantages": [
+    "Memanfaatkan tekstur alami",
+    "Perawatan harian ringan"
+   ],
+   "styling_tips": [
+    "Gunakan leave-in dan minyak untuk kelembapan",
+    "Bentuk ikal dengan finger coil bila perlu"
+   ]
+  },
+  {
+   "id": "buzz_cut",
+   "name": "Buzz Cut",
+   "gender": [
+    "pria"
+   ],
+   "length": "very_short",
+   "hair_types": {
+    "straight": "ideal",
+    "wavy": "ideal",
+    "curly": "ideal",
+    "coily": "ideal"
+   },
+   "thickness": {
+    "thin": "ideal",
+    "medium": "ideal",
+    "thick": "ok"
+   },
+   "effects": [
+    "face_exposed",
+    "tight_sides"
+   ],
+   "maintenance": "low",
+   "formal": true,
+   "description": "Potongan mesin sangat pendek dengan panjang yang sama di seluruh kepala.",
+   "advantages": [
+    "Hampir tanpa perawatan harian",
+    "Rapi untuk rambut tipis atau menipis"
+   ],
+   "styling_tips": [
+    "Cukur ulang setiap 2-3 minggu",
+    "Gunakan tabir surya pada kulit kepala saat di luar ruangan"
+   ]
+  },
+  {
+   "id": "crew_cut",
+   "name": "Crew Cut",
+   "gender": [
+    "pria"
+   ],
+   "length": "very_short",
+   "hair_types": {
+    "straight": "ideal",
+    "wavy": "ideal",
+    "curly": "ok",
+    "coily": "ok"
+   },
+   "thickness": {
+    "thin": "ideal",
+    "medium": "ideal",
+    "thick": "ok"
+   },
+   "effects": [
+    "tight_sides",
+    "face_exposed"
+   ],
+   "maintenance": "low",
+   "formal": true,
+   "description": "Atas sedikit lebih panjang, samping dan belakang pendek.",
+   "advantages": [
+    "Rapi dan profesional",
+    "Mudah ditata hanya dengan jari"
+   ],
+   "styling_tips": [
+    "Pangkas setiap 3-4 minggu",
+    "Gunakan sedikit clay untuk tekstur di atas"
+   ]
+  },
+  {
+   "id": "ivy_league",
+   "name": "Ivy League",
+   "gender": [
+    "pria"
+   ],
+   "length": "short",
+   "hair_types": {
+    "straight": "ideal",
+    "wavy": "ideal"
+   },
+   "thickness": {
+    "thin": "ok",
+    "medium": "ideal",
+    "thick": "ok"
+   },
+   "effects": [
+    "side_part",
+    "tight_sides",
+    "face_exposed"
+   ],
+   "maintenance": "low",
+   "formal": true,
+   "description": "Crew cut yang cukup panjang di atas untuk disisir ke samping.",
+   "advantages": [
+    "Tampilan rapi untuk kantor",
+    "Mudah diatur"
+   ],
+   "styling_tips": [
+    "Sisir ke samping dengan pomade berbasis air",
+    "Pangkas samping setiap 3-4 minggu"
+   ]
+  },
+  {
+   "id": "classic_side_part",
+   "name": "Belah Samping Klasik",
+   "gender": [
+    "pria"
+   ],
+   "length": "short",
+   "hair_types": {
+    "straight": "ideal",
+    "wavy": "ideal"
+   },
+   "thickness": {
+    "thin": "ok",
+    "medium": "ideal",
+    "thick": "ok"
+   },
+   "effects": [
+    "side_part",
+    "sharp_lines"
+   ],
+   "maintenance": "medium",
+   "formal": true,
+   "description": "Gaya gentleman dengan belahan samping tegas dan samping yang rapi.",
+   "advantages": [
+    "Formal dan tidak lekang waktu",
+    "Cocok untuk acara resmi"
+   ],
+   "styling_tips": [
+    "Tegaskan belahan dengan sisir saat rambut lembap",
+    "Gunakan pomade dengan kilau sedang"
+   ]
+  },
+  {
+   "id": "pompadour",
+   "name": "Pompadour",
+   "gender": [
+    "pria"
+   ],
+   "length": "short",
+   "hair_types": {
+    "straight": "ideal",
+    "wavy": "ideal"
+   },
+   "thickness": {
+    "thin": "avoid",
+    "medium": "ok",
+    "thick": "ideal"
+   },
+   "effects": [
+    "volume_top",
+    "tight_sides",
+    "face_exposed"
+   ],
+   "maintenance": "high",
+   "formal": true,
+   "description": "Rambut atas panjang yang disisir ke atas dan ke belakang membentuk volume tinggi.",
+   "advantages": [
+    "Menambah tinggi dan kesan percaya diri",
+    "Tampilan klasik yang mencolok"
+   ],
+   "styling_tips": [
+    "Blow dry ke atas sebelum memakai pomade",
+    "Pangkas samping setiap 3-4 minggu"
+   ]
+  },
+  {
+   "id": "quiff",
+   "name": "Quiff",
+   "gender": [
+    "pria"
+   ],
+   "length": "short",
+   "hair_types": {
+    "straight": "ideal",
+    "wavy": "ideal",
+    "curly": "ok"
+   },
+   "thickness": {
+    "thin": "ok",
+    "medium": "ideal",
+    "thick": "ideal"
+   },
+   "effects": [
+    "volume_top",
+    "tight_sides"
+   ],
+   "maintenance": "medium",
+   "formal": true,
+   "description": "Bagian depan diangkat ke atas dengan tekstur, samping lebih pendek.",
+   "advantages": [
+    "Lebih santai daripada pompadour",
+    "Menambah tinggi di atas kepala"
+   ],
+   "styling_tips": [
+    "Blow dry bagian depan ke atas",
+    "Gunakan clay atau paste matte"
+   ]
+  },
+  {
+   "id": "french_crop",
+   "name": "French Crop",
+   "gender": [
+    "pria"
+   ],
+   "length": "short",
+   "hair_types": {
+    "straight": "ideal",
+    "wavy": "ideal",
+    "curly": "ok"
+   },
+   "thickness": {
+    "thin": "ideal",
+    "medium": "ideal",
+    "thick": "ok"
+   },
+   "effects": [
+    "bangs_full",
+    "textured",
+    "tight_sides"
+   ],
+   "maintenance": "low",
+   "formal": true,
+   "description": "Atas bertekstur dengan poni pendek ke depan, samping dipotong fade.",
+   "advantages": [
+    "Menyamarkan dahi tinggi atau garis rambut mundur",
+    "Perawatan cepat"
+   ],
+   "styling_tips": [
+    "Acak bagian atas dengan clay matte",
+    "Pangkas setiap 3-4 minggu"
+   ]
+  },
+  {
+   "id": "undercut_slick_back",
+   "name": "Undercut Slick Back",
+   "gender": [
+    "pria"
+   ],
+   "length": "short",
+   "hair_types": {
+    "straight": "ideal",
+    "wavy": "ideal"
+   },
+   "thickness": {
+    "thin": "ok",
+    "medium": "ideal",
+    "thick": "ideal"
+   },
+   "effects": [
+    "tight_sides",
+    "face_exposed",
+    "volume_top",
+    "sharp_lines"
+   ],
+   "maintenance": "medium",
+   "formal": true,
+   "description": "Samping dicukur pendek, atas panjang disisir ke belakang.",
+   "advantages": [
+    "Kontras tegas antara samping dan atas",
+    "Wajah terlihat bersih dan terbuka"
+   ],
+   "styling_tips": [
+    "Gunakan pomade berkilau untuk kesan klasik",
+    "Rapikan samping setiap 2-3 minggu"
+   ]
+  },
+  {
+   "id": "taper_curly_top",
+   "name": "Taper Fade Ikal di Atas",
+   "gender": [
+    "pria"
+   ],
+   "length": "short",
+   "hair_types": {
+    "curly": "ideal",
+    "coily": "ideal",
+    "wavy": "ok"
+   },
+   "thickness": {
+    "thin": "ok",
+    "medium": "ideal",
+    "thick": "ideal"
+   },
+   "effects": [
+    "volume_top",
+    "tight_sides",
+    "textured"
+   ],
+   "maintenance": "low",
+   "formal": true,
+   "description": "Samping taper fade, ikal alami dibiarkan di bagian atas.",
+   "advantages": [
+    "Menonjolkan ikal alami",
+    "Rapi tanpa banyak produk"
+   ],
+   "styling_tips": [
+    "Gunakan krim ikal ringan",
+    "Rapikan fade setiap 2-3 minggu"
+   ]
+  },
+  {
+   "id": "two_block",
+   "name": "Two Block",
+   "gender": [
+    "pria"
+   ],
+   "length": "short",
+   "hair_types": {
+    "straight": "ideal",
+    "wavy": "ok"
+   },
+   "thickness": {
+    "thin": "ok",
+    "medium": "ideal",
+    "thick": "ideal"
+   },
+   "effects": [
+    "bangs_full",
+    "volume_sides"
+   ],
+   "maintenance": "medium",
+   "formal": false,
+   "description": "Gaya Korea: samping dan belakang pendek tertutup oleh rambut atas yang jatuh ke depan.",
+   "advantages": [
+    "Cocok untuk rambut lurus tebal",
+    "Tampilan muda dan rapi"
+   ],
+   "styling_tips": [
+    "Blow dry rambut atas ke bawah lalu ke depan",
+    "Gunakan sedikit wax untuk memisahkan helai"
+   ]
+  },
+  {
+   "id": "comma_hair",
+   "name": "Comma Hair",
+   "gender": [
+    "pria"
+   ],
+   "length": "short",
+   "hair_types": {
+    "straight": "ideal",
+    "wavy": "ideal"
+   },
+   "thickness": {
+    "thin": "ok",
+    "medium": "ideal",
+    "thick": "ok"
+   },
+   "effects": [
+    "bangs_side",
+    "soft_layers"
+   ],
+   "maintenance": "medium",
+   "formal": false,
+   "description": "Poni depan yang melengkung ke dalam seperti tanda koma.",
+   "advantages": [
+    "Membingkai dahi dengan lembut",
+    "Populer dan mudah dikenali"
+   ],
+   "styling_tips": [
+    "Catok bulat kecil atau sisir bulat untuk lengkungan poni",
+    "Gunakan hairspray ringan"
+   ]
+  },
+  {
+   "id": "curtain_hair_men",
+   "name": "Curtain Hair Pria",
+   "gender": [
+    "pria"
+   ],
+   "length": "medium",
+   "hair_types": {
+    "straight": "ideal",
+    "wavy": "ideal"
+   },
+   "thickness": {
+    "thin": "ok",
+    "medium": "ideal",
+    "thick": "ok"
+   },
+   "effects": [
+    "bangs_side",
+    "soft_layers"
+   ],
+   "maintenance": "medium",
+   "formal": false,
+   "description": "Rambut atas sedang dengan belah tengah yang jatuh ke kedua sisi dahi.",
+   "advantages": [
+    "Melunakkan garis wajah",
+    "Tidak perlu fade"
+   ],
+   "styling_tips": [
+    "Keringkan dengan belahan tengah",
+    "Gunakan sea salt spray untuk tekstur"
+   ]
+  },
+  {
+   "id": "messy_fringe",
+   "name": "Messy Fringe",
+   "gender": [
+    "pria"
+   ],
+   "length": "short",
+   "hair_types": {
+    "straight": "ideal",
+    "wavy": "ideal"
+   },
+   "thickness": {
+    "thin": "ideal",
+    "medium": "ideal",
+    "thick": "ok"
+   },
+   "effects": [
+    "bangs_full",
+    "textured"
+   ],
+   "maintenance": "low",
+   "formal": false,
+   "description": "Poni bertekstur yang dibiarkan berantakan ke depan.",
+   "advantages": [
+    "Santai dan mudah ditata",
+    "Menutup dahi tinggi"
+   ],
+   "styling_tips": [
+    "Acak dengan jari menggunakan paste matte",
+    "Pangkas setiap 4-5 minggu"
+   ]
+  },
+  {
+   "id": "caesar_cut",
+   "name": "Caesar Cut",
+   "gender": [
+    "pria"
+   ],
+   "length": "very_short",
+   "hair_types": {
+    "straight": "ideal",
+    "wavy": "ideal",
+    "curly": "ideal"
+   },
+   "thickness": {
+    "thin": "ideal",
+    "medium": "ideal",
+    "thick": "ok"
+   },
+   "effects": [
+    "bangs_full",
+    "tight_sides"
+   ],
+   "maintenance": "low",
+   "formal": true,
+   "description": "Rambut pendek rata dengan poni pendek lurus ke depan.",
+   "advantages": [
+    "Sangat mudah dirawat",
+    "Menyamarkan garis rambut mundur"
+   ],
+   "styling_tips": [
+    "Sisir ke depan saat lembap",
+    "Pangkas setiap 3 minggu"
+   ]
+  },
+  {
+   "id": "medium_slick_back",
+   "name": "Slick Back Sedang",
+   "gender": [
+    "pria"
+   ],
+   "length": "medium",
+   "hair_types": {
+    "straight": "ideal",
+    "wavy": "ideal"
+   },
+   "thickness": {
+    "thin": "ok",
+    "medium": "ideal",
+    "thick": "ok"
+   },
+   "effects": [
+    "face_exposed",
+    "length_past_chin"
+   ],
+   "maintenance": "medium",
+   "formal": true,
+   "description": "Rambut sedang hingga dagu yang disisir ke belakang tanpa fade.",
+   "advantages": [
+    "Elegan untuk acara formal",
+    "Menonjolkan wajah"
+   ],
+   "styling_tips": [
+    "Gunakan pomade berbasis air saat rambut lembap",
+    "Sisir dengan sisir bergigi lebar"
+   ]
+  },
+  {
+   "id": "man_bun",
+   "name": "Man Bun",
+   "gender": [
+    "pria"
+   ],
+   "length": "long",
+   "hair_types": {
+    "straight": "ideal",
+    "wavy": "ideal",
+    "curly": "ideal"
+   },
+   "thickness": {
+    "thin": "ok",
+    "medium": "ideal",
+    "thick": "ideal"
+   },
+   "effects": [
+    "face_exposed",
+    "volume_top"
+   ],
+   "maintenance": "medium",
+   "formal": false,
+   "description": "Rambut panjang yang diikat menjadi cepol di belakang atau atas kepala.",
+   "advantages": [
+    "Fleksibel: bisa diikat atau diurai",
+    "Wajah tetap terbuka saat diikat"
+   ],
+   "styling_tips": [
+    "Gunakan ikat rambut tanpa logam agar rambut tidak patah",
+    "Variasikan posisi cepol untuk mengurangi tarikan"
+   ]
+  },
+  {
+   "id": "bro_flow",
+   "name": "Bro Flow Sebahu",
+   "gender": [
+    "pria"
+   ],
+   "length": "medium",
+   "hair_types": {
+    "straight": "ideal",
+    "wavy": "ideal"
+   },
+   "thickness": {
+    "thin": "ok",
+    "medium": "ideal",
+    "thick": "ok"
+   },
+   "effects": [
+    "length_past_chin",
+    "volume_sides",
+    "soft_layers"
+   ],
+   "maintenance": "low",
+   "formal": false,
+   "description": "Rambut sebatas leher hingga bahu yang disapu ke belakang secara alami.",
+   "advantages": [
+    "Santai dan maskulin",
+    "Tidak perlu fade"
+   ],
+   "styling_tips": [
+    "Gunakan sea salt spray saat rambut lembap",
+    "Rapikan ujung setiap 8 minggu"
+   ]
+  },
+  {
+   "id": "modern_mullet",
+   "name": "Mullet Modern",
+   "gender": [
+    "pria"
+   ],
+   "length": "medium",
+   "hair_types": {
+    "straight": "ideal",
+    "wavy": "ideal",
+    "curly": "ok"
+   },
+   "thickness": {
+    "thin": "ok",
+    "medium": "ideal",
+    "thick": "ok"
+   },
+   "effects": [
+    "textured",
+    "volume_top",
+    "tight_sides"
+   ],
+   "maintenance": "medium",
+   "formal": false,
+   "description": "Atas bertekstur, samping pendek, dan belakang lebih panjang.",
+   "advantages": [
+    "Berkarakter dan sedang tren",
+    "Cocok untuk rambut bergelombang"
+   ],
+   "styling_tips": [
+    "Acak bagian atas dengan clay",
+    "Rapikan samping setiap 3-4 minggu"
+   ]
+  },
+  {
+   "id": "short_afro",
+   "name": "Afro Pendek",
+   "gender": [
+    "pria"
+   ],
+   "length": "short",
+   "hair_types": {
+    "coily": "ideal",
+    "curly": "ok"
+   },
+   "thickness": {
+    "thin": "ok",
+    "medium": "ideal",
+    "thick": "ideal"
+   },
+   "effects": [
+    "volume_top",
+    "volume_sides"
+   ],
+   "maintenance": "low",
+   "formal": true,
+   "description": "Rambut keriting rapat yang dibentuk bulat rata.",
+   "advantages": [
+    "Memanfaatkan tekstur alami",
+    "Bentuk rapi dengan sedikit perawatan"
+   ],
+   "styling_tips": [
+    "Gunakan sisir afro (pick) untuk membentuk",
+    "Lembapkan dengan leave-in setiap hari"
+   ]
+  },
+  {
+   "id": "high_top_fade",
+   "name": "High Top Fade",
+   "gender": [
+    "pria"
+   ],
+   "length": "short",
+   "hair_types": {
+    "coily": "ideal",
+    "curly": "ok"
+   },
+   "thickness": {
+    "thin": "ok",
+    "medium": "ok",
+    "thick": "ideal"
+   },
+   "effects": [
+    "volume_top",
+    "tight_sides",
+    "sharp_lines"
+   ],
+   "maintenance": "high",
+   "formal": false,
+   "description": "Samping fade dengan rambut atas tinggi berbentuk kotak.",
+   "advantages": [
+    "Menambah tinggi kepala",
+    "Tampilan tegas dan khas"
+   ],
+   "styling_tips": [
+    "Bentuk dengan sisir afro dan gunting rutin",
+    "Rapikan setiap 2 minggu"
+   ]
+  },
+  {
+   "id": "short_twists",
+   "name": "Twist Pendek",
+   "gender": [
+    "pria"
+   ],
+   "length": "medium",
+   "hair_types": {
+    "coily": "ideal",
+    "curly": "ok"
+   },
+   "thickness": {
+    "thin": "ok",
+    "medium": "ideal",
+    "thick": "ideal"
+   },
+   "effects": [
+    "volume_top",
+    "textured"
+   ],
+   "maintenance": "high",
+   "formal": false,
+   "description": "Rambut keriting rapat yang dipilin menjadi twist pendek.",
+   "advantages": [
+    "Melindungi ujung rambut",
+    "Tekstur jelas dan rapi"
+   ],
+   "styling_tips": [
+    "Lembapkan kulit kepala secara rutin",
+    "Pilin ulang setiap 2-3 minggu"
+   ]
+  },
+  {
+   "id": "side_swept_taper",
+   "name": "Poni Samping dengan Taper",
+   "gender": [
+    "pria"
+   ],
+   "length": "short",
+   "hair_types": {
+    "straight": "ideal",
+    "wavy": "ideal"
+   },
+   "thickness": {
+    "thin": "ok",
+    "medium": "ideal",
+    "thick": "ok"
+   },
+   "effects": [
+    "bangs_side",
+    "tight_sides",
+    "side_part"
+   ],
+   "maintenance": "medium",
+   "formal": true,
+   "description": "Rambut atas sedang disapu ke satu sisi, samping taper.",
+   "advantages": [
+    "Rapi namun tidak kaku",
+    "Melunakkan dahi lebar"
+   ],
+   "styling_tips": [
+    "Blow dry ke arah samping",
+    "Gunakan cream pomade untuk hasil natural"
+   ]
+  },
+  {
+   "id": "curly_fringe",
+   "name": "Curly Fringe",
+   "gender": [
+    "pria"
+   ],
+   "length": "short",
+   "hair_types": {
+    "curly": "ideal",
+    "wavy": "ideal"
+   },
+   "thickness": {
+    "thin": "ok",
+    "medium": "ideal",
+    "thick": "ideal"
+   },
+   "effects": [
+    "bangs_full",
+    "textured",
+    "tight_sides"
+   ],
+   "maintenance": "low",
+   "formal": false,
+   "description": "Ikal di atas dibiarkan jatuh ke depan sebagai poni, samping fade.",
+   "advantages": [
+    "Menonjolkan ikal alami",
+    "Menutup dahi tinggi"
+   ],
+   "styling_tips": [
+    "Gunakan krim ikal, hindari menyisir saat kering",
+    "Rapikan fade setiap 3 minggu"
+   ]
+  },
+  {
+   "id": "long_layered_men",
+   "name": "Panjang Berlapis Pria",
+   "gender": [
+    "pria"
+   ],
+   "length": "long",
+   "hair_types": {
+    "straight": "ideal",
+    "wavy": "ideal",
+    "curly": "ok"
+   },
+   "thickness": {
+    "thin": "ok",
+    "medium": "ideal",
+    "thick": "ok"
+   },
+   "effects": [
+    "length_past_chin",
+    "soft_layers",
+    "volume_sides"
+   ],
+   "maintenance": "medium",
+   "formal": false,
+   "description": "Rambut panjang melewati bahu dengan lapisan agar tidak berat.",
+   "advantages": [
+    "Lapisan memberi gerak",
+    "Bisa diikat saat beraktivitas"
+   ],
+   "styling_tips": [
+    "Gunakan conditioner dan minyak rambut di ujung",
+    "Rapikan ujung setiap 10 minggu"
+   ]
+  },
+  {
+   "id": "afro_rounded_medium",
+   "name": "Afro Bulat Sedang",
+   "gender": [
+    "pria",
+    "wanita"
+   ],
+   "length": "medium",
+   "hair_types": {
+    "coily": "ideal",
+    "curly": "ok"
+   },
+   "thickness": {
+    "thin": "ok",
+    "medium": "ideal",
+    "thick": "ideal"
+   },
+   "effects": [
+    "volume_sides",
+    "volume_jaw",
+    "textured"
+   ],
+   "maintenance": "medium",
+   "formal": false,
+   "description": "Afro alami berbentuk bulat dengan volume merata sampai sekitar garis rahang.",
+   "advantages": [
+    "Menonjolkan tekstur rambut keriting rapat apa adanya",
+    "Volume di samping menyeimbangkan wajah yang panjang"
+   ],
+   "styling_tips": [
+    "Bentuk dengan afro pick dari akar, bukan sisir rapat",
+    "Rapikan siluetnya setiap 6-8 minggu"
+   ]
+  },
+  {
+   "id": "twist_out",
+   "name": "Twist Out Sebahu",
+   "gender": [
+    "wanita"
+   ],
+   "length": "medium",
+   "hair_types": {
+    "coily": "ideal",
+    "curly": "ideal"
+   },
+   "thickness": {
+    "thin": "ok",
+    "medium": "ideal",
+    "thick": "ideal"
+   },
+   "effects": [
+    "volume_sides",
+    "volume_jaw",
+    "soft_layers",
+    "textured"
+   ],
+   "maintenance": "high",
+   "formal": false,
+   "description": "Rambut dipilin dua helai saat basah lalu dibuka setelah kering, menghasilkan ikal teratur sebahu.",
+   "advantages": [
+    "Ikal tampak rapi dan terdefinisi",
+    "Bisa diulang tanpa panas dari catokan"
+   ],
+   "styling_tips": [
+    "Pilin rambut dengan krim atau butter saat masih lembap",
+    "Buka pilinan hanya setelah benar-benar kering"
+   ]
+  },
+  {
+   "id": "box_braids_side_part",
+   "name": "Box Braids dengan Belahan Samping",
+   "gender": [
+    "wanita"
+   ],
+   "length": "long",
+   "hair_types": {
+    "coily": "ideal",
+    "curly": "ideal"
+   },
+   "thickness": {
+    "thin": "ok",
+    "medium": "ideal",
+    "thick": "ideal"
+   },
+   "effects": [
+    "length_past_chin",
+    "side_part",
+    "textured"
+   ],
+   "maintenance": "high",
+   "formal": true,
+   "description": "Kepang kotak panjang dengan belahan di samping, bisa diurai atau diikat.",
+   "advantages": [
+    "Melindungi rambut alami dari gesekan harian",
+    "Tahan beberapa minggu tanpa penataan ulang"
+   ],
+   "styling_tips": [
+    "Jangan mengepang terlalu kencang di garis rambut",
+    "Lepas dan istirahatkan rambut setelah 6-8 minggu"
+   ]
+  },
+  {
+   "id": "tapered_cut_side_bangs",
+   "name": "Tapered Cut dengan Poni Samping",
+   "gender": [
+    "wanita"
+   ],
+   "length": "short",
+   "hair_types": {
+    "coily": "ideal",
+    "curly": "ideal"
+   },
+   "thickness": {
+    "thin": "ok",
+    "medium": "ideal",
+    "thick": "ideal"
+   },
+   "effects": [
+    "bangs_side",
+    "textured",
+    "tight_sides"
+   ],
+   "maintenance": "medium",
+   "formal": true,
+   "description": "Potongan pendek meruncing untuk rambut keriting dengan ikal panjang yang jatuh ke satu sisi dahi.",
+   "advantages": [
+    "Poni ikal melembutkan dahi dan tulang pipi",
+    "Perawatan harian singkat"
+   ],
+   "styling_tips": [
+    "Bentuk ikal poni dengan jari dan gel ringan",
+    "Rapikan bagian samping setiap 4-6 minggu"
+   ]
+  },
+  {
+   "id": "afro_taper_part",
+   "name": "Taper Afro dengan Belahan",
+   "gender": [
+    "pria"
+   ],
+   "length": "short",
+   "hair_types": {
+    "coily": "ideal",
+    "curly": "ideal"
+   },
+   "thickness": {
+    "thin": "ok",
+    "medium": "ideal",
+    "thick": "ideal"
+   },
+   "effects": [
+    "side_part",
+    "textured",
+    "tight_sides"
+   ],
+   "maintenance": "medium",
+   "formal": true,
+   "description": "Afro pendek dengan taper di samping dan garis belahan yang dicukur di satu sisi.",
+   "advantages": [
+    "Terlihat rapi untuk kantor tanpa meluruskan rambut",
+    "Belahan memberi kesan terstruktur"
+   ],
+   "styling_tips": [
+    "Pertegas garis belahan setiap 2-3 minggu",
+    "Gunakan sponge brush untuk meratakan tekstur bagian atas"
+   ]
+  },
+  {
+   "id": "twist_fringe",
+   "name": "Twist dengan Poni ke Depan",
+   "gender": [
+    "pria"
+   ],
+   "length": "short",
+   "hair_types": {
+    "coily": "ideal",
+    "curly": "ok"
+   },
+   "thickness": {
+    "thin": "ok",
+    "medium": "ideal",
+    "thick": "ideal"
+   },
+   "effects": [
+    "bangs_full",
+    "textured"
+   ],
+   "maintenance": "medium",
+   "formal": false,
+   "description": "Pilinan pendek di bagian atas yang diarahkan jatuh ke depan menutupi sebagian dahi.",
+   "advantages": [
+    "Menutupi dahi yang lebar atau tinggi",
+    "Tekstur pilinan tetap terlihat jelas"
+   ],
+   "styling_tips": [
+    "Buat pilinan dengan sponge brush atau twist comb",
+    "Lembapkan dengan leave-in agar pilinan tidak kering"
+   ]
+  },
+  {
+   "id": "long_locs",
+   "name": "Locs Panjang",
+   "gender": [
+    "pria",
+    "wanita"
+   ],
+   "length": "long",
+   "hair_types": {
+    "coily": "ideal",
+    "curly": "ok"
+   },
+   "thickness": {
+    "thin": "ok",
+    "medium": "ideal",
+    "thick": "ideal"
+   },
+   "effects": [
+    "length_past_chin",
+    "textured",
+    "volume_sides"
+   ],
+   "maintenance": "high",
+   "formal": true,
+   "description": "Rambut keriting rapat yang dibentuk menjadi locs panjang.",
+   "advantages": [
+    "Tekstur alami terjaga dalam jangka panjang",
+    "Bisa diikat, dikepang, atau diurai"
+   ],
+   "styling_tips": [
+    "Rawat akar locs setiap 4-6 minggu",
+    "Cuci dengan sampo bebas residu dan keringkan sampai benar-benar kering"
+   ]
+  }
+ ]
+}

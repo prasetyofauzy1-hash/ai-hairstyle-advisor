@@ -34,7 +34,15 @@ Prepared but **not done**: the FFHQ labeling set (`ml/datasets/ffhq_labeling/`),
 and kappa script. FFHQ labels need at least two human annotators, none are named yet, so no FFHQ result and no Diamond
 class exist. The trained model covers 5 shapes only.
 
+## Phase 4 status
+
+Done: catalog of 55 styles (30 for `pria`, 29 for `wanita`, some for both) with Indonesian text, filters, transparent rule
+scoring, ranking and top-5 explanations in `ml/recommendation/` ([rules and limitations](recommendation-rules.md)). Unit
+tests cover each rule and filter; the sanity review of top-5 per shape × hair type is in
+[`research/results/phase4/sanity_review.md`](../research/results/phase4/sanity_review.md). Not done: reference images
+(none license-clear yet), any validation with users or stylists, ML ranking (no preference data).
+
 ## Next steps
 
 1. FFHQ: annotators label the subset, run `ml.datasets.agreement`, add the consensus set to training and evaluation.
-2. Phase 4 (recommendation engine) after the owner's go-ahead.
+2. Phase 5 (backend & web) after the owner's go-ahead.

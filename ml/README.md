@@ -9,7 +9,7 @@ Framework-independent Python package used by the backend.
 | preprocessing/ | image quality checks, face crop/alignment | 2 |
 | feature_extraction/ | MediaPipe landmarks -> geometric features | 2 |
 | classification/ | rule-based baseline, RF / SVM / XGBoost / MLP | 2-3 |
-| recommendation/ | catalog filtering, scoring, ranking | 4 |
+| recommendation/ | hairstyle catalog, filters, rule scoring, ranking ([rules](../docs/recommendation-rules.md)) | 4 |
 | evaluation/ | landmark/measurement overlays (2); metrics, confusion matrices, CV reports (3) | 2-3 |
 | models/ | MediaPipe model download + checksums (2); serialized models (git-ignored) + model cards (3) | 2-3 |
 

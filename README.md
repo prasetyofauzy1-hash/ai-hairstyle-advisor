@@ -2,7 +2,7 @@
 
 Research-oriented application that analyzes facial geometry, predicts face shape (Oval, Round, Square, Oblong, Heart, Diamond), recommends hairstyles with explanations, and offers a generative virtual try-on. Web (Next.js) and Android (Expo) clients, FastAPI backend, PostgreSQL, OpenCV + MediaPipe, scikit-learn / XGBoost, Hugging Face Diffusers.
 
-> **Status: Phase 3 (machine learning), Kaggle part.** The `ml` package detects the main face, checks image quality, extracts MediaPipe landmarks and normalized geometric features, and classifies face shape with a rule baseline or a model trained on Kaggle niten19 (5 shapes, research use only). Results are in [`research/results/phase3/kaggle_niten19`](research/results/phase3/kaggle_niten19/README.md) and the [model card](docs/model-card.md). The FFHQ labeling set is prepared but has no human labels yet. Every metric in this repository comes from a run.
+> **Status: Phase 4 (recommendation engine).** The `ml` package detects the main face, checks image quality, extracts MediaPipe landmarks and normalized geometric features, and classifies face shape with a rule baseline or a model trained on Kaggle niten19 (5 shapes, research use only). Results are in [`research/results/phase3/kaggle_niten19`](research/results/phase3/kaggle_niten19/README.md) and the [model card](docs/model-card.md). The FFHQ labeling set is prepared but has no human labels yet. A rule-based recommender ranks 55 catalog hairstyles with Indonesian explanations ([rules](docs/recommendation-rules.md)); it is not validated with users. Every metric in this repository comes from a run.
 
 ## Documents
 
@@ -65,3 +65,14 @@ python -m ml.training.train_face_shape data/processed/niten19/features.csv \
 
 FFHQ labeling: `ml.datasets.ffhq_select` → `ml.datasets.labeling_tool` → `ml.datasets.agreement` (see
 [`docs/annotation-guide-id.md`](docs/annotation-guide-id.md)).
+
+## Phase 4: hairstyle recommendations
+
+```python
+from ml.recommendation import UserProfile, recommend
+recommend(UserProfile("round", "wavy", "thin", gender="wanita", preferred_length="medium"))
+```
+
+Returns the top 5 styles with rule-point scores, a per-rule breakdown, explanation, advantages and tips in Bahasa Indonesia.
+Rules and limitations: [`docs/recommendation-rules.md`](docs/recommendation-rules.md). Sanity review:
+`python -m ml.recommendation.review`.
