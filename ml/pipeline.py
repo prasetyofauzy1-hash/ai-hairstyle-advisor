@@ -11,6 +11,7 @@ from dataclasses import dataclass
 import numpy as np
 
 from ml.classification.rule_based import FaceShapePrediction, classify
+from ml.feature_extraction.face_count import FaceCounter
 from ml.feature_extraction.geometry import FaceFeatures, extract_features
 from ml.feature_extraction.landmarks import DetectedFace, FaceLandmarkDetector
 from ml.preprocessing.hair import HairSegmenter, forehead_hair_fraction
@@ -42,13 +43,15 @@ class AnalysisResult:
 
 class FaceAnalyzer:
     def __init__(self, detector: FaceLandmarkDetector | None = None, hair: HairSegmenter | None = None,
-                 use_hair_segmenter: bool = True):
+                 use_hair_segmenter: bool = True, counter: FaceCounter | None = None, use_face_counter: bool = True):
         self.detector = detector or FaceLandmarkDetector()
+        self.counter = counter if counter is not None else (FaceCounter() if use_face_counter else None)
         self.hair = hair if hair is not None else (HairSegmenter() if use_hair_segmenter else None)
 
     def analyze(self, image_rgb: np.ndarray) -> AnalysisResult:
         faces = self.detector.detect(image_rgb)
-        quality = assess_quality(image_rgb, faces)
+        widths = self.counter.face_widths(image_rgb) if self.counter is not None and faces else None
+        quality = assess_quality(image_rgb, faces, detector_face_widths=widths)
         result = AnalysisResult(quality=quality, face=faces[0] if faces else None)
         if not quality.passed:
             log.info("analysis rejected by quality gates: %s", [i.code for i in quality.issues])

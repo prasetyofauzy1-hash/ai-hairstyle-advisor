@@ -68,8 +68,47 @@ def test_head_pose_gates():
     lm[:, 1] = np.linspace(100, 400, 478)
     lm[454, 0], lm[234, 0] = 400, 100
     img = np.full((512, 512, 3), 128, np.uint8)
-    report = assess_quality(img, [DetectedFace(lm, yaw=30, pitch=-25, roll=40)])
+    report = assess_quality(img, [DetectedFace(lm, yaw=30, pitch=-30, roll=40)])
     assert {"head_turned", "head_tilted_vertically", "head_tilted"} <= _codes(report)
+
+
+def test_level_frontal_pitch_passes():
+    lm = np.zeros((478, 3))
+    lm[:, 0] = np.linspace(100, 400, 478)
+    lm[:, 1] = np.linspace(100, 400, 478)
+    lm[454, 0], lm[234, 0] = 400, 100
+    img = np.full((512, 512, 3), 128, np.uint8)
+    assert "head_tilted_vertically" not in _codes(assess_quality(img, [DetectedFace(lm, yaw=0, pitch=19, roll=0)]))
+
+
+def test_dark_but_sharp_is_dark_not_blurry(detector, frontal_image):
+    faces = detector.detect(frontal_image)
+    codes = _codes(assess_quality((frontal_image * 0.2).astype(np.uint8), faces))
+    assert "too_dark" in codes and "blurry" not in codes
+
+
+def test_blown_highlights_are_too_bright(detector, frontal_image):
+    faces = detector.detect(frontal_image)
+    over = np.clip(frontal_image.astype(np.float32) * 1.6, 0, 255).astype(np.uint8)
+    assert "too_bright" in _codes(assess_quality(over, faces))
+
+
+def test_sunglasses_warn(detector, frontal_image):
+    face = detector.detect(frontal_image)[0]
+    img = frontal_image.copy()
+    x0, y0, x1, y1 = face.bbox
+    for idx in ([33, 160, 158, 133, 153, 144], [362, 385, 387, 263, 373, 380]):
+        c = face.landmarks[idx, :2].mean(0)
+        cv2.ellipse(img, (int(c[0]), int(c[1])), (int(x1 - x0) // 6, int(y1 - y0) // 12), 0, 0, 360, (15, 15, 15), -1)
+    report = assess_quality(img, [face])
+    assert "eyes_covered" in _codes(report) and report.passed
+    assert "eyes_covered" not in _codes(assess_quality(frontal_image, [face]))
+
+
+def test_group_photo_reports_only_multiple_faces(detector, frontal_image):
+    faces = detector.detect(frontal_image)
+    report = assess_quality(frontal_image, faces, detector_face_widths=[160.0, 155.0, 151.0])
+    assert _codes(report) == {"multiple_faces"}
 
 
 def test_messages_are_indonesian():
