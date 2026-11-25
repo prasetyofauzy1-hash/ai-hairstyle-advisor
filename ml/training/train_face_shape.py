@@ -97,7 +97,9 @@ def metrics(y_true, y_pred, labels) -> dict:
         "accuracy": accuracy_score(y_true, y_pred),
         "macro_precision": p, "macro_recall": r, "macro_f1": f1,
         "per_class": {c: {"precision": pc[i], "recall": rc[i], "f1": fc[i], "support": int(sc[i])} for i, c in enumerate(labels)},
-        "confusion_matrix": confusion_matrix(y_true, y_pred, labels=labels).tolist(),
+        # Columns include predicted labels absent from the data (the rule baseline can say diamond), so no row is lost.
+        "confusion_labels": (cm_labels := list(labels) + sorted(set(y_pred) - set(labels))),
+        "confusion_matrix": confusion_matrix(y_true, y_pred, labels=cm_labels)[:len(labels)].tolist(),
     }
 
 
@@ -227,10 +229,11 @@ def _plots(out: Path, report: dict, df: pd.DataFrame, labels: list[str]) -> None
     for ax, name in zip(axes.ravel(), names):
         cm = np.array(report["models"][name]["test"]["confusion_matrix"])
         ax.imshow(cm, cmap="Blues")
-        ax.set_xticks(range(len(labels)), labels, rotation=45, fontsize=8)
+        cols = report["models"][name]["test"]["confusion_labels"]
+        ax.set_xticks(range(len(cols)), cols, rotation=45, fontsize=8)
         ax.set_yticks(range(len(labels)), labels, fontsize=8)
         for i in range(len(labels)):
-            for j in range(len(labels)):
+            for j in range(len(cols)):
                 ax.text(j, i, cm[i, j], ha="center", va="center", fontsize=7)
         ax.set_title(f"{name}\nmacro-F1 {report['models'][name]['test']['macro_f1']:.3f}", fontsize=9)
         ax.set_xlabel("predicted", fontsize=8)
