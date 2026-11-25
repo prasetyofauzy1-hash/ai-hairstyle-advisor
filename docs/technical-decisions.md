@@ -46,3 +46,13 @@
 | TD-27 | Length preference is strict unless fewer than 5 styles match; then nearby lengths are added with a point penalty and a note | Users keep their choice where possible and always see why a different length appears | Hard length filter (empty results for sparse combinations) |
 | TD-28 | `reference_image` is `null` with a note for now | No license-clear hairstyle photos were sourced; unlicensed images are not used | Scraped reference photos |
 
+## Phase 5 decisions
+
+| ID | Decision | Reason | Alternatives rejected |
+|---|---|---|---|
+| TD-29 | Images are processed in memory; stored only when the upload carries `consent=true`, re-encoded to JPEG under a UUID name | Consent before storage; re-encoding drops EXIF/GPS | Always storing; storing the original bytes |
+| TD-30 | No user accounts in Phase 5: each analysis gets a random access token (SHA-256 stored) required to read, fetch the image, recommend or delete | Lets one person try the app and delete their data without building auth now | Public analysis IDs (anyone with the ID could see the photo); full auth before any UI |
+| TD-31 | The face shape shown is the Phase 3 MLP; the Phase 2 rule result is shown as a comparison; users can override the shape for recommendations | The learned model scored higher on held-out data; Diamond is only reachable by override | Hiding the model's uncertainty; showing scores as percentages |
+| TD-32 | `hairstyles` table is synced from `ml/recommendation/catalog.json` at startup | One source of truth; recommendations reference catalog rows by slug | Editing styles in the DB (would drift from the engine) |
+| TD-33 | `users`, `virtual_tryons` and `model_experiments` tables are deferred | Phase 5 has no accounts or try-on; empty tables would be speculative | Creating them now |
+
