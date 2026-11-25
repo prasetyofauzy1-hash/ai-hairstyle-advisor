@@ -1,0 +1,536 @@
+{
+  "jasmin_moghbeli.jpg": {
+    "quality": {
+      "passed": true,
+      "issues": [],
+      "metrics": {
+        "face_count": 1.0,
+        "face_width_px": 209.949,
+        "sharpness": 288.8486,
+        "brightness": 127.8823,
+        "yaw_deg": -7.0208,
+        "pitch_deg": 8.6698,
+        "roll_deg": 3.816
+      }
+    },
+    "features": {
+      "measurements": {
+        "face_length": 269.1479,
+        "forehead_width": 179.8355,
+        "cheekbone_width": 209.949,
+        "jaw_width": 169.8738,
+        "chin_width": 69.6469
+      },
+      "length_to_width": 1.282,
+      "forehead_to_cheekbone": 0.8566,
+      "jaw_to_cheekbone": 0.8091,
+      "forehead_to_jaw": 1.0586,
+      "chin_to_jaw": 0.41,
+      "jaw_angle_deg": 149.2044
+    },
+    "forehead_hair_fraction": 0.0,
+    "forehead_visible": true,
+    "prediction": {
+      "shape": "oblong",
+      "label_id": "Lonjong",
+      "scores": {
+        "oval": 0.3353,
+        "round": 0.0286,
+        "square": 0.0161,
+        "oblong": 0.365,
+        "heart": 0.037,
+        "diamond": 0.218
+      },
+      "deviations": {
+        "oval": {
+          "length_to_width": 1.0328,
+          "forehead_to_jaw": -0.517,
+          "jaw_to_cheekbone": 0.5824,
+          "jaw_angle_deg": 0.1721
+        },
+        "round": {
+          "length_to_width": 3.3661,
+          "forehead_to_jaw": 0.108,
+          "jaw_to_cheekbone": -0.2176,
+          "jaw_angle_deg": -0.3994
+        },
+        "square": {
+          "length_to_width": 3.0328,
+          "forehead_to_jaw": 1.1235,
+          "jaw_to_cheekbone": -1.4176,
+          "jaw_angle_deg": 1.1721
+        },
+        "oblong": {
+          "length_to_width": -1.1147,
+          "forehead_to_jaw": 0.108,
+          "jaw_to_cheekbone": -0.1813,
+          "jaw_angle_deg": 0.2755
+        },
+        "heart": {
+          "length_to_width": 1.171,
+          "forehead_to_jaw": -2.392,
+          "jaw_to_cheekbone": 1.7824,
+          "chin_to_jaw": 0.4999
+        },
+        "diamond": {
+          "length_to_width": 0.4567,
+          "forehead_to_cheekbone": 1.1314,
+          "forehead_to_jaw": 0.733,
+          "jaw_to_cheekbone": 1.1824
+        }
+      },
+      "explanation_id": "Bentuk wajah paling mendekati Lonjong, terutama karena rasio lebar dahi terhadap rahang 1.06 dan rasio lebar rahang terhadap tulang pipi 0.81. Ini estimasi berbasis aturan geometri yang belum dikalibrasi dengan data berlabel.",
+      "method": "rule_based_v0",
+      "calibrated": false
+    }
+  },
+  "jerry_m_linenger.jpg": {
+    "quality": {
+      "passed": true,
+      "issues": [],
+      "metrics": {
+        "face_count": 1.0,
+        "face_width_px": 300.2814,
+        "sharpness": 201.7004,
+        "brightness": 151.7528,
+        "yaw_deg": -14.2483,
+        "pitch_deg": 10.7718,
+        "roll_deg": 11.192
+      }
+    },
+    "features": {
+      "measurements": {
+        "face_length": 367.4684,
+        "forehead_width": 251.0409,
+        "cheekbone_width": 300.2814,
+        "jaw_width": 256.4979,
+        "chin_width": 99.4472
+      },
+      "length_to_width": 1.2237,
+      "forehead_to_cheekbone": 0.836,
+      "jaw_to_cheekbone": 0.8542,
+      "forehead_to_jaw": 0.9787,
+      "chin_to_jaw": 0.3877,
+      "jaw_angle_deg": 145.7859
+    },
+    "forehead_hair_fraction": 0.0,
+    "forehead_visible": true,
+    "prediction": {
+      "shape": "oval",
+      "label_id": "Oval",
+      "scores": {
+        "oval": 0.2382,
+        "round": 0.1074,
+        "square": 0.2164,
+        "oblong": 0.2195,
+        "heart": 0.0068,
+        "diamond": 0.2118
+      },
+      "deviations": {
+        "oval": {
+          "length_to_width": 0.0624,
+          "forehead_to_jaw": -1.5159,
+          "jaw_to_cheekbone": 1.4838,
+          "jaw_angle_deg": -0.3163
+        },
+        "round": {
+          "length_to_width": 2.3958,
+          "forehead_to_jaw": -0.8909,
+          "jaw_to_cheekbone": 0.6838,
+          "jaw_angle_deg": -0.8877
+        },
+        "square": {
+          "length_to_width": 2.0624,
+          "forehead_to_jaw": -0.0182,
+          "jaw_to_cheekbone": -0.5162,
+          "jaw_angle_deg": 0.6837
+        },
+        "oblong": {
+          "length_to_width": -1.9465,
+          "forehead_to_jaw": -0.8909,
+          "jaw_to_cheekbone": 0.5699,
+          "jaw_angle_deg": -0.1518
+        },
+        "heart": {
+          "length_to_width": 0.3392,
+          "forehead_to_jaw": -3.3909,
+          "jaw_to_cheekbone": 2.6838,
+          "chin_to_jaw": 0.1285
+        },
+        "diamond": {
+          "length_to_width": -0.375,
+          "forehead_to_cheekbone": 0.7204,
+          "forehead_to_jaw": -0.2659,
+          "jaw_to_cheekbone": 2.0838
+        }
+      },
+      "explanation_id": "Bentuk wajah paling mendekati Oval, terutama karena rasio panjang terhadap lebar wajah 1.22 dan sudut rahang 145.79. Ini estimasi berbasis aturan geometri yang belum dikalibrasi dengan data berlabel.",
+      "method": "rule_based_v0",
+      "calibrated": false
+    }
+  },
+  "jonny_kim.jpg": {
+    "quality": {
+      "passed": true,
+      "issues": [],
+      "metrics": {
+        "face_count": 1.0,
+        "face_width_px": 237.6004,
+        "sharpness": 148.4964,
+        "brightness": 123.5321,
+        "yaw_deg": -6.9894,
+        "pitch_deg": 10.2521,
+        "roll_deg": -1.0679
+      }
+    },
+    "features": {
+      "measurements": {
+        "face_length": 300.9621,
+        "forehead_width": 198.4198,
+        "cheekbone_width": 237.6004,
+        "jaw_width": 185.4108,
+        "chin_width": 76.3699
+      },
+      "length_to_width": 1.2667,
+      "forehead_to_cheekbone": 0.8351,
+      "jaw_to_cheekbone": 0.7803,
+      "forehead_to_jaw": 1.0702,
+      "chin_to_jaw": 0.4119,
+      "jaw_angle_deg": 151.4365
+    },
+    "forehead_hair_fraction": 0.0,
+    "forehead_visible": true,
+    "prediction": {
+      "shape": "oval",
+      "label_id": "Oval",
+      "scores": {
+        "oval": 0.3549,
+        "round": 0.0339,
+        "square": 0.0093,
+        "oblong": 0.2379,
+        "heart": 0.0662,
+        "diamond": 0.2978
+      },
+      "deviations": {
+        "oval": {
+          "length_to_width": 0.7779,
+          "forehead_to_jaw": -0.373,
+          "jaw_to_cheekbone": 0.0069,
+          "jaw_angle_deg": 0.4909
+        },
+        "round": {
+          "length_to_width": 3.1112,
+          "forehead_to_jaw": 0.252,
+          "jaw_to_cheekbone": -0.7931,
+          "jaw_angle_deg": -0.0805
+        },
+        "square": {
+          "length_to_width": 2.7779,
+          "forehead_to_jaw": 1.288,
+          "jaw_to_cheekbone": -1.9931,
+          "jaw_angle_deg": 1.4909
+        },
+        "oblong": {
+          "length_to_width": -1.3332,
+          "forehead_to_jaw": 0.252,
+          "jaw_to_cheekbone": -0.6609,
+          "jaw_angle_deg": 0.5546
+        },
+        "heart": {
+          "length_to_width": 0.9525,
+          "forehead_to_jaw": -2.248,
+          "jaw_to_cheekbone": 1.2069,
+          "chin_to_jaw": 0.5316
+        },
+        "diamond": {
+          "length_to_width": 0.2382,
+          "forehead_to_cheekbone": 0.702,
+          "forehead_to_jaw": 0.877,
+          "jaw_to_cheekbone": 0.6069
+        }
+      },
+      "explanation_id": "Bentuk wajah paling mendekati Oval, terutama karena rasio lebar rahang terhadap tulang pipi 0.78 dan rasio lebar dahi terhadap rahang 1.07. Ini estimasi berbasis aturan geometri yang belum dikalibrasi dengan data berlabel.",
+      "method": "rule_based_v0",
+      "calibrated": false
+    }
+  },
+  "kenneth_reightler.jpg": {
+    "quality": {
+      "passed": true,
+      "issues": [],
+      "metrics": {
+        "face_count": 1.0,
+        "face_width_px": 181.5249,
+        "sharpness": 165.8135,
+        "brightness": 149.3468,
+        "yaw_deg": -7.4697,
+        "pitch_deg": 12.7392,
+        "roll_deg": 1.1575
+      }
+    },
+    "features": {
+      "measurements": {
+        "face_length": 217.397,
+        "forehead_width": 153.2989,
+        "cheekbone_width": 181.5249,
+        "jaw_width": 151.7693,
+        "chin_width": 60.6138
+      },
+      "length_to_width": 1.1976,
+      "forehead_to_cheekbone": 0.8445,
+      "jaw_to_cheekbone": 0.8361,
+      "forehead_to_jaw": 1.0101,
+      "chin_to_jaw": 0.3994,
+      "jaw_angle_deg": 147.2463
+    },
+    "forehead_hair_fraction": 0.0,
+    "forehead_visible": true,
+    "prediction": {
+      "shape": "oval",
+      "label_id": "Oval",
+      "scores": {
+        "oval": 0.2907,
+        "round": 0.177,
+        "square": 0.1888,
+        "oblong": 0.1363,
+        "heart": 0.0152,
+        "diamond": 0.192
+      },
+      "deviations": {
+        "oval": {
+          "length_to_width": -0.3731,
+          "forehead_to_jaw": -1.124,
+          "jaw_to_cheekbone": 1.1216,
+          "jaw_angle_deg": -0.1077
+        },
+        "round": {
+          "length_to_width": 1.9602,
+          "forehead_to_jaw": -0.499,
+          "jaw_to_cheekbone": 0.3216,
+          "jaw_angle_deg": -0.6791
+        },
+        "square": {
+          "length_to_width": 1.6269,
+          "forehead_to_jaw": 0.4297,
+          "jaw_to_cheekbone": -0.8784,
+          "jaw_angle_deg": 0.8923
+        },
+        "oblong": {
+          "length_to_width": -2.3198,
+          "forehead_to_jaw": -0.499,
+          "jaw_to_cheekbone": 0.268,
+          "jaw_angle_deg": 0.0308
+        },
+        "heart": {
+          "length_to_width": -0.0341,
+          "forehead_to_jaw": -2.999,
+          "jaw_to_cheekbone": 2.3216,
+          "chin_to_jaw": 0.323
+        },
+        "diamond": {
+          "length_to_width": -0.7484,
+          "forehead_to_cheekbone": 0.8901,
+          "forehead_to_jaw": 0.126,
+          "jaw_to_cheekbone": 1.7216
+        }
+      },
+      "explanation_id": "Bentuk wajah paling mendekati Oval, terutama karena sudut rahang 147.25 dan rasio panjang terhadap lebar wajah 1.20. Ini estimasi berbasis aturan geometri yang belum dikalibrasi dengan data berlabel.",
+      "method": "rule_based_v0",
+      "calibrated": false
+    }
+  },
+  "linda_m_godwin.jpg": {
+    "quality": {
+      "passed": true,
+      "issues": [
+        {
+          "code": "forehead_covered",
+          "message": "Dahi sebagian tertutup rambut, sehingga pengukuran dahi kurang akurat.",
+          "blocking": false
+        }
+      ],
+      "metrics": {
+        "face_count": 1.0,
+        "face_width_px": 166.9958,
+        "sharpness": 193.0137,
+        "brightness": 112.2038,
+        "yaw_deg": 5.5817,
+        "pitch_deg": 12.6706,
+        "roll_deg": -0.2858
+      }
+    },
+    "features": {
+      "measurements": {
+        "face_length": 193.2343,
+        "forehead_width": 140.0568,
+        "cheekbone_width": 166.9958,
+        "jaw_width": 139.6144,
+        "chin_width": 55.7776
+      },
+      "length_to_width": 1.1571,
+      "forehead_to_cheekbone": 0.8387,
+      "jaw_to_cheekbone": 0.836,
+      "forehead_to_jaw": 1.0032,
+      "chin_to_jaw": 0.3995,
+      "jaw_angle_deg": 144.5543
+    },
+    "forehead_hair_fraction": 0.328,
+    "forehead_visible": false,
+    "prediction": {
+      "shape": "square",
+      "label_id": "Persegi",
+      "scores": {
+        "oval": 0.2597,
+        "round": 0.2358,
+        "square": 0.3235,
+        "oblong": 0.0355,
+        "heart": 0.0873,
+        "diamond": 0.0582
+      },
+      "deviations": {
+        "oval": {
+          "length_to_width": -1.048,
+          "jaw_to_cheekbone": 1.1207,
+          "jaw_angle_deg": -0.4922
+        },
+        "round": {
+          "length_to_width": 1.2853,
+          "jaw_to_cheekbone": 0.3207,
+          "jaw_angle_deg": -1.0637
+        },
+        "square": {
+          "length_to_width": 0.952,
+          "jaw_to_cheekbone": -0.8793,
+          "jaw_angle_deg": 0.5078
+        },
+        "oblong": {
+          "length_to_width": -2.8983,
+          "jaw_to_cheekbone": 0.2673,
+          "jaw_angle_deg": -0.3057
+        },
+        "heart": {
+          "length_to_width": -0.6126,
+          "jaw_to_cheekbone": 2.3207,
+          "chin_to_jaw": 0.3252
+        },
+        "diamond": {
+          "length_to_width": -1.3268,
+          "jaw_to_cheekbone": 1.7207
+        }
+      },
+      "explanation_id": "Bentuk wajah paling mendekati Persegi, terutama karena sudut rahang 144.55 dan rasio lebar rahang terhadap tulang pipi 0.84. Ini estimasi berbasis aturan geometri yang belum dikalibrasi dengan data berlabel.",
+      "method": "rule_based_v0",
+      "calibrated": false
+    }
+  },
+  "mae_jemison.jpg": {
+    "quality": {
+      "passed": true,
+      "issues": [],
+      "metrics": {
+        "face_count": 1.0,
+        "face_width_px": 184.5153,
+        "sharpness": 89.2956,
+        "brightness": 115.768,
+        "yaw_deg": -2.9569,
+        "pitch_deg": 12.1611,
+        "roll_deg": 4.1185
+      }
+    },
+    "features": {
+      "measurements": {
+        "face_length": 223.2467,
+        "forehead_width": 162.47,
+        "cheekbone_width": 184.5153,
+        "jaw_width": 142.0611,
+        "chin_width": 56.5236
+      },
+      "length_to_width": 1.2099,
+      "forehead_to_cheekbone": 0.8805,
+      "jaw_to_cheekbone": 0.7699,
+      "forehead_to_jaw": 1.1437,
+      "chin_to_jaw": 0.3979,
+      "jaw_angle_deg": 153.9324
+    },
+    "forehead_hair_fraction": 0.0,
+    "forehead_visible": true,
+    "prediction": {
+      "shape": "oval",
+      "label_id": "Oval",
+      "scores": {
+        "oval": 0.4247,
+        "round": 0.0935,
+        "square": 0.0078,
+        "oblong": 0.0872,
+        "heart": 0.2716,
+        "diamond": 0.1152
+      },
+      "deviations": {
+        "oval": {
+          "length_to_width": -0.1682,
+          "forehead_to_jaw": 0.5458,
+          "jaw_to_cheekbone": -0.2017,
+          "jaw_angle_deg": 0.8475
+        },
+        "round": {
+          "length_to_width": 2.1652,
+          "forehead_to_jaw": 1.1708,
+          "jaw_to_cheekbone": -1.0017,
+          "jaw_angle_deg": 0.2761
+        },
+        "square": {
+          "length_to_width": 1.8318,
+          "forehead_to_jaw": 2.338,
+          "jaw_to_cheekbone": -2.2017,
+          "jaw_angle_deg": 1.8475
+        },
+        "oblong": {
+          "length_to_width": -2.1442,
+          "forehead_to_jaw": 1.1708,
+          "jaw_to_cheekbone": -0.8347,
+          "jaw_angle_deg": 0.8665
+        },
+        "heart": {
+          "length_to_width": 0.1416,
+          "forehead_to_jaw": -1.3292,
+          "jaw_to_cheekbone": 0.9983,
+          "chin_to_jaw": 0.298
+        },
+        "diamond": {
+          "length_to_width": -0.5727,
+          "forehead_to_cheekbone": 1.6105,
+          "forehead_to_jaw": 1.7958,
+          "jaw_to_cheekbone": 0.3983
+        }
+      },
+      "explanation_id": "Bentuk wajah paling mendekati Oval, terutama karena rasio panjang terhadap lebar wajah 1.21 dan rasio lebar rahang terhadap tulang pipi 0.77. Ini estimasi berbasis aturan geometri yang belum dikalibrasi dengan data berlabel.",
+      "method": "rule_based_v0",
+      "calibrated": false
+    }
+  },
+  "susan_j_helms.jpg": {
+    "quality": {
+      "passed": false,
+      "issues": [
+        {
+          "code": "head_tilted_vertically",
+          "message": "Kepala terlalu menunduk atau mendongak. Posisikan wajah sejajar dengan kamera.",
+          "blocking": true
+        }
+      ],
+      "metrics": {
+        "face_count": 1.0,
+        "face_width_px": 152.3319,
+        "sharpness": 215.4843,
+        "brightness": 128.0462,
+        "yaw_deg": -11.6939,
+        "pitch_deg": 20.1023,
+        "roll_deg": -9.5444
+      }
+    },
+    "features": null,
+    "forehead_hair_fraction": null,
+    "forehead_visible": null,
+    "prediction": null
+  }
+}

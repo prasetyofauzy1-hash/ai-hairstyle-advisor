@@ -1,4 +1,4 @@
-# Technical Decisions (Phase 1)
+# Technical Decisions
 
 | ID | Decision | Reason | Alternatives rejected |
 |---|---|---|---|
@@ -15,3 +15,15 @@
 | TD-11 | Images: consent-gated storage, UUID names, EXIF stripped, never logged | Biometric privacy, UU PDP | Store everything by default |
 | TD-12 | Scope: non-commercial research/portfolio | Licenses of InsightFace, IP-Adapter-FaceID, CelebAMask-HQ | — |
 | TD-13 | UI text in Bahasa Indonesia; code/docs in English | Brief §10; portfolio reach | — |
+| TD-14 | Phase 3 data: Kaggle niten19 + self-labeled FFHQ, **non-commercial research only** (owner's decision) | Only large labeled source; scraped-photo provenance unclear, so no commercial use; FFHQ adds both genders and Diamond | Kaggle only; delaying until a clean commercial dataset exists |
+
+## Phase 2 decisions
+
+| ID | Decision | Reason | Alternatives rejected |
+|---|---|---|---|
+| TD-15 | Face Landmarker (Tasks API, 478 pts incl. iris, `num_faces=3`); largest face is the subject, a second face ≥ 50 % of its area rejects the photo | Main-face selection without a separate detector; ambiguity is surfaced instead of guessed | BlazeFace + crop + mesh (extra model, same result) |
+| TD-16 | Features are ratios and the jaw angle after rotating landmarks so the iris line is horizontal | Invariant to scale, translation and roll (tested exactly) | Raw pixel distances; full 3D normalization (yaw from a single image is unreliable) |
+| TD-17 | Forehead visibility = share of the forehead polygon the MediaPipe hair segmenter marks as hair; ≥ 0.3 drops forehead features from the classifier and warns the user | Landmark 10 is below the hairline and bangs cover it; this keeps hair from skewing the forehead width | Ignoring occlusion; asking users to pull hair back as a hard gate |
+| TD-18 | Rule baseline = distance to per-shape prototypes, softmax to relative scores, flagged `calibrated: false` | Transparent, gives a ranked list for recommendations; Phase 3 evaluates and calibrates it | Hand-written if/else thresholds (brittle, no ranking) |
+| TD-19 | Quality-gate messages and explanations in Bahasa Indonesia; logs carry only check codes and the predicted shape | Brief requirements; faces and image data never in logs (tested) | — |
+| TD-20 | Public-domain NASA portraits as test fixtures (`ml/datasets/samples/SOURCES.md`) | License-clear, real faces for CI; carry no labels, so no accuracy is claimed from them | FFHQ samples (CC BY-NC-SA, would need attribution handling in CI) |

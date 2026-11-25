@@ -5,7 +5,7 @@ Each phase ends with a review gate: the owner approves before the next phase sta
 | Phase | Scope | Exit criteria (all must be real, measured) | Est. |
 |---|---|---|---|
 | 1 Research & architecture | Datasets, models, risks, architecture, structure | This repo's docs approved; dataset decision made | done |
-| 2 Computer vision | Quality gates, MediaPipe landmarks, alignment, features, overlay visualization, rule-based classifier | `ml` package + pytest; landmark overlays on sample images; feature stability test (same face, small pose changes) | 3-5 d |
+| 2 Computer vision | Quality gates, MediaPipe landmarks, alignment, features, overlay visualization, rule-based classifier | `ml` package + pytest; landmark overlays on sample images; feature stability test (same face, small pose changes) | done |
 | 3 Machine learning | Dataset prep (approved sources), label validation, feature selection, RF/SVM/XGBoost/MLP, stratified/group CV, tuning, serialization | Evaluation report with accuracy, macro P/R/F1, confusion matrices vs rule baseline; model card; reproducible with one command | 4-7 d (+ labeling time) |
 | 4 Recommendation | Curated catalog (male + female, ≥ 40 styles), filter + transparent scoring + ranking + explanations | Unit tests per rule; sanity review of top-5 for each shape × hair type | 3-4 d |
 | 5 Backend & web | FastAPI, Postgres schema + Alembic, consent & deletion, Next.js pages in Bahasa Indonesia | End-to-end analysis → recommendations in browser; OpenAPI docs; integration tests | 6-9 d |
@@ -13,10 +13,17 @@ Each phase ends with a review gate: the owner approves before the next phase sta
 | 7 Android | Expo app: camera/gallery, analysis, recommendations, try-on | APK build talking to the same API | 4-6 d |
 | 8 Testing & deployment | Coverage of critical paths, performance, Docker Compose (CPU + GPU profiles), deployment docs | Fresh-machine install works from README | 3-4 d |
 
-## Immediate next steps (Phase 2, after approval)
+## Phase 2 status
 
-1. `ml/preprocessing`: image loading, EXIF strip, quality gates.
-2. `ml/feature_extraction`: Face Landmarker wrapper, eye alignment, feature vector + `forehead_visible`.
-3. Landmark/measurement overlay renderer.
-4. Rule-based classifier with soft scores.
-5. Tests on a handful of license-clear sample images (FFHQ, attributed).
+Done: `ml/preprocessing` (decode, EXIF orientation, quality gates), `ml/feature_extraction` (Face Landmarker, roll alignment,
+features), forehead-occlusion estimate from the MediaPipe hair segmenter, `ml/classification/rule_based.py`, overlay renderer,
+pytest suite (`ml/tests`, CI in `.github/workflows/ml-tests.yml`), overlays in `research/results/phase2/`.
+
+Known gaps carried into Phase 3: stability is tested with synthetic roll/scale/perspective changes of one photo, not real
+multi-pose photos of one person; rule prototypes are uncalibrated and their accuracy is unknown until a labeled split exists.
+
+## Next steps (Phase 3, after the owner's go-ahead)
+
+1. Build the Kaggle niten19 + self-labeled FFHQ sets (research only, TD-14), with identity-aware splits.
+2. Run the Phase 2 pipeline over them to produce feature tables; report the quality-gate rejection rate.
+3. Evaluate the rule baseline on a held-out split, then calibrate its prototypes; compare RF/SVM/XGBoost/MLP.
