@@ -34,22 +34,26 @@ Jangan melihat label anotator lain sampai Anda selesai.</p>
 <div id="item"></div>
 <script>
 const ITEMS=__ITEMS__, CHOICES=__CHOICES__;
-const KEY="faceshape-labels", labels=JSON.parse(localStorage.getItem(KEY)||"{}");
-let i=0;
+const KEY="faceshape-labels";
+let i=0, labels={};
 const who=document.getElementById("who"); who.value=localStorage.getItem(KEY+"-who")||"";
-who.oninput=()=>localStorage.setItem(KEY+"-who",who.value);
+const name=()=>who.value.trim().replace(/[^A-Za-z0-9_-]+/g,"_");
+function load(){labels=name()?JSON.parse(localStorage.getItem(KEY+":"+name())||"{}"):{};}
+who.oninput=()=>{localStorage.setItem(KEY+"-who",who.value);load();render();};
+load();
 function render(){const it=ITEMS[i];
  document.getElementById("progress").textContent=`Gambar ${i+1} dari ${ITEMS.length}, sudah dilabeli ${Object.keys(labels).length}`;
  document.getElementById("item").innerHTML=`<h3>FFHQ ${it.id}</h3><img src="${it.src}"><small>Foto: ${it.credit}</small><div>`+
   CHOICES.map(([v,t],k)=>`<button class="${labels[it.id]===v?"sel":""}" onclick="pick('${v}')">${k+1}. ${t}</button>`).join("")+"</div>";}
-function pick(v){labels[ITEMS[i].id]=v;localStorage.setItem(KEY,JSON.stringify(labels));go(1);}
+function pick(v){if(!name()){alert("Isi nama anotator dulu.");return;}
+ labels[ITEMS[i].id]=v;localStorage.setItem(KEY+":"+name(),JSON.stringify(labels));go(1);}
 function go(d){i=Math.max(0,Math.min(ITEMS.length-1,i+d));render();}
 document.onkeydown=e=>{if(e.target===who)return;const n=parseInt(e.key);if(n>=1&&n<=CHOICES.length)pick(CHOICES[n-1][0]);
  if(e.key==="ArrowRight")go(1);if(e.key==="ArrowLeft")go(-1);};
-function exportCsv(){if(!who.value){alert("Isi nama anotator dulu.");return;}
- const rows=["ffhq_id,annotator,label"].concat(ITEMS.filter(it=>labels[it.id]).map(it=>`${it.id},${who.value},${labels[it.id]}`));
+function exportCsv(){if(!name()){alert("Isi nama anotator dulu.");return;}
+ const rows=["ffhq_id,annotator,label"].concat(ITEMS.filter(it=>labels[it.id]).map(it=>`${it.id},${name()},${labels[it.id]}`));
  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([rows.join("\\n")],{type:"text/csv"}));
- a.download=`labels_${who.value}.csv`;a.click();}
+ a.download=`labels_${name()}.csv`;a.click();}
 render();
 </script></body></html>"""
 
