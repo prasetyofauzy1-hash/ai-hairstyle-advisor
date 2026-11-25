@@ -6,8 +6,10 @@ against NVIDIA's `ffhq-dataset-v2.json`, and passing the Phase 2 quality gates. 
 Flickr URL for attribution. Images are not committed.
 
 Current manifest: 600 images (Attribution 522, Public Domain Mark 62, CC0 13, US Government Work 3), reached after
-checking 872 candidates in seed-42 order (272 rejected by the quality gates or the checksum). Re-running `ffhq_select`
-with the same metadata recreates the same list and downloads the images into `data/raw/ffhq/`.
+checking 872 candidates in seed-42 order (272 rejected by the quality gates or the checksum). Do not re-run
+`ffhq_select` to get the images: it rewrites the manifest under the current quality gates, which may no longer match
+the split and labels. `python -m ml.datasets.ffhq_features --download` fetches this manifest's photos into
+`data/raw/ffhq/` instead.
 
 **Split:** `split.csv` assigns the first 104 manifest rows to the human test set, matching the photos already labeled
 on the 600-photo page, and the remaining 496 to the AI training set. Do not reorder the manifest. The split separates
