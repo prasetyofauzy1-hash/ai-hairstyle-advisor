@@ -23,6 +23,10 @@ To generate an optional page containing only the 104 test photos, pass
 **Status:** Uzy alone labeled the 104 test photos. The second annotator was dropped, so inter-annotator agreement
 cannot be measured.
 
+`human_labels_test.csv` holds Uzy's 104 test labels (oval 64, round 29, oblong 11), in split order. They are used only
+for evaluation (`python -m ml.datasets.ffhq_features`, then `python -m ml.training.train_face_shape_ffhq`); results
+are in `research/results/phase3/kaggle_plus_ffhq_ai/`.
+
 `ai_pseudo_labels_train.csv` contains the 496 training photos' AI-generated labels. Devin labeled them with its
 own vision from 256×256 pixel contact-sheet tiles, without an external API. These pseudo-labels are for training
 only, are never ground truth, and must never be merged with the human test labels.

@@ -70,3 +70,24 @@ def test_labeling_page_rejects_incomplete_split(tmp_path):
     split.write_text("ffhq_id,split\n40566,test\n23628,train\n", encoding="utf-8")
     with pytest.raises(ValueError, match="each manifest ID exactly once"):
         labeling_tool.build_page(SUBSET / "manifest.csv", tmp_path, test_split=split)
+
+
+def test_human_test_labels_cover_only_the_test_split():
+    split = read_rows(SUBSET / "split.csv")
+    test_ids = [r["ffhq_id"] for r in split if r["split"] == "test"]
+    labels = read_rows(SUBSET / "human_labels_test.csv")
+    assert [r["ffhq_id"] for r in labels] == test_ids
+    assert {r["ffhq_id"] for r in labels}.isdisjoint(r["ffhq_id"] for r in read_rows(SUBSET / "ai_pseudo_labels_train.csv"))
+    assert {r["label"] for r in labels} <= {*SHAPES, UNSURE}
+    assert {r["source"] for r in labels} == {"human"}
+    assert {r["annotator"] for r in labels} == {"Uzy"}
+
+
+def test_ffhq_feature_items_keep_human_and_ai_labels_apart():
+    from ml.datasets.ffhq_features import labeled_items
+
+    items = labeled_items()
+    by_source = {s: [it for it in items if it["label_source"] == s] for s in ("human", "ai_pseudo_label")}
+    assert len(by_source["human"]) == 104 and {it["split"] for it in by_source["human"]} == {"test"}
+    assert len(by_source["ai_pseudo_label"]) == 364 and {it["split"] for it in by_source["ai_pseudo_label"]} == {"train"}
+    assert UNSURE not in {it["label"] for it in items}
