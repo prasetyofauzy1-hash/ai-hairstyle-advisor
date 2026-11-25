@@ -17,13 +17,33 @@ image IDs, not identities; the manifest has no identity groups. Regenerate it wi
 python -m ml.datasets.ffhq_split ml/datasets/ffhq_labeling/manifest.csv --out ml/datasets/ffhq_labeling/split.csv
 ```
 
-The second annotator should label only **Gambar 1–104** on the 600-photo page. To generate an optional page containing
-only those 104 photos, pass `--test-split ml/datasets/ffhq_labeling/split.csv` to `ml.datasets.labeling_tool`. Keep the
-human test labels and AI training labels separate.
+To generate an optional page containing only the 104 test photos, pass
+`--test-split ml/datasets/ffhq_labeling/split.csv` to `ml.datasets.labeling_tool`.
 
-**Status:** One annotator has labeled the test photos; a second independent set of labels is needed
-(see `docs/annotation-guide-id.md`).
-AI labels are training-only pseudo-labels, never ground truth.
+**Status:** Uzy alone labeled the 104 test photos. The second annotator was dropped, so inter-annotator agreement
+cannot be measured.
+
+`ai_pseudo_labels_train.csv` contains the 496 training photos' AI-generated labels. Devin labeled them with its
+own vision from 256×256 pixel contact-sheet tiles, without an external API. These pseudo-labels are for training
+only, are never ground truth, and must never be merged with the human test labels.
+
+`ragu` marks photos excluded from training because a face shape could not be judged confidently, for example
+because of occlusion from hats, sunglasses combined with other obstructions, wigs, hands, or microphones, or
+because of strong head tilt or expression.
+
+| Label | Photos |
+| --- | ---: |
+| round | 151 |
+| oval | 92 |
+| oblong | 57 |
+| square | 35 |
+| heart | 25 |
+| diamond | 4 |
+| ragu | 132 |
+| **Total** | **496** |
+| **Usable for training** | **364** |
+
+Diamond is severely under-represented, with only four usable examples.
 
 FFHQ is © NVIDIA under CC BY-NC-SA 4.0 (the dataset); individual photos carry the Flickr licenses listed here.
 NVIDIA asks that FFHQ not be used to develop face recognition; identity grouping here is only for leakage-free splits.
