@@ -135,7 +135,7 @@ export default function Home() {
     } catch (e) { setError((e as Error).message); setStatus(""); } finally { setBusy(false); }
   }
 
-  const set = (k: keyof RecRequest) => (v: string | boolean) => setPrefs((p) => ({ ...p, [k]: v }));
+  const set = (k: keyof RecRequest) => (v: string | boolean) => { setPrefs((p) => ({ ...p, [k]: v })); setRecs(null); };
   const pred = analysis?.prediction;
   const canRecommend = !!pred || !!prefs.face_shape;
 
