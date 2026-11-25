@@ -2,7 +2,7 @@
 
 Research-oriented application that analyzes facial geometry, predicts face shape (Oval, Round, Square, Oblong, Heart, Diamond), recommends hairstyles with explanations, and offers a generative virtual try-on. Web (Next.js) and Android (Expo) clients, FastAPI backend, PostgreSQL, OpenCV + MediaPipe, scikit-learn / XGBoost, Hugging Face Diffusers.
 
-> **Status: Phase 1 (research & architecture).** No application code, trained model or experimental result exists yet. Nothing in this repository reports a metric that was not produced by a run.
+> **Status: Phase 2 (computer vision pipeline).** The `ml` package detects the main face, checks image quality, extracts MediaPipe landmarks and normalized geometric features, and gives a rule-based face-shape estimate with landmark overlays. No trained model or evaluation metric exists yet; the rule-based scores are uncalibrated. Nothing in this repository reports a metric that was not produced by a run.
 
 ## Documents
 
@@ -39,3 +39,15 @@ docker compose up -d db   # PostgreSQL 16, bound to 127.0.0.1 only
 ## Scope and ethics
 
 Non-commercial research/portfolio project (several pretrained models and datasets are research-only, see docs). Facial images are stored only with explicit consent, can be deleted, and are never written to logs.
+
+## Phase 2: run the CV pipeline
+
+```bash
+python3.10 -m venv .venv && . .venv/bin/activate
+pip install -r ml/requirements.txt
+python -m ml.models.download            # MediaPipe models, SHA-256 verified
+python -m pytest ml/tests -q
+python -m ml.analyze ml/datasets/samples/*.jpg --out research/results/phase2
+```
+
+Sample overlays and their JSON output are in `research/results/phase2/`.

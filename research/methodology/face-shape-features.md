@@ -1,6 +1,6 @@
 # Face-Shape Features: Method Draft
 
-Status: Phase 1 draft. Landmark indices are **candidates** to be validated visually on sample images in Phase 2.
+Status: Phase 2. Indices below were checked visually on the overlays in `research/results/phase2/`. Implemented choices: forehead 54↔284, cheekbones 234↔454, jaw 172↔397, chin 176↔400, jaw angle at 172/397 (between 132→172→148 and 361→397→377), length 10→152, landmarks rotated so the iris line (468, 473) is horizontal. See `ml/feature_extraction/geometry.py`.
 
 | Measurement | Candidate MediaPipe landmarks | Note |
 |---|---|---|

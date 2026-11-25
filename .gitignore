@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.env
+node_modules/
+.next/
+data/raw/
+data/processed/
+uploads/
+storage/
+*.task
+*.tflite
+*.pt
+*.safetensors
+*.ckpt
+*.onnx

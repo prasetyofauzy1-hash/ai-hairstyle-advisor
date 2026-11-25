@@ -1,0 +1,4 @@
+mediapipe==1.2.3
+opencv-python-headless==5.1.0.95
+numpy>=1.26,<3
+pytest>=8
