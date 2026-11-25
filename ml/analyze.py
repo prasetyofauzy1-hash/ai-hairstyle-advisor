@@ -31,6 +31,12 @@ def main() -> None:
     parser.add_argument("images", nargs="+", type=Path)
     parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args()
+    stems = [p.stem for p in args.images]
+    if len(set(stems)) != len(stems):
+        parser.error("input file names (without extension) must be unique")
+    inputs = {p.resolve() for p in args.images}
+    if any((args.out / f"{s}_analysis.jpg").resolve() in inputs for s in stems):
+        parser.error("an output overlay would overwrite an input image")
     args.out.mkdir(parents=True, exist_ok=True)
     summary = {}
     with FaceAnalyzer() as analyzer:
