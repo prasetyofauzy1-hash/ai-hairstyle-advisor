@@ -27,3 +27,12 @@
 | TD-18 | Rule baseline = distance to per-shape prototypes, softmax to relative scores, flagged `calibrated: false` | Transparent, gives a ranked list for recommendations; Phase 3 evaluates and calibrates it | Hand-written if/else thresholds (brittle, no ranking) |
 | TD-19 | Quality-gate messages and explanations in Bahasa Indonesia; logs carry only check codes and the predicted shape | Brief requirements; faces and image data never in logs (tested) | — |
 | TD-20 | Public-domain NASA portraits as test fixtures (`ml/datasets/samples/SOURCES.md`) | License-clear, real faces for CI; carry no labels, so no accuracy is claimed from them | FFHQ samples (CC BY-NC-SA, would need attribution handling in CI) |
+
+## Phase 3 decisions
+
+| ID | Decision | Reason | Alternatives rejected |
+|---|---|---|---|
+| TD-21 | Identity groups from OpenCV Zoo SFace embeddings (Apache-2.0), average-linkage clusters at cosine 0.363; splits never share a group | niten19 has no person IDs and repeats celebrities: 564 of 586 of its own test images share a group with its train set | The dataset's own train/test split (leaks identities); single-linkage components (chained 2,968 of 2,977 images into one group) |
+| TD-22 | Train only on images that pass the Phase 2 quality gates (2,977 of 5,000) | The model sees the same inputs the app accepts; rejection counts are reported | Relaxing gates for the dataset (would train on inputs the app refuses) |
+| TD-23 | Hold out the seeded identity-aware fold whose class mix is closest to the whole set; tune with 5-fold identity-aware CV; select by CV macro-F1 only | Large groups make folds uneven; choosing by labels, not scores, keeps the test set untouched | Random image-level split (leaks identities) |
+| TD-24 | FFHQ subset: attribution / public-domain licenses only, MD5-checked, quality-gated; labels only from ≥ 2 human annotators with kappa, consensus only | Defensible ground truth; AI-made labels would be fabricated | Labeling by one person or by a model |

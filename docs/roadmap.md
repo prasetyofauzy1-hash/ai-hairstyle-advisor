@@ -6,7 +6,7 @@ Each phase ends with a review gate: the owner approves before the next phase sta
 |---|---|---|---|
 | 1 Research & architecture | Datasets, models, risks, architecture, structure | This repo's docs approved; dataset decision made | done |
 | 2 Computer vision | Quality gates, MediaPipe landmarks, alignment, features, overlay visualization, rule-based classifier | `ml` package + pytest; landmark overlays on sample images; feature stability test (same face, small pose changes) | done |
-| 3 Machine learning | Dataset prep (approved sources), label validation, feature selection, RF/SVM/XGBoost/MLP, stratified/group CV, tuning, serialization | Evaluation report with accuracy, macro P/R/F1, confusion matrices vs rule baseline; model card; reproducible with one command | 4-7 d (+ labeling time) |
+| 3 Machine learning | Dataset prep (approved sources), label validation, feature selection, RF/SVM/XGBoost/MLP, stratified/group CV, tuning, serialization | Evaluation report with accuracy, macro P/R/F1, confusion matrices vs rule baseline; model card; reproducible with one command | Kaggle part done; FFHQ waits on annotators |
 | 4 Recommendation | Curated catalog (male + female, ≥ 40 styles), filter + transparent scoring + ranking + explanations | Unit tests per rule; sanity review of top-5 for each shape × hair type | 3-4 d |
 | 5 Backend & web | FastAPI, Postgres schema + Alembic, consent & deletion, Next.js pages in Bahasa Indonesia | End-to-end analysis → recommendations in browser; OpenAPI docs; integration tests | 6-9 d |
 | 6 Generative AI | GPU benchmark, hair/face masks, SD1.5 inpainting (+ControlNet/IP-Adapter), async worker, evaluation | Benchmark + evaluation report (ArcFace similarity, LPIPS/FID-KID, boundary checks) on a fixed test set | 5-8 d |
@@ -22,8 +22,19 @@ pytest suite (`ml/tests`, CI in `.github/workflows/ml-tests.yml`), overlays in `
 Known gaps carried into Phase 3: stability is tested with synthetic roll/scale/perspective changes of one photo, not real
 multi-pose photos of one person; rule prototypes are uncalibrated and their accuracy is unknown until a labeled split exists.
 
-## Next steps (Phase 3, after the owner's go-ahead)
+## Phase 3 status
 
-1. Build the Kaggle niten19 + self-labeled FFHQ sets (research only, TD-14), with identity-aware splits.
-2. Run the Phase 2 pipeline over them to produce feature tables; report the quality-gate rejection rate.
-3. Evaluate the rule baseline on a held-out split, then calibrate its prototypes; compare RF/SVM/XGBoost/MLP.
+Done on Kaggle niten19 (research only, TD-14): feature table from the Phase 2 pipeline with quality-gate rejection
+counts, SFace identity groups (TD-21), identity-aware hold-out + 5-fold CV comparing the rule baseline, fitted prototypes,
+RF, SVM, XGBoost and MLP (`ml/training/train_face_shape.py`), results in
+[`research/results/phase3/kaggle_niten19/`](../research/results/phase3/kaggle_niten19/README.md), model card in
+[`docs/model-card.md`](model-card.md), serialized model in `ml/models/artifacts/`.
+
+Prepared but **not done**: the FFHQ labeling set (`ml/datasets/ffhq_labeling/`), labeling tool, Indonesian annotation guide
+and kappa script. FFHQ labels need at least two human annotators, none are named yet, so no FFHQ result and no Diamond
+class exist. The trained model covers 5 shapes only.
+
+## Next steps
+
+1. FFHQ: annotators label the subset, run `ml.datasets.agreement`, add the consensus set to training and evaluation.
+2. Phase 4 (recommendation engine) after the owner's go-ahead.
