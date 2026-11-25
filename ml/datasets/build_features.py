@@ -84,7 +84,7 @@ def build(root: Path, out: Path, workers: int = 4) -> list[dict]:
     out.mkdir(parents=True, exist_ok=True)
     np.save(out / "embeddings.npy", embeddings)
     fields = list(dict.fromkeys(k for r in rows for k in r))
-    with (out / "features.csv").open("w", newline="") as f:
+    with (out / "features.csv").open("w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=fields)
         writer.writeheader()
         writer.writerows(rows)

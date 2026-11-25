@@ -51,7 +51,7 @@ def fetch(idx: int, md5: str, images: Path) -> Path | None:
 
 
 def select(meta_path: Path, images: Path, manifest: Path, target: int) -> list[dict]:
-    meta = json.loads(meta_path.read_text())
+    meta = json.loads(meta_path.read_text(encoding="utf-8"))
     rows, tried, rejected = [], 0, 0
     with FaceAnalyzer() as analyzer:
         for idx in candidates(meta):
@@ -68,7 +68,7 @@ def select(meta_path: Path, images: Path, manifest: Path, target: int) -> list[d
                          "author": m["author"], "photo_url": m["photo_url"], "photo_title": m["photo_title"],
                          "file_md5": entry["image"]["file_md5"], "local_file": path.name})
     manifest.parent.mkdir(parents=True, exist_ok=True)
-    with manifest.open("w", newline="") as f:
+    with manifest.open("w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=FIELDS)
         w.writeheader()
         w.writerows(rows)

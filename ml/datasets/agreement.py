@@ -24,7 +24,7 @@ def read_labels(paths: list[Path]) -> dict[str, dict[str, str]]:
     """{ffhq_id: {annotator: label}}"""
     out: dict[str, dict[str, str]] = defaultdict(dict)
     for p in paths:
-        with p.open() as f:
+        with p.open(encoding="utf-8") as f:
             for r in csv.DictReader(f):
                 out[r["ffhq_id"]][r["annotator"]] = r["label"]
     return dict(out)
@@ -74,7 +74,7 @@ def main() -> None:
     args = parser.parse_args()
     report, consensus = agreement(read_labels(args.labels))
     args.out.parent.mkdir(parents=True, exist_ok=True)
-    with args.out.open("w", newline="") as f:
+    with args.out.open("w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=["ffhq_id", "label"])
         w.writeheader()
         w.writerows(consensus)

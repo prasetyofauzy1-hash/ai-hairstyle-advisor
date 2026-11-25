@@ -70,7 +70,7 @@ def thumbnail_data_uri(path: Path, size: int = 512) -> str:
 
 
 def build_page(manifest: Path, images: Path) -> str:
-    with manifest.open() as f:
+    with manifest.open(encoding="utf-8") as f:
         rows = list(csv.DictReader(f))
     items = [{"id": r["ffhq_id"], "src": thumbnail_data_uri(images / r["local_file"]),
               "credit": html.escape(f"{r['author']} ({r['license']})")} for r in rows]
