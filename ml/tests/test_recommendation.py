@@ -6,7 +6,7 @@ import pytest
 
 from ml.classification.rule_based import SHAPES
 from ml.recommendation import rules as R
-from ml.recommendation.catalog import CATALOG_PATH, HAIR_TYPES, THICKNESSES, load_catalog, parse
+from ml.recommendation.catalog import CATALOG_PATH, HAIR_TYPES, LENGTHS, THICKNESSES, load_catalog, parse
 from ml.recommendation.engine import SCORE_NOTE, UserProfile, passes_filters, recommend, score
 
 CATALOG = load_catalog()
@@ -111,6 +111,12 @@ def test_length_match_and_relaxation():
     for r in recs:
         pts = {b["rule"]: b["points"] for b in r["score_breakdown"]}["panjang"]
         assert pts == (R.LENGTH_MATCH[0] if BY_ID[r["id"]].length == "long" else R.LENGTH_ADJACENT[0])
+    # fallback styles fill open slots only: every exact-length match ranks first
+    for prof in [UserProfile("square", "straight", "thin", gender="wanita", preferred_length="short"),
+                 UserProfile("oblong", "coily", "thick", gender="pria", preferred_length="long")]:
+        dist = [abs(LENGTHS.index(BY_ID[r["id"]].length) - LENGTHS.index(prof.preferred_length))
+                for r in recommend(prof)["recommendations"]]
+        assert dist == sorted(dist) and dist[0] == 0
     sparse = recommend(UserProfile("oblong", "coily", "thick", gender="pria", preferred_length="long"))
     assert "long_locs" in [r["id"] for r in sparse["recommendations"]]
     assert any("panjang lain" in n for n in sparse["notes"])
@@ -149,7 +155,7 @@ def test_output_fields_score_and_determinism():
     assert a["face_shape_label"] == "Hati" and SCORE_NOTE in a["notes"]
     recs = a["recommendations"]
     assert [r["rank"] for r in recs] == [1, 2, 3, 4, 5]
-    assert [r["score"] for r in recs] == sorted((r["score"] for r in recs), reverse=True)
+    assert [r["score"] for r in recs] == sorted((r["score"] for r in recs), reverse=True)  # no length preference
     for r in recs:
         assert r["score"] == sum(x["points"] for x in r["score_breakdown"])
         assert r["score_unit"] == "poin aturan" and isinstance(r["score"], int)

@@ -48,6 +48,7 @@ class Recommendation:
     style: Hairstyle
     score: int
     terms: list[tuple[str, int, str]] = field(default_factory=list)
+    length_distance: int = 0
 
     def explanation(self) -> str:
         good = [r for _, p, r in self.terms if p > 0]
@@ -105,7 +106,7 @@ def score(style: Hairstyle, p: UserProfile, length_distance: int = 0) -> Recomme
             terms.append(("bentuk_wajah_kedua", R.SECONDARY_SHAPE_FIT[0], R.SECONDARY_SHAPE_FIT[1].format(shape=name)))
         elif pts < 0:
             terms.append(("bentuk_wajah_kedua", R.SECONDARY_SHAPE_MISFIT[0], R.SECONDARY_SHAPE_MISFIT[1].format(shape=name)))
-    return Recommendation(style, sum(t[1] for t in terms), terms)
+    return Recommendation(style, sum(t[1] for t in terms), terms, length_distance)
 
 
 def recommend(p: UserProfile, top_k: int = 5, catalog=None) -> dict:
@@ -128,8 +129,8 @@ def recommend(p: UserProfile, top_k: int = 5, catalog=None) -> dict:
         if any(r.style.length != p.preferred_length for r in recs):
             notes.append("Gaya dengan panjang yang Anda pilih kurang dari lima, jadi gaya dengan panjang lain ikut "
                          "ditampilkan dengan pengurangan poin.")
-    # Step 3: rank by score, then by face-shape points, then by id so ties are deterministic.
-    recs.sort(key=lambda r: (-r.score, -R.shape_points(p.face_shape, r.style.effects), r.style.id))
+    # Step 3: preferred length first (fallback styles only fill open slots), then score, face-shape points, id.
+    recs.sort(key=lambda r: (r.length_distance, -r.score, -R.shape_points(p.face_shape, r.style.effects), r.style.id))
     top = recs[:top_k]
     if len(top) < top_k:
         notes.append(f"Hanya {len(top)} gaya yang lolos filter untuk profil ini.")

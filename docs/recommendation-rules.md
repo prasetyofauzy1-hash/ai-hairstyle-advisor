@@ -78,7 +78,7 @@ Styles carry effect tags (`volume_top`, `volume_sides`, `volume_jaw`, `soft_laye
 
 ## Step 3-4: rank and return
 
-Sort by score, then face-shape points, then style `id` (so ties are deterministic but alphabetical, not meaningful).
+Sort by length distance (exact matches first, so fallback lengths only fill open slots), then score, then face-shape points, then style `id` (so ties are deterministic but alphabetical, not meaningful).
 Return the top 5 with name, description, `reference_image` (currently `null` plus a note), `score` with
 `score_unit: "poin aturan"`, `score_breakdown`, an explanation built from the rules that fired (positive reasons first,
 negatives after "Perlu diperhatikan:"), advantages, styling tips, and `notes` (always includes that the score is rule
