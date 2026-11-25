@@ -16,6 +16,7 @@ import argparse
 import hashlib
 import json
 import platform
+from types import SimpleNamespace
 from pathlib import Path
 
 import joblib
@@ -27,6 +28,7 @@ from sklearn.base import clone
 from sklearn.model_selection import GridSearchCV, StratifiedGroupKFold
 from sklearn.preprocessing import LabelEncoder
 
+from ml.classification.rule_based import classify
 from ml.feature_extraction.geometry import FEATURE_NAMES
 from ml.training.train_face_shape import N_FOLDS, SEED, bootstrap_ci, candidates, holdout_split, load, metrics
 
@@ -48,6 +50,13 @@ def load_ffhq(path: Path) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
 def predict_bundle(bundle: dict, X: np.ndarray) -> np.ndarray:
     pred = bundle["model"].predict(X)
     return bundle["label_encoder"].inverse_transform(pred) if bundle["label_encoder"] is not None else pred
+
+
+def phase2_rules(df: pd.DataFrame) -> np.ndarray:
+    """The Phase 2 classifier as the app runs it: forehead features are dropped when hair covers the forehead."""
+    occluded = df["forehead_occluded"].astype(str) == "True" if "forehead_occluded" in df else pd.Series(False, df.index)
+    return np.array([classify(SimpleNamespace(**{n: row[n] for n in FEATURE_NAMES}), forehead_occluded=occ).shape
+                     for (_, row), occ in zip(df.iterrows(), occluded)])
 
 
 def evaluate(y_true, y_pred, labels) -> dict:
@@ -103,6 +112,11 @@ def run(kaggle_csv: Path, ffhq_csv: Path, out: Path, model_out: Path | None = No
                            "class_counts": pd.Series(y).value_counts().sort_index().to_dict(),
                            "selected_model": selected, "models": models}
 
+    phase2 = {"kaggle_test": evaluate(yk[k_te], phase2_rules(kag.iloc[k_te]), kaggle_labels),
+              "ffhq_human_test": evaluate(yf_te, phase2_rules(ff_te), human_labels),
+              "ffhq_human_test_forehead_occluded": int((ff_te.get("forehead_occluded", pd.Series(dtype=str))
+                                                        .astype(str) == "True").sum())}
+
     current = None
     if current_model is not None:
         bundle = joblib.load(current_model)
@@ -136,6 +150,7 @@ def run(kaggle_csv: Path, ffhq_csv: Path, out: Path, model_out: Path | None = No
             "ffhq_human_test_used": int(len(ff_te)),
             "ffhq_human_test_class_counts": pd.Series(yf_te).value_counts().sort_index().to_dict(),
         },
+        "phase2_rule_baseline": phase2,
         "current_model": current,
         "configs": configs,
         "versions": {"python": platform.python_version(), "sklearn": sklearn.__version__, "xgboost": xgboost.__version__,
@@ -165,7 +180,7 @@ def run(kaggle_csv: Path, ffhq_csv: Path, out: Path, model_out: Path | None = No
 def headline(report: dict) -> dict[str, dict]:
     """The three models the comparison is about: rule baseline, current Kaggle-only artifact, retrained model."""
     combined = report["configs"][COMBINED]
-    rows = {"Rule baseline (Phase 2, rule_based_v0)": report["configs"][KAGGLE_ONLY]["models"]["rule_based_v0"]}
+    rows = {"Rule baseline (Phase 2, rule_based_v0)": report["phase2_rule_baseline"]}
     if report["current_model"] is not None:
         rows[f"Current Kaggle-only model ({report['current_model']['model_name']})"] = report["current_model"]
     rows[f"Kaggle + FFHQ AI labels ({combined['selected_model']}, selected)"] = combined["models"][combined["selected_model"]]
@@ -245,6 +260,9 @@ def _markdown(r: dict) -> str:
             lines.append(f"| {config} | {name}{mark} | {m['cv_macro_f1_mean']:.3f} ± {m['cv_macro_f1_std']:.3f} | "
                          f"{_f1(m['kaggle_test'])} | {_f1(m['ffhq_human_test'])} |")
     lines += ["", f"Selection: {r['selection_rule']}.", "",
+              "The headline rule baseline is `ml.classification.rule_based.classify` as the app runs it, dropping the "
+              f"forehead features when hair covers the forehead ({r['phase2_rule_baseline']['ffhq_human_test_forehead_occluded']} "
+              "human test photos); the `rule_based_v0` rows above always use all six features, as in Phase 3.", "",
               "`kaggle_only` is retrained here on the current feature table so it differs from the Kaggle+FFHQ run only by "
               "the added FFHQ rows; the committed Kaggle-only artifact was trained on an older feature table (quality gates "
               "have changed since), so its numbers are reported separately. Its Kaggle hold-out score is n/a here because that older split differs and "

@@ -122,6 +122,7 @@ def test_ffhq_run_never_trains_on_human_test_and_drops_identity_overlap(tmp_path
     assert report["configs"][COMBINED]["train_size"] == report["configs"][KAGGLE_ONLY]["train_size"] + 39
     assert "diamond" in report["configs"][COMBINED]["labels"]
     assert set(report["current_model"]["ffhq_human_test"]["per_class"]) == {"oblong", "oval", "round"}
+    assert report["phase2_rule_baseline"]["ffhq_human_test"]["macro_f1"] >= 0
     assert (tmp_path / "out" / "README.md").exists()
     assert (tmp_path / "out" / "confusion_matrices_ffhq_human_test.png").exists()
     assert "diamond" in LearnedFaceShapeClassifier(tmp_path / "model" / ARTIFACT).labels

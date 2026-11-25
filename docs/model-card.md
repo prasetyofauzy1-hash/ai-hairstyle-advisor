@@ -39,11 +39,12 @@ square or diamond), and none of them, nor anyone grouped with them by SFace, was
 
 | Model | FFHQ accuracy | FFHQ macro-F1 (95% bootstrap CI) |
 |---|---|---|
-| Rule baseline (Phase 2, hand-written) | 0.436 | **0.400 (0.295-0.510)** |
+| Rule baseline (Phase 2, hand-written, as the app runs it) | 0.426 | **0.391 (0.288-0.503)** |
 | Current Kaggle-only MLP (`face_shape_kaggle_niten19.joblib`) | 0.228 | 0.321 (0.212-0.407) |
 | Kaggle + FFHQ AI pseudo-labels MLP (`face_shape_kaggle_ffhq_ai.joblib`) | 0.277 | 0.340 (0.240-0.432) |
 
-Macro-F1 averages the three shapes in the human labels; predicting any other shape counts as an error. Confusion
+Macro-F1 averages the three shapes in the human labels; predicting any other shape counts as an error. The rule
+baseline drops the forehead features on the 15 test photos where hair covers the forehead, as the app does. Confusion
 matrices (rows: Uzy's label) are in the results README. Both learned models call most oval faces round, heart or
 square (oval F1 0.061 and 0.145), while the rule baseline gets oval F1 0.544. Adding the pseudo-labels moved
 macro-F1 from 0.321 to 0.340, well inside the intervals, so it is not a measurable improvement, and neither learned
