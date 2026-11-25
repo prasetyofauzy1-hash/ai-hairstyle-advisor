@@ -111,23 +111,22 @@ def test_length_match_and_relaxation():
     for r in recs:
         pts = {b["rule"]: b["points"] for b in r["score_breakdown"]}["panjang"]
         assert pts == (R.LENGTH_MATCH[0] if BY_ID[r["id"]].length == "long" else R.LENGTH_ADJACENT[0])
-    # fallback styles fill open slots only: every exact-length match ranks first
+    # fallback styles carry their length penalty in the score, and results stay in descending score order
     for prof in [UserProfile("square", "straight", "thin", gender="wanita", preferred_length="short"),
                  UserProfile("oblong", "coily", "thick", gender="pria", preferred_length="long")]:
-        dist = [abs(LENGTHS.index(BY_ID[r["id"]].length) - LENGTHS.index(prof.preferred_length))
-                for r in recommend(prof)["recommendations"]]
-        assert dist == sorted(dist) and dist[0] == 0
+        scores = [r["score"] for r in recommend(prof)["recommendations"]]
+        assert scores == sorted(scores, reverse=True) and min(scores) >= 0
     sparse = recommend(UserProfile("oblong", "coily", "thick", gender="pria", preferred_length="long"))
     assert "long_locs" in [r["id"] for r in sparse["recommendations"]]
     assert any("panjang lain" in n for n in sparse["notes"])
 
 
-def test_formal_rule():
+def test_formal_is_filter_not_bonus():
     style = next(s for s in CATALOG if s.formal)
     p = UserProfile("oval", next(iter(style.hair_types)), "medium", formal=True)
-    assert ("formal", R.FORMAL_MATCH[0]) in [(t[0], t[1]) for t in score(style, p).terms]
+    assert score(style, p).score == score(style, UserProfile("oval", p.hair_type, "medium")).score
     informal = next(s for s in CATALOG if not s.formal)
-    assert "formal" not in [t[0] for t in score(informal, UserProfile("oval", next(iter(informal.hair_types)), "medium", formal=True)).terms]
+    assert not passes_filters(informal, UserProfile("oval", next(iter(informal.hair_types)), "medium", formal=True))
 
 
 def test_secondary_shape_rule():
@@ -158,7 +157,7 @@ def test_output_fields_score_and_determinism():
     assert [r["score"] for r in recs] == sorted((r["score"] for r in recs), reverse=True)  # no length preference
     for r in recs:
         assert r["score"] == sum(x["points"] for x in r["score_breakdown"])
-        assert r["score_unit"] == "poin aturan" and isinstance(r["score"], int)
+        assert r["score_unit"] == "poin" and isinstance(r["score"], int)
         assert "%" not in r["explanation"]
         assert r["reference_image"] is None and r["reference_image_note"]
         assert r["advantages"] and r["styling_tips"] and r["explanation"]
@@ -188,3 +187,21 @@ def test_sanity_top5_every_shape_and_hair_type(shape, hair):
             s = BY_ID[r["id"]]
             assert hair in s.hair_types and (gender is None or gender in s.gender)
             assert R.shape_points(shape, s.effects) >= 0
+
+
+def test_formal_and_thickness_avoid_are_filters():
+    for r in recommend(UserProfile("square", "straight", "thin", formal=True))["recommendations"]:
+        assert BY_ID[r["id"]].formal and BY_ID[r["id"]].thickness["thin"] != "avoid"
+
+
+def test_no_negative_scores_and_limiting_choice_named():
+    res = recommend(UserProfile("oval", "coily", "medium", gender="wanita", max_maintenance="low"))
+    assert all(r["score"] >= 0 for r in res["recommendations"])
+    if len(res["recommendations"]) < 5:
+        assert any("Pilihan yang paling membatasi" in n for n in res["notes"])
+
+
+def test_secondary_shape_note():
+    res = recommend(UserProfile("oblong", "straight", "thin", secondary_face_shape="oval"))
+    assert any("skor kedua tertinggi" in n for n in res["notes"])
+    assert not any("skor kedua tertinggi" in n for n in recommend(UserProfile("oblong", "straight", "thin"))["notes"])

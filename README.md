@@ -2,7 +2,7 @@
 
 Research-oriented application that analyzes facial geometry, predicts face shape (Oval, Round, Square, Oblong, Heart, Diamond), recommends hairstyles with explanations, and offers a generative virtual try-on. Web (Next.js) and Android (Expo) clients, FastAPI backend, PostgreSQL, OpenCV + MediaPipe, scikit-learn / XGBoost, Hugging Face Diffusers.
 
-> **Status: Phase 4 (recommendation engine).** The `ml` package detects the main face, checks image quality, extracts MediaPipe landmarks and normalized geometric features, and classifies face shape with a rule baseline or a model trained on Kaggle niten19 (5 shapes, research use only). Results are in [`research/results/phase3/kaggle_niten19`](research/results/phase3/kaggle_niten19/README.md) and the [model card](docs/model-card.md). The FFHQ labeling set is prepared but has no human labels yet. A rule-based recommender ranks 55 catalog hairstyles with Indonesian explanations ([rules](docs/recommendation-rules.md)); it is not validated with users. Every metric in this repository comes from a run.
+> **Status: Phase 5 (backend & web).** A FastAPI backend with PostgreSQL and a Next.js web app in Bahasa Indonesia run the full flow in a browser: upload (stored only with consent), face-shape analysis, recommendations, deletion ([backend](backend/README.md), [web](frontend/web/README.md)). The `ml` package detects the main face, checks image quality, extracts MediaPipe landmarks and normalized geometric features, and classifies face shape with a rule baseline or a model trained on Kaggle niten19 (5 shapes, research use only). Results are in [`research/results/phase3/kaggle_niten19`](research/results/phase3/kaggle_niten19/README.md) and the [model card](docs/model-card.md). The FFHQ labeling set is prepared but has no human labels yet. A rule-based recommender ranks 55 catalog hairstyles with Indonesian explanations ([rules](docs/recommendation-rules.md)); it is not validated with users. Every metric in this repository comes from a run.
 
 ## Documents
 
@@ -20,9 +20,9 @@ Research-oriented application that analyzes facial geometry, predicts face shape
 ## Structure
 
 ```
-frontend/web        Next.js app (Phase 5)
+frontend/web        Next.js app
 frontend/mobile     Expo Android app (Phase 7)
-backend/app         FastAPI: api, services, schemas, database (Phase 5)
+backend/            FastAPI: api, services, schemas, database, Alembic migrations
 ml/                 CV + ML package: preprocessing, features, classification, recommendation, evaluation
 generative_ai/      Hair segmentation, inpainting, virtual try-on (Phase 6)
 research/           Methodology, experiments, results
@@ -34,6 +34,15 @@ docs/               Project documentation
 ```bash
 cp .env.example .env    # then set a strong POSTGRES_PASSWORD (and in DATABASE_URL)
 docker compose up -d db   # PostgreSQL 16, bound to 127.0.0.1 only
+```
+
+## Phase 5: run the web app
+
+```bash
+docker compose up -d db
+pip install -r backend/requirements.txt && python -m ml.models.download
+(cd backend && PYTHONPATH=..:. alembic upgrade head && PYTHONPATH=..:. uvicorn app.main:app --port 8000) &
+cd frontend/web && npm ci && npm run build && npm run start   # http://localhost:3000, API docs at /docs
 ```
 
 ## Scope and ethics

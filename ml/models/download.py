@@ -16,6 +16,11 @@ MODELS = {
         "https://storage.googleapis.com/mediapipe-models/image_segmenter/hair_segmenter/float32/latest/hair_segmenter.tflite",
         "2628cf3ce5f695f604cbea2841e00befcaa3624bf80caf3664bef2656d59bf84",
     ),
+    # OpenCV Zoo YuNet (MIT): counts faces in group photos, where the landmarker often finds only one.
+    "face_detection_yunet_2023mar.onnx": (
+        "https://github.com/opencv/opencv_zoo/raw/main/models/face_detection_yunet/face_detection_yunet_2023mar.onnx",
+        "8f2383e4dd3cfbb4553ea8718107fc0423210dc964f9f4280604804ed2552fa4",
+    ),
     # OpenCV Zoo SFace (Apache-2.0): face embeddings, used only to group same-person photos for leakage-free splits.
     "face_recognition_sface_2021dec.onnx": (
         "https://github.com/opencv/opencv_zoo/raw/main/models/face_recognition_sface/face_recognition_sface_2021dec.onnx",

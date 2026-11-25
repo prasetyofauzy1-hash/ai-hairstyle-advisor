@@ -42,7 +42,14 @@ tests cover each rule and filter; the sanity review of top-5 per shape × hair t
 [`research/results/phase4/sanity_review.md`](../research/results/phase4/sanity_review.md). Not done: reference images
 (none license-clear yet), any validation with users or stylists, ML ranking (no preference data).
 
+## Phase 5 status
+
+FastAPI backend (`backend/`) with PostgreSQL schema and Alembic migration, consent-gated image storage, token-protected
+read and deletion, OpenAPI docs at `/docs`, and a Next.js web app in Bahasa Indonesia. Integration tests run the real
+pipeline against PostgreSQL in CI, plus a Playwright browser test of upload → analysis → recommendations → deletion.
+Not done: user accounts and history across analyses (TD-30), try-on and Android (later phases).
+
 ## Next steps
 
 1. FFHQ: annotators label the subset, run `ml.datasets.agreement`, add the consensus set to training and evaluation.
-2. Phase 5 (backend & web) after the owner's go-ahead.
+2. Phase 6 (generative try-on) and Phase 7 (Android) after the owner's go-ahead.
