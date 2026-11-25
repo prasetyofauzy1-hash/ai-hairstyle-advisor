@@ -23,8 +23,8 @@ alembic upgrade head
 uvicorn app.main:app --port 8000             # OpenAPI docs at http://localhost:8000/docs
 ```
 
-Tests: `python -m pytest backend/tests -q` (uses `DATABASE_URL` if set, otherwise a local SQLite file; CI runs them on
-PostgreSQL 16). They run the real MediaPipe pipeline and model on a public-domain sample photo.
+Tests: `python -m pytest backend/tests -q`. They drop and recreate the schema, so they use `TEST_DATABASE_URL` (a
+separate database) or a local SQLite file, never `DATABASE_URL`; CI runs them on PostgreSQL 16. They run the real MediaPipe pipeline and model on a public-domain sample photo.
 
 ## Endpoints
 

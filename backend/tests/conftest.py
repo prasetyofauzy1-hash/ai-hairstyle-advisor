@@ -7,7 +7,8 @@ sys.path[:0] = [str(BACKEND), str(BACKEND.parent)]
 
 import pytest  # noqa: E402
 
-os.environ.setdefault("DATABASE_URL", f"sqlite:///{BACKEND / '.test.db'}")
+# Tests drop and recreate the schema, so they never use the app DATABASE_URL.
+os.environ["DATABASE_URL"] = os.environ.get("TEST_DATABASE_URL", f"sqlite:///{BACKEND / '.test.db'}")
 
 
 @pytest.fixture(scope="session")
