@@ -4,7 +4,9 @@ from pathlib import Path
 
 import pytest
 
+from ml.classification.rule_based import SHAPES
 from ml.datasets import labeling_tool
+from ml.datasets.agreement import UNSURE
 from ml.datasets.ffhq_split import write_split
 
 SUBSET = Path(__file__).resolve().parents[1] / "datasets" / "ffhq_labeling"
@@ -25,6 +27,21 @@ def test_committed_ffhq_split_matches_first_104_manifest_rows(tmp_path):
     assert len(manifest_ids) == len(set(manifest_ids)) == 600
     assert [r["ffhq_id"] for r in split] == manifest_ids
     assert [r["split"] for r in split] == ["test"] * 104 + ["train"] * 496
+
+
+def test_ai_pseudo_labels_cover_only_the_training_split():
+    split = read_rows(SUBSET / "split.csv")
+    train_ids = [r["ffhq_id"] for r in split if r["split"] == "train"]
+    test_ids = {r["ffhq_id"] for r in split if r["split"] == "test"}
+    labels = read_rows(SUBSET / "ai_pseudo_labels_train.csv")
+    labeled_ids = [r["ffhq_id"] for r in labels]
+
+    assert len(labeled_ids) == len(set(labeled_ids)) == 496
+    assert labeled_ids == train_ids
+    assert test_ids.isdisjoint(labeled_ids)
+    assert {r["label"] for r in labels} <= {*SHAPES, UNSURE}
+    assert {r["source"] for r in labels} == {"ai_pseudo_label"}
+    assert {r["annotator"] for r in labels} == {"devin-ai-vision"}
 
 
 def test_labeling_page_only_loads_test_images_and_isolates_storage(monkeypatch):
