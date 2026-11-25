@@ -37,7 +37,6 @@ Invalid values raise `ValueError`.
 | `jenis_rambut` | +2 | the user's hair type is `ideal` for the style (`ok` gives 0) |
 | `ketebalan` | +1 | thickness is `ideal` for the style (`ok` gives 0; `avoid` is filtered out) |
 | `panjang` | +1 / -1 / -2 | length equals the preference / one step away / two or more steps away (only shown when fewer than 5 exact matches) |
-| `formal` | +1 | `formal=True` and the style is office-appropriate |
 | `bentuk_wajah_kedua` | +1 / -1 | face-shape points for `secondary_face_shape` are > 0 / < 0 |
 
 ### Face-shape × style-effect rules

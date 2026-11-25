@@ -57,7 +57,6 @@ THICKNESS_AVOID = (-2, "Kurang disarankan untuk rambut dengan ketebalan {thick};
 LENGTH_MATCH = (1, "Panjangnya sesuai dengan yang Anda inginkan ({length}).")
 LENGTH_ADJACENT = (-1, "Gaya ini sedikit lebih pendek atau panjang dari pilihan Anda ({length}). Kami menampilkannya karena pilihan dengan panjang tersebut terbatas.")
 LENGTH_OTHER = (-2, "Panjang gaya ini berbeda dari pilihan Anda ({length}). Kami menampilkannya karena pilihan dengan panjang tersebut terbatas.")
-FORMAL_MATCH = (1, "Sesuai untuk suasana kantor atau acara formal.")
 SECONDARY_SHAPE_FIT = (1, "Gaya ini juga disarankan untuk wajah {shape}, bentuk dengan skor kedua tertinggi.")
 SECONDARY_SHAPE_MISFIT = (-1, "Gaya ini kurang disarankan untuk wajah {shape}, bentuk dengan skor kedua tertinggi.")
 

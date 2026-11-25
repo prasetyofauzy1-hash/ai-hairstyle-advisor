@@ -121,12 +121,12 @@ def test_length_match_and_relaxation():
     assert any("panjang lain" in n for n in sparse["notes"])
 
 
-def test_formal_rule():
+def test_formal_is_filter_not_bonus():
     style = next(s for s in CATALOG if s.formal)
     p = UserProfile("oval", next(iter(style.hair_types)), "medium", formal=True)
-    assert ("formal", R.FORMAL_MATCH[0]) in [(t[0], t[1]) for t in score(style, p).terms]
+    assert score(style, p).score == score(style, UserProfile("oval", p.hair_type, "medium")).score
     informal = next(s for s in CATALOG if not s.formal)
-    assert "formal" not in [t[0] for t in score(informal, UserProfile("oval", next(iter(informal.hair_types)), "medium", formal=True)).terms]
+    assert not passes_filters(informal, UserProfile("oval", next(iter(informal.hair_types)), "medium", formal=True))
 
 
 def test_secondary_shape_rule():

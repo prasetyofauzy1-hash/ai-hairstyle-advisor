@@ -104,8 +104,6 @@ def score(style: Hairstyle, p: UserProfile, length_distance: int = 0) -> Recomme
     if p.preferred_length is not None:
         rule = (R.LENGTH_MATCH, R.LENGTH_ADJACENT)[length_distance] if length_distance < 2 else R.LENGTH_OTHER
         terms.append(("panjang", rule[0], rule[1].format(length=LABELS_ID[p.preferred_length])))
-    if p.formal and style.formal:
-        terms.append(("formal", *R.FORMAL_MATCH))
     if p.secondary_face_shape is not None and p.secondary_face_shape != p.face_shape:
         pts = R.shape_points(p.secondary_face_shape, style.effects)
         name = SHAPE_LABELS_ID[p.secondary_face_shape]
