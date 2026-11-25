@@ -2,13 +2,19 @@
 
 from __future__ import annotations
 
+import io
 import uuid
+import warnings
 from pathlib import Path
 
 import cv2
 import numpy as np
 
+from PIL import Image
+
 from app.config import settings
+
+MAX_PIXELS = 40_000_000
 
 ALLOWED_MAGIC = {b"\xff\xd8\xff": "jpeg", b"\x89PNG\r\n\x1a\n": "png", b"RIFF": "webp"}
 
@@ -18,6 +24,20 @@ def sniff_format(data: bytes) -> str | None:
         if data.startswith(magic) and (fmt != "webp" or data[8:12] == b"WEBP"):
             return fmt
     return None
+
+
+def pixel_count(data: bytes) -> int | None:
+    """Width x height from the image header, read before any full decode allocates the pixels."""
+    try:
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", Image.DecompressionBombWarning)
+            with Image.open(io.BytesIO(data)) as im:
+                w, h = im.size
+    except Image.DecompressionBombError:
+        return MAX_PIXELS + 1
+    except Exception:
+        return None
+    return w * h
 
 
 def store_image(image_rgb: np.ndarray) -> str:

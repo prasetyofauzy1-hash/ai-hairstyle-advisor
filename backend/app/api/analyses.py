@@ -51,6 +51,11 @@ async def create_analysis(image: UploadFile = File(...), consent: bool = Form(Fa
         raise HTTPException(413, f"Ukuran foto maksimal {settings.max_upload_bytes // (1024 * 1024)} MB.")
     if storage.sniff_format(data) is None:
         raise HTTPException(415, "Format foto harus JPEG, PNG, atau WebP.")
+    pixels = storage.pixel_count(data)
+    if pixels is None:
+        raise HTTPException(422, "Foto tidak dapat dibaca. Coba unggah ulang.")
+    if pixels > storage.MAX_PIXELS:
+        raise HTTPException(413, "Resolusi foto terlalu besar (maksimal 40 megapiksel).")
     try:
         rgb = decode_image(data)
     except ImageDecodeError:

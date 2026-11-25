@@ -95,6 +95,25 @@ def test_rejects_bad_uploads(client):
     assert upload(client, False, data=b"\xff\xd8\xff" + b"0" * (settings.max_upload_bytes + 1)).status_code == 413
 
 
+def test_upload_kept_in_memory(client, monkeypatch):
+    import tempfile
+    spilled = []
+    real = tempfile.SpooledTemporaryFile.rollover
+    monkeypatch.setattr(tempfile.SpooledTemporaryFile, "rollover", lambda self: (spilled.append(1), real(self))[1])
+    big = cv2.imencode(".png", np.random.default_rng(0).integers(0, 255, (900, 900, 3), np.uint8))[1].tobytes()
+    assert 1024 * 1024 < len(big) < settings.max_upload_bytes
+    assert upload(client, False, data=big, name="big.png").status_code == 201
+    assert not spilled
+
+
+def test_rejects_huge_pixel_count(client):
+    from PIL import Image
+    buf = io.BytesIO()
+    Image.new("L", (12000, 12000)).save(buf, "PNG")
+    assert len(buf.getvalue()) < settings.max_upload_bytes
+    assert upload(client, False, data=buf.getvalue(), name="huge.png").status_code == 413
+
+
 def test_quality_failure_has_no_prediction(client):
     blank = cv2.imencode(".jpg", np.full((480, 480, 3), 200, np.uint8))[1].tobytes()
     body = upload(client, consent=True, data=blank).json()

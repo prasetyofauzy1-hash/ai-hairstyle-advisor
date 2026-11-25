@@ -7,6 +7,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app import logging_filter
+from app.body_limit import BodyLimitMiddleware
 from app.api import analyses, hairstyles
 from app.config import settings
 from app.database.session import SessionLocal
@@ -26,6 +27,7 @@ async def lifespan(_: FastAPI):
 app = FastAPI(title="AI Hairstyle Advisor API", version="0.5.0", lifespan=lifespan,
               description="Face-shape analysis and rule-based hairstyle recommendations. Research use only.")
 app.add_middleware(CORSMiddleware, allow_origins=settings.cors_origins, allow_methods=["*"], allow_headers=["*"])
+app.add_middleware(BodyLimitMiddleware, max_bytes=settings.max_upload_bytes)
 app.include_router(analyses.router)
 app.include_router(hairstyles.router)
 
