@@ -1,4 +1,4 @@
-"""Download and verify the pretrained MediaPipe model files used by the pipeline."""
+"""Download and verify the pretrained model files (MediaPipe, OpenCV Zoo) used by the pipeline."""
 
 from __future__ import annotations
 
@@ -15,6 +15,11 @@ MODELS = {
     "hair_segmenter.tflite": (
         "https://storage.googleapis.com/mediapipe-models/image_segmenter/hair_segmenter/float32/latest/hair_segmenter.tflite",
         "2628cf3ce5f695f604cbea2841e00befcaa3624bf80caf3664bef2656d59bf84",
+    ),
+    # OpenCV Zoo SFace (Apache-2.0): face embeddings, used only to group same-person photos for leakage-free splits.
+    "face_recognition_sface_2021dec.onnx": (
+        "https://github.com/opencv/opencv_zoo/raw/main/models/face_recognition_sface/face_recognition_sface_2021dec.onnx",
+        "0ba9fbfa01b5270c96627c4ef784da859931e02f04419c829e83484087c34e79",
     ),
 }
 
