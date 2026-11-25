@@ -22,12 +22,16 @@ log = logging.getLogger("app.analyses")
 router = APIRouter(prefix="/api/analyses", tags=["analyses"])
 
 LIMITATIONS = [
-    "Model bentuk wajah dilatih pada dataset Kaggle niten19 (5 bentuk, tanpa Wajik/Diamond, wajah perempuan saja), "
-    "untuk riset non-komersial.",
-    "Pada data uji, macro-F1 model adalah 0,476: kira-kira separuh prediksi bisa keliru.",
-    "Angka probabilitas tidak terkalibrasi; jangan dibaca sebagai tingkat keyakinan yang pasti.",
-    "Hasil untuk wajah laki-laki belum pernah dievaluasi.",
+    "Model hanya bisa memperkirakan lima bentuk: oval, bulat, persegi, lonjong, dan hati. Bentuk wajik (diamond) "
+    "belum bisa dikenali otomatis, tetapi bisa Anda pilih sendiri.",
+    "Model dilatih dan diuji hanya dengan foto wajah perempuan (data Kaggle niten19). Ketepatan hasil untuk wajah "
+    "laki-laki belum diketahui.",
+    "Pada data uji, sekitar 5 dari 10 tebakan bentuk wajah benar. Skor macro-F1, yang memberi bobot sama pada tiap "
+    "bentuk wajah, adalah 0,476 dari 1. Angka ini tidak menunjukkan apakah hasil untuk foto Anda benar.",
+    "Skor belum terkalibrasi, jadi tidak bisa digunakan untuk mengetahui peluang hasil ini benar.",
+    "Model ini untuk riset nonkomersial.",
 ]
+UNREADABLE = "Kami tidak bisa membuka foto ini. Coba pilih foto lain berformat JPEG, PNG, atau WebP."
 
 
 def to_out(a: FaceAnalysis) -> dict:
@@ -50,16 +54,16 @@ async def create_analysis(image: UploadFile = File(...), consent: bool = Form(Fa
     if len(data) > settings.max_upload_bytes:
         raise HTTPException(413, f"Ukuran foto maksimal {settings.max_upload_bytes // (1024 * 1024)} MB.")
     if storage.sniff_format(data) is None:
-        raise HTTPException(415, "Format foto harus JPEG, PNG, atau WebP.")
+        raise HTTPException(415, UNREADABLE)
     pixels = storage.pixel_count(data)
     if pixels is None:
-        raise HTTPException(422, "Foto tidak dapat dibaca. Coba unggah ulang.")
+        raise HTTPException(422, UNREADABLE)
     if pixels > storage.MAX_PIXELS:
         raise HTTPException(413, "Resolusi foto terlalu besar (maksimal 40 megapiksel).")
     try:
         rgb = decode_image(data)
     except ImageDecodeError:
-        raise HTTPException(422, "Foto tidak dapat dibaca. Coba unggah ulang.")
+        raise HTTPException(422, UNREADABLE)
     out = svc.analyze(rgb)
     r = out.result
     token = secrets.token_urlsafe(32)
@@ -73,7 +77,7 @@ async def create_analysis(image: UploadFile = File(...), consent: bool = Form(Fa
         d = r.to_dict()
         a.features = FacialFeatures(values=d["features"], forehead_hair_fraction=d["forehead_hair_fraction"],
                                     forehead_visible=d["forehead_visible"])
-    if consent:
+    if consent and r.quality.passed:
         a.consent_given_at = datetime.now(timezone.utc)
         a.image_path = storage.store_image(rgb)
     try:
@@ -124,7 +128,7 @@ def create_recommendations(req: RecommendationRequest, a: FaceAnalysis = Depends
     shape, source, secondary = req.face_shape, "user", None
     if shape is None:
         if a.predicted_shape is None:
-            raise HTTPException(422, "Bentuk wajah belum terdeteksi; pilih bentuk wajah secara manual.")
+            raise HTTPException(422, "Aplikasi belum bisa memperkirakan bentuk wajah. Silakan pilih sendiri.")
         shape, source = a.predicted_shape, "model"
         ranked = sorted(a.class_probabilities["scores"].items(), key=lambda kv: -kv[1])
         secondary = ranked[1][0] if len(ranked) > 1 else None

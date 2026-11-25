@@ -29,6 +29,7 @@ def install() -> None:
         logger = logging.getLogger(name)
         if not any(isinstance(x, NoFaceDataFilter) for x in logger.filters):
             logger.addFilter(f)
-    for h in logging.getLogger().handlers:
-        if not any(isinstance(x, NoFaceDataFilter) for x in h.filters):
-            h.addFilter(f)
+        # Logger filters skip records propagated from child loggers; handler filters see every record.
+        for h in logger.handlers:
+            if not any(isinstance(x, NoFaceDataFilter) for x in h.filters):
+                h.addFilter(f)

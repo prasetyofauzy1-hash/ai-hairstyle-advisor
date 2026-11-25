@@ -18,8 +18,9 @@ class BodyLimitMiddleware:
     def __init__(self, app, max_bytes: int):
         self.app = app
         self.limit = max_bytes + FORM_OVERHEAD
-        MultiPartParser.spool_max_size = self.limit + 1
-        MultiPartParser.max_part_size = self.limit + 1
+        # Starlette 0.40-0.45 spools at `max_file_size`; 0.46+ at `spool_max_size`.
+        for attr in ("spool_max_size", "max_file_size", "max_part_size"):
+            setattr(MultiPartParser, attr, self.limit + 1)
 
     async def _reject(self, send):
         body = json.dumps({"detail": f"Ukuran foto maksimal {(self.limit - FORM_OVERHEAD) // (1024 * 1024)} MB."}).encode()
@@ -34,19 +35,26 @@ class BodyLimitMiddleware:
         if length is not None and length.isdigit() and int(length) > self.limit:
             return await self._reject(send)
         seen = 0
-        started = False
+        started = over = False
 
         async def limited_receive():
-            nonlocal seen
+            nonlocal seen, over
             msg = await receive()
             if msg["type"] == "http.request":
                 seen += len(msg.get("body", b""))
                 if seen > self.limit:
+                    over = True
                     raise _TooLarge
             return msg
 
         async def tracked_send(msg):
+            # FastAPI turns the form-parsing exception into a 400; send the 413 instead.
             nonlocal started
+            if over:
+                if not started and msg["type"] == "http.response.start":
+                    started = True
+                    await self._reject(send)
+                return
             started = started or msg["type"] == "http.response.start"
             await send(msg)
 

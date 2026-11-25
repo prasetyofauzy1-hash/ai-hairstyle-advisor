@@ -118,6 +118,7 @@ def test_quality_failure_has_no_prediction(client):
     blank = cv2.imencode(".jpg", np.full((480, 480, 3), 200, np.uint8))[1].tobytes()
     body = upload(client, consent=True, data=blank).json()
     assert body["quality"]["passed"] is False and body["prediction"] is None
+    assert body["image_stored"] is False and not any(Path(settings.image_storage_dir).glob("*"))
     assert any(i["blocking"] for i in body["quality"]["issues"])
     r = client.post(f"/api/analyses/{body['id']}/recommendations", headers={"X-Analysis-Token": body["access_token"]},
                     json={"hair_type": "wavy", "thickness": "medium"})
@@ -136,3 +137,18 @@ def test_logs_never_contain_image_data(client, caplog):
     assert "AAAA" * 10 not in text and body["id"] + ".jpg" not in text and "\\xff\\xd8" not in text
     stored = stored_files()
     assert all(p.name not in text for p in stored)
+
+
+def test_chunked_oversized_upload_gets_413(client):
+    boundary = "xyz"
+    head = (f'--{boundary}\r\nContent-Disposition: form-data; name="image"; filename="a.jpg"\r\n'
+            "Content-Type: image/jpeg\r\n\r\n").encode()
+
+    def body():
+        yield head
+        for _ in range(settings.max_upload_bytes // 65536 + 4):
+            yield b"\xff" * 65536
+        yield f"\r\n--{boundary}--\r\n".encode()
+
+    r = client.post("/api/analyses", content=body(), headers={"content-type": f"multipart/form-data; boundary={boundary}"})
+    assert r.status_code == 413 and "MB" in r.json()["detail"]

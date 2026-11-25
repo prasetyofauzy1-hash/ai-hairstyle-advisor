@@ -19,6 +19,7 @@ logging_filter.install()
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
+    logging_filter.install()  # again, after uvicorn has attached its handlers
     with SessionLocal() as db:
         sync_catalog(db)
     yield
