@@ -21,7 +21,8 @@ jobs:
         options: --health-cmd "pg_isready -U hairstyle" --health-interval 5s --health-retries 10
     env:
       DATABASE_URL: postgresql+psycopg://hairstyle:ci-only@localhost:5432/hairstyle_advisor
-      IMAGE_STORAGE_DIR: ${{ runner.temp }}/images
+      IMAGE_STORAGE_DIR: /tmp/hairstyle-images
+      TEST_DATABASE_URL: postgresql+psycopg://hairstyle:ci-only@localhost:5432/hairstyle_advisor
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -51,7 +52,7 @@ jobs:
           PYTHONPATH: ..:.
         run: |
           alembic upgrade head
-          nohup uvicorn app.main:app --port 8000 > ${{ runner.temp }}/api.log 2>&1 &
+          nohup uvicorn app.main:app --port 8000 > /tmp/api.log 2>&1 &
       - name: Web lint, typecheck, build
         working-directory: frontend/web
         run: |
@@ -63,8 +64,8 @@ jobs:
         working-directory: frontend/web
         run: |
           npx playwright install --with-deps chromium
-          nohup npm run start > ${{ runner.temp }}/web.log 2>&1 &
+          nohup npm run start > /tmp/web.log 2>&1 &
           npx -y wait-on -t 60000 http://localhost:3000 http://localhost:8000/api/health
           npm run test:e2e
       - if: failure()
-        run: tail -100 ${{ runner.temp }}/api.log || true
+        run: tail -100 /tmp/api.log || true
