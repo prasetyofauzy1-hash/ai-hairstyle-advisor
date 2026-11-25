@@ -6,10 +6,10 @@ Minimal dua anotator; gambar hanya dipakai bila semua anotator memberi label yan
 
 ## Persiapan
 
-1. Ekstrak paket set uji ke komputer masing-masing. Jika membuat halaman sendiri, jalankan
-   `python -m ml.datasets.labeling_tool ml/datasets/ffhq_labeling/manifest.csv --test-split ml/datasets/ffhq_labeling/split.csv --images data/raw/ffhq --out data/raw/ffhq_labeling.html`.
-2. Buka `ffhq_labeling.html` di browser, isi nama Anda, lalu label 200 foto set uji (tombol atau angka 1-7).
-   Jangan gunakan CSV label AI dari set latih bersama CSV set uji.
+1. Ekstrak paket **600 foto** dan buka `ffhq_labeling.html` di browser. Isi nama Anda.
+2. Sebagai anotator kedua, labeli hanya **Gambar 1–104** (tombol atau angka 1-7), lalu berhenti sebelum
+   melabeli Gambar 105. Urutan ini sama dengan 104 foto yang sudah dilabeli anotator pertama.
+   Jangan gunakan CSV label AI dari 496 foto set latih bersama CSV set uji.
 3. Klik **Ekspor CSV** dan kirim `labels_<nama>.csv`. File HTML berisi wajah: jangan diunggah ke tempat publik.
 
 ## Cara menilai

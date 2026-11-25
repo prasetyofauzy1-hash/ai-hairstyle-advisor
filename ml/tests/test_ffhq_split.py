@@ -1,6 +1,5 @@
 import csv
 import json
-from collections import Counter
 from pathlib import Path
 
 import pytest
@@ -16,22 +15,16 @@ def read_rows(path):
         return list(csv.DictReader(f))
 
 
-def test_committed_ffhq_split_is_reproducible_and_stratified(tmp_path):
+def test_committed_ffhq_split_matches_first_104_manifest_rows(tmp_path):
     regenerated = tmp_path / "split.csv"
     write_split(SUBSET / "manifest.csv", regenerated)
     assert regenerated.read_bytes() == (SUBSET / "split.csv").read_bytes()
 
     split = read_rows(regenerated)
-    licenses = {r["ffhq_id"]: r["license"] for r in read_rows(SUBSET / "manifest.csv")}
-    assert len(split) == len(licenses) == len({r["ffhq_id"] for r in split}) == 600
-    assert {r["ffhq_id"] for r in split} == set(licenses)
-    assert Counter(r["split"] for r in split) == {"test": 200, "train": 400}
-    assert Counter(licenses[r["ffhq_id"]] for r in split if r["split"] == "test") == {
-        "Attribution License": 174,
-        "Public Domain Mark": 21,
-        "Public Domain Dedication (CC0)": 4,
-        "United States Government Work": 1,
-    }
+    manifest_ids = [r["ffhq_id"] for r in read_rows(SUBSET / "manifest.csv")]
+    assert len(manifest_ids) == len(set(manifest_ids)) == 600
+    assert [r["ffhq_id"] for r in split] == manifest_ids
+    assert [r["split"] for r in split] == ["test"] * 104 + ["train"] * 496
 
 
 def test_labeling_page_only_loads_test_images_and_isolates_storage(monkeypatch):
@@ -47,10 +40,9 @@ def test_labeling_page_only_loads_test_images_and_isolates_storage(monkeypatch):
     def items(page):
         return json.loads(page.split("const ITEMS=", 1)[1].split(", CHOICES=", 1)[0])
 
-    test_ids = {r["ffhq_id"] for r in read_rows(split) if r["split"] == "test"}
     assert len(items(full)) == 600
-    assert items(test) == [item for item in items(full) if item["id"] in test_ids]
-    assert "<title>Pelabelan Bentuk Wajah — Set Uji (200 Foto)</title>" in test
+    assert items(test) == items(full)[:104]
+    assert "<title>Pelabelan Bentuk Wajah — Set Uji (104 Foto)</title>" in test
     assert 'const KEY="faceshape-labels";' in full
     assert 'const KEY="faceshape-labels-test-' in test
     assert 'a.download=`labels_${name()}.csv`' in test
