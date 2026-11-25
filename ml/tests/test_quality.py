@@ -113,3 +113,13 @@ def test_group_photo_reports_only_multiple_faces(detector, frontal_image):
 
 def test_messages_are_indonesian():
     assert MESSAGES["no_face"].startswith("Wajah tidak terdeteksi")
+
+
+def test_white_background_is_not_too_bright(detector, frontal_image):
+    face = detector.detect(frontal_image)[0]
+    img = frontal_image.copy()
+    hull = cv2.convexHull(face.landmarks[:, :2].astype(np.int32))
+    mask = np.zeros(img.shape[:2], np.uint8)
+    cv2.fillConvexPoly(mask, hull, 1)
+    img[mask == 0] = 255
+    assert "too_bright" not in _codes(assess_quality(img, [face]))

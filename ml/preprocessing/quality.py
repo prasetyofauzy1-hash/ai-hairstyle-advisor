@@ -89,6 +89,13 @@ def sharpness(gray: np.ndarray) -> float:
     return float(cv2.Laplacian(g, cv2.CV_64F).var())
 
 
+def clipped_fraction(image_rgb: np.ndarray, face: DetectedFace) -> float:
+    """Share of blown-out pixels inside the face outline (not the bbox, so a white background does not count)."""
+    mask = np.zeros(image_rgb.shape[:2], np.uint8)
+    cv2.fillConvexPoly(mask, cv2.convexHull(face.landmarks[:, :2].astype(np.int32)), 1)
+    return float((image_rgb[mask > 0].max(axis=1) >= 250).mean()) if mask.any() else 0.0
+
+
 def eye_brightness_ratio(image_rgb: np.ndarray, face: DetectedFace, face_mean: float) -> float:
     gray = cv2.cvtColor(image_rgb, cv2.COLOR_RGB2GRAY)
     mask = np.zeros(gray.shape, np.uint8)
@@ -131,7 +138,7 @@ def assess_quality(image_rgb: np.ndarray, faces: list[DetectedFace],
         gray = cv2.cvtColor(crop, cv2.COLOR_RGB2GRAY)
         report.metrics["sharpness"] = sharpness(gray)
         report.metrics["brightness"] = float(gray.mean())
-        report.metrics["clipped_fraction"] = float((crop.max(axis=2) >= 250).mean())
+        report.metrics["clipped_fraction"] = clipped_fraction(image_rgb, main)
         if report.metrics["brightness"] < t.min_brightness:
             report.add("too_dark")
         elif report.metrics["brightness"] > t.max_brightness or report.metrics["clipped_fraction"] > t.max_clipped_fraction:
