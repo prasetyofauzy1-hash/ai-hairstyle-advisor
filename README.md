@@ -32,8 +32,8 @@ docs/               Project documentation
 ## Local setup (so far)
 
 ```bash
-cp .env.example .env
-docker compose up -d db   # PostgreSQL 16
+cp .env.example .env    # then set a strong POSTGRES_PASSWORD (and in DATABASE_URL)
+docker compose up -d db   # PostgreSQL 16, bound to 127.0.0.1 only
 ```
 
 ## Scope and ethics
