@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import hashlib
 import math
+import os
+import tempfile
 from pathlib import Path
 
 import numpy as np
@@ -58,6 +60,16 @@ def fuse(blocks: list[np.ndarray]) -> np.ndarray:
     return np.column_stack(blocks) / math.sqrt(len(blocks)) if len(blocks) > 1 else blocks[0]
 
 
+def _save_cache(output: Path, data: np.ndarray) -> None:
+    with tempfile.NamedTemporaryFile(dir=output.parent, delete=False) as pending:
+        try:
+            np.save(pending, data, allow_pickle=False)
+            pending.close()
+            os.replace(pending.name, output)
+        finally:
+            Path(pending.name).unlink(missing_ok=True)
+
+
 def encode_foundation(names, photos: list[Path], cache: Path, workers: int) -> dict[str, np.ndarray]:
     bases = set().union(*(REPRESENTATIONS[name] for name in names))
     features = {}
@@ -71,7 +83,7 @@ def encode_foundation(names, photos: list[Path], cache: Path, workers: int) -> d
             if not output.is_file():
                 print(f"Encoding {len(photos)} photos with {name}", flush=True)
                 data = activations(pixels) if name == "mobile_tail" else frozen_features(name, pixels)
-                np.save(output, data, allow_pickle=False)
+                _save_cache(output, data)
             features[name] = np.load(output, allow_pickle=False)
     if "sface" in bases:
         features["sface"] = face_assets(photos, cache, workers, sface=True)

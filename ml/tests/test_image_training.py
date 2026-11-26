@@ -1,8 +1,9 @@
 import numpy as np
 import pandas as pd
+import pytest
 
 from ml.datasets.face_crops import SIZE, square_crop
-from ml.training.foundation_features import fuse
+from ml.training.foundation_features import encode_foundation, fuse
 from ml.training.train_face_shape_image import baseline_predictions, encode, select, subset_metrics
 
 
@@ -82,6 +83,28 @@ def test_fusion_gives_equal_weight_to_unit_vectors_regardless_of_dimension():
     combined = fuse([a, b])
     np.testing.assert_allclose(np.linalg.norm(combined, axis=1), 1.0)
     np.testing.assert_allclose(np.linalg.norm(combined[:, :1], axis=1), np.linalg.norm(combined[:, 1:], axis=1))
+
+
+def test_foundation_cache_does_not_publish_a_partial_write(monkeypatch, tmp_path):
+    features = np.array([[1.0, 0.0]])
+    monkeypatch.setattr("ml.training.foundation_features.face_assets",
+                        lambda *args: np.zeros((1, 2, 2, 3), dtype=np.uint8))
+    monkeypatch.setattr("ml.training.foundation_features.frozen_features", lambda *args: features)
+    photos = [tmp_path / "face.jpg"]
+
+    def failed_save(file, *args, **kwargs):
+        file.write(b"partial array")
+        raise OSError("no space left")
+
+    with monkeypatch.context() as patch:
+        patch.setattr("ml.training.foundation_features.np.save", failed_save)
+        with pytest.raises(OSError, match="no space left"):
+            encode_foundation(["dino"], photos, tmp_path, 1)
+    assert not list(tmp_path.iterdir())
+
+    result = encode_foundation(["dino"], photos, tmp_path, 1)
+    cached, = tmp_path.glob("*.npy")
+    np.testing.assert_array_equal(np.load(cached), result["dino"])
 
 
 def test_foundation_selection_keeps_families_and_locked_reference_separate(monkeypatch):
