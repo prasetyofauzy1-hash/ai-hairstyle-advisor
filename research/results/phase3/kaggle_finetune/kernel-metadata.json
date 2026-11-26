@@ -1,0 +1,15 @@
+{
+  "id": "OWNER/face-shape-finetune",
+  "title": "Face Shape Finetune",
+  "code_file": "kaggle_kernel.py",
+  "language": "python",
+  "kernel_type": "script",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_tpu": false,
+  "enable_internet": true,
+  "dataset_sources": ["OWNER/face-shape-train"],
+  "competition_sources": [],
+  "kernel_sources": [],
+  "model_sources": []
+}

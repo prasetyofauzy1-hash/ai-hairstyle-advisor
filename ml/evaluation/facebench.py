@@ -36,12 +36,20 @@ def _read(path: Path) -> list[dict]:
         return list(csv.DictReader(f))
 
 
-def training_reference(images: Path, workers: int) -> np.ndarray:
+def training_reference(images: Path, workers: int, *, allow_download: bool = True) -> np.ndarray:
     split = {r["ffhq_id"] for r in _read(SUBSET / "split.csv") if r["split"] == "train"}
     manifest = {r["ffhq_id"]: r for r in _read(SUBSET / "manifest.csv")}
 
     def item(ffhq_id: str) -> tuple[Path, str, str, str]:
-        path = fetch(int(ffhq_id), manifest[ffhq_id]["file_md5"], images)
+        expected = manifest[ffhq_id]["file_md5"]
+        if allow_download:
+            path = fetch(int(ffhq_id), expected, images)
+        else:
+            path = images / f"{int(ffhq_id):05d}.png"
+            if not path.resolve(strict=True).is_relative_to(images.resolve()):
+                raise ValueError("FFHQ reference photo must be under its staged source root")
+            if hashlib.md5(path.read_bytes()).hexdigest() != expected:
+                path = None
         if path is None:
             raise ValueError(f"Training reference failed the FFHQ checksum: {ffhq_id}")
         return images, path.name, "", "train"
@@ -165,7 +173,8 @@ def markdown(report: dict) -> str:
     return "\n".join(lines) + "\n"
 
 
-def benchmark_inputs(manifest: Path, images: Path, ffhq_train: Path, niten_embeddings: Path, workers: int
+def benchmark_inputs(manifest: Path, images: Path, ffhq_train: Path, niten_embeddings: Path, workers: int,
+                     *, allow_download: bool = True
                      ) -> tuple[list[dict], np.ndarray, dict[str, np.ndarray]]:
     niten = np.load(niten_embeddings)
     if niten.shape != (5000, 128):
@@ -174,11 +183,13 @@ def benchmark_inputs(manifest: Path, images: Path, ffhq_train: Path, niten_embed
     items = []
     for row in candidates:
         path = images / row["local_file"]
+        if not allow_download and not path.resolve(strict=True).is_relative_to(images.resolve()):
+            raise ValueError("FaceBench photo must be under its staged source root")
         if hashlib.md5(path.read_bytes()).hexdigest() != row["file_md5"]:
             raise ValueError(f"FaceBench photo failed the FFHQ checksum: {path.name}")
         items.append((images, row["local_file"], row["label"], "test"))
     rows, embeddings = analyze_items(items, workers)
-    ffhq = training_reference(ffhq_train, workers)
+    ffhq = training_reference(ffhq_train, workers, allow_download=allow_download)
     return rows, embeddings, {"niten19 archive": niten, "FFHQ train split": ffhq}
 
 

@@ -66,3 +66,12 @@ def test_common_identity_screen_excludes_only_audited_matches_before_any_model_s
 def test_identity_screen_rejects_empty_reference_pool():
     with pytest.raises(ValueError, match="No usable identity embeddings in missing"):
         facebench.score([{"passed": True}], np.array([[1, 0]]), {"missing": np.array([[np.nan, np.nan]])}, [])
+
+
+def test_local_reference_does_not_fetch_missing_photo(monkeypatch, tmp_path):
+    monkeypatch.setattr(facebench, "_read", lambda path: [
+        {"ffhq_id": "00001", "split": "train", "file_md5": "reference-checksum"}
+    ])
+    monkeypatch.setattr(facebench, "fetch", lambda *_: pytest.fail("must not download a local input"))
+    with pytest.raises(FileNotFoundError, match="00001.png"):
+        facebench.training_reference(tmp_path, 1, allow_download=False)
