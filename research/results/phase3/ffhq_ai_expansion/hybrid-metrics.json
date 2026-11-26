@@ -1,0 +1,3398 @@
+{
+  "training": {
+    "niten19": 2562,
+    "ffhq_ai": 288,
+    "roboflow": 63,
+    "ffhq_ai_expansion": 118
+  },
+  "selection": {
+    "cv_seed": 42,
+    "cv_folds": 5,
+    "selected": {
+      "image_plus_landmarks": {
+        "backbone": "sface",
+        "geometry": true,
+        "C": 1.0,
+        "power": 0.5,
+        "cv_macro_f1": 0.4295238838417477
+      }
+    },
+    "trials": [
+      {
+        "backbone": "sface",
+        "geometry": true,
+        "C": 1.0,
+        "power": 0.0,
+        "cv_macro_f1": 0.42542769560724364
+      },
+      {
+        "backbone": "sface",
+        "geometry": true,
+        "C": 1.0,
+        "power": 0.5,
+        "cv_macro_f1": 0.4295238838417477
+      },
+      {
+        "backbone": "sface",
+        "geometry": true,
+        "C": 10.0,
+        "power": 0.0,
+        "cv_macro_f1": 0.41825764223026063
+      },
+      {
+        "backbone": "sface",
+        "geometry": true,
+        "C": 10.0,
+        "power": 0.5,
+        "cv_macro_f1": 0.4183456761206986
+      }
+    ]
+  },
+  "benchmarks": {
+    "niten19_holdout": {
+      "all": {
+        "photos": 682,
+        "models": {
+          "phase2_rules": {
+            "accuracy": 0.34017595307917886,
+            "macro_precision": 0.4977836442518352,
+            "macro_recall": 0.3444158464567042,
+            "macro_f1": 0.3253342013820305,
+            "per_class": {
+              "heart": {
+                "precision": 0.22033898305084745,
+                "recall": 0.08441558441558442,
+                "f1": 0.12206572769953052,
+                "support": 154
+              },
+              "oblong": {
+                "precision": 0.7142857142857143,
+                "recall": 0.1282051282051282,
+                "f1": 0.21739130434782608,
+                "support": 117
+              },
+              "oval": {
+                "precision": 0.24235294117647058,
+                "recall": 0.7984496124031008,
+                "f1": 0.37184115523465705,
+                "support": 129
+              },
+              "round": {
+                "precision": 0.7865168539325843,
+                "recall": 0.3626943005181347,
+                "f1": 0.49645390070921985,
+                "support": 193
+              },
+              "square": {
+                "precision": 0.5254237288135594,
+                "recall": 0.34831460674157305,
+                "f1": 0.4189189189189189,
+                "support": 89
+              }
+            },
+            "confusion_labels": [
+              "heart",
+              "oblong",
+              "oval",
+              "round",
+              "square",
+              "diamond"
+            ],
+            "confusion_matrix": [
+              [
+                13,
+                1,
+                124,
+                9,
+                0,
+                7
+              ],
+              [
+                19,
+                15,
+                76,
+                0,
+                0,
+                7
+              ],
+              [
+                7,
+                4,
+                103,
+                7,
+                0,
+                8
+              ],
+              [
+                20,
+                1,
+                71,
+                70,
+                28,
+                3
+              ],
+              [
+                0,
+                0,
+                51,
+                3,
+                31,
+                4
+              ]
+            ]
+          },
+          "combined_landmarks": {
+            "accuracy": 0.5219941348973607,
+            "macro_precision": 0.5283024110064783,
+            "macro_recall": 0.5425107412712525,
+            "macro_f1": 0.5169226246571639,
+            "per_class": {
+              "heart": {
+                "precision": 0.5741935483870968,
+                "recall": 0.577922077922078,
+                "f1": 0.5760517799352751,
+                "support": 154
+              },
+              "oblong": {
+                "precision": 0.5,
+                "recall": 0.39316239316239315,
+                "f1": 0.44019138755980863,
+                "support": 117
+              },
+              "oval": {
+                "precision": 0.35333333333333333,
+                "recall": 0.4108527131782946,
+                "f1": 0.37992831541218636,
+                "support": 129
+              },
+              "round": {
+                "precision": 0.7419354838709677,
+                "recall": 0.47668393782383417,
+                "f1": 0.580441640378549,
+                "support": 193
+              },
+              "square": {
+                "precision": 0.4720496894409938,
+                "recall": 0.8539325842696629,
+                "f1": 0.608,
+                "support": 89
+              }
+            },
+            "confusion_labels": [
+              "heart",
+              "oblong",
+              "oval",
+              "round",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                89,
+                14,
+                33,
+                9,
+                9
+              ],
+              [
+                30,
+                46,
+                30,
+                0,
+                11
+              ],
+              [
+                23,
+                29,
+                53,
+                16,
+                8
+              ],
+              [
+                9,
+                3,
+                32,
+                92,
+                57
+              ],
+              [
+                4,
+                0,
+                2,
+                7,
+                76
+              ]
+            ]
+          },
+          "image_plus_landmarks": {
+            "accuracy": 0.5909090909090909,
+            "macro_precision": 0.609195292436009,
+            "macro_recall": 0.6221617461867065,
+            "macro_f1": 0.5920201414331296,
+            "per_class": {
+              "heart": {
+                "precision": 0.7192982456140351,
+                "recall": 0.5324675324675324,
+                "f1": 0.6119402985074627,
+                "support": 154
+              },
+              "oblong": {
+                "precision": 0.6386554621848739,
+                "recall": 0.6495726495726496,
+                "f1": 0.6440677966101694,
+                "support": 117
+              },
+              "oval": {
+                "precision": 0.4066666666666667,
+                "recall": 0.4728682170542636,
+                "f1": 0.43727598566308246,
+                "support": 129
+              },
+              "round": {
+                "precision": 0.8015873015873016,
+                "recall": 0.5233160621761658,
+                "f1": 0.6332288401253918,
+                "support": 193
+              },
+              "square": {
+                "precision": 0.4797687861271676,
+                "recall": 0.9325842696629213,
+                "f1": 0.6335877862595419,
+                "support": 89
+              }
+            },
+            "confusion_labels": [
+              "heart",
+              "oblong",
+              "oval",
+              "round",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                82,
+                10,
+                46,
+                2,
+                14
+              ],
+              [
+                9,
+                76,
+                22,
+                0,
+                10
+              ],
+              [
+                10,
+                30,
+                61,
+                20,
+                8
+              ],
+              [
+                10,
+                3,
+                21,
+                101,
+                58
+              ],
+              [
+                3,
+                0,
+                0,
+                3,
+                83
+              ]
+            ]
+          }
+        }
+      },
+      "female": {
+        "photos": 675,
+        "models": {
+          "phase2_rules": {
+            "accuracy": 0.33925925925925926,
+            "macro_precision": 0.4993711621066268,
+            "macro_recall": 0.34473104587016123,
+            "macro_f1": 0.32600289371900926,
+            "per_class": {
+              "heart": {
+                "precision": 0.22413793103448276,
+                "recall": 0.08441558441558442,
+                "f1": 0.12264150943396226,
+                "support": 154
+              },
+              "oblong": {
+                "precision": 0.7142857142857143,
+                "recall": 0.13043478260869565,
+                "f1": 0.22058823529411764,
+                "support": 115
+              },
+              "oval": {
+                "precision": 0.23990498812351543,
+                "recall": 0.7952755905511811,
+                "f1": 0.3686131386861314,
+                "support": 127
+              },
+              "round": {
+                "precision": 0.7931034482758621,
+                "recall": 0.3612565445026178,
+                "f1": 0.49640287769784175,
+                "support": 191
+              },
+              "square": {
+                "precision": 0.5254237288135594,
+                "recall": 0.3522727272727273,
+                "f1": 0.4217687074829932,
+                "support": 88
+              }
+            },
+            "confusion_labels": [
+              "heart",
+              "oblong",
+              "oval",
+              "round",
+              "square",
+              "diamond"
+            ],
+            "confusion_matrix": [
+              [
+                13,
+                1,
+                124,
+                9,
+                0,
+                7
+              ],
+              [
+                19,
+                15,
+                74,
+                0,
+                0,
+                7
+              ],
+              [
+                7,
+                4,
+                101,
+                7,
+                0,
+                8
+              ],
+              [
+                19,
+                1,
+                71,
+                69,
+                28,
+                3
+              ],
+              [
+                0,
+                0,
+                51,
+                2,
+                31,
+                4
+              ]
+            ]
+          },
+          "combined_landmarks": {
+            "accuracy": 0.5244444444444445,
+            "macro_precision": 0.5312679089951817,
+            "macro_recall": 0.5454894102063992,
+            "macro_f1": 0.5193569799376251,
+            "per_class": {
+              "heart": {
+                "precision": 0.577922077922078,
+                "recall": 0.577922077922078,
+                "f1": 0.577922077922078,
+                "support": 154
+              },
+              "oblong": {
+                "precision": 0.5,
+                "recall": 0.4,
+                "f1": 0.4444444444444444,
+                "support": 115
+              },
+              "oval": {
+                "precision": 0.35135135135135137,
+                "recall": 0.4094488188976378,
+                "f1": 0.3781818181818182,
+                "support": 127
+              },
+              "round": {
+                "precision": 0.7520661157024794,
+                "recall": 0.47643979057591623,
+                "f1": 0.5833333333333334,
+                "support": 191
+              },
+              "square": {
+                "precision": 0.475,
+                "recall": 0.8636363636363636,
+                "f1": 0.6129032258064516,
+                "support": 88
+              }
+            },
+            "confusion_labels": [
+              "heart",
+              "oblong",
+              "oval",
+              "round",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                89,
+                14,
+                33,
+                9,
+                9
+              ],
+              [
+                29,
+                46,
+                30,
+                0,
+                10
+              ],
+              [
+                23,
+                29,
+                52,
+                15,
+                8
+              ],
+              [
+                9,
+                3,
+                31,
+                91,
+                57
+              ],
+              [
+                4,
+                0,
+                2,
+                6,
+                76
+              ]
+            ]
+          },
+          "image_plus_landmarks": {
+            "accuracy": 0.5896296296296296,
+            "macro_precision": 0.6076632135324143,
+            "macro_recall": 0.6214450359081851,
+            "macro_f1": 0.5909460149075121,
+            "per_class": {
+              "heart": {
+                "precision": 0.7192982456140351,
+                "recall": 0.5324675324675324,
+                "f1": 0.6119402985074627,
+                "support": 154
+              },
+              "oblong": {
+                "precision": 0.635593220338983,
+                "recall": 0.6521739130434783,
+                "f1": 0.6437768240343348,
+                "support": 115
+              },
+              "oval": {
+                "precision": 0.40268456375838924,
+                "recall": 0.47244094488188976,
+                "f1": 0.43478260869565216,
+                "support": 127
+              },
+              "round": {
+                "precision": 0.7983870967741935,
+                "recall": 0.518324607329843,
+                "f1": 0.6285714285714286,
+                "support": 191
+              },
+              "square": {
+                "precision": 0.4823529411764706,
+                "recall": 0.9318181818181818,
+                "f1": 0.6356589147286822,
+                "support": 88
+              }
+            },
+            "confusion_labels": [
+              "heart",
+              "oblong",
+              "oval",
+              "round",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                82,
+                10,
+                46,
+                2,
+                14
+              ],
+              [
+                9,
+                75,
+                22,
+                0,
+                9
+              ],
+              [
+                10,
+                30,
+                60,
+                20,
+                7
+              ],
+              [
+                10,
+                3,
+                21,
+                99,
+                58
+              ],
+              [
+                3,
+                0,
+                0,
+                3,
+                82
+              ]
+            ]
+          }
+        }
+      },
+      "male": {
+        "photos": 6,
+        "models": {
+          "phase2_rules": {
+            "accuracy": 0.5,
+            "macro_precision": 0.25,
+            "macro_recall": 0.5,
+            "macro_f1": 0.3333333333333333,
+            "per_class": {
+              "oblong": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 2
+              },
+              "oval": {
+                "precision": 0.5,
+                "recall": 1.0,
+                "f1": 0.6666666666666666,
+                "support": 2
+              },
+              "round": {
+                "precision": 0.5,
+                "recall": 1.0,
+                "f1": 0.6666666666666666,
+                "support": 1
+              },
+              "square": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 1
+              }
+            },
+            "confusion_labels": [
+              "oblong",
+              "oval",
+              "round",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                0,
+                2,
+                0,
+                0
+              ],
+              [
+                0,
+                2,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                1,
+                0
+              ]
+            ]
+          },
+          "combined_landmarks": {
+            "accuracy": 0.3333333333333333,
+            "macro_precision": 0.3333333333333333,
+            "macro_recall": 0.375,
+            "macro_f1": 0.29166666666666663,
+            "per_class": {
+              "oblong": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 2
+              },
+              "oval": {
+                "precision": 1.0,
+                "recall": 0.5,
+                "f1": 0.6666666666666666,
+                "support": 2
+              },
+              "round": {
+                "precision": 0.3333333333333333,
+                "recall": 1.0,
+                "f1": 0.5,
+                "support": 1
+              },
+              "square": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 1
+              }
+            },
+            "confusion_labels": [
+              "oblong",
+              "oval",
+              "round",
+              "square",
+              "heart"
+            ],
+            "confusion_matrix": [
+              [
+                0,
+                0,
+                0,
+                1,
+                1
+              ],
+              [
+                0,
+                1,
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                1,
+                0,
+                0
+              ]
+            ]
+          },
+          "image_plus_landmarks": {
+            "accuracy": 0.6666666666666666,
+            "macro_precision": 0.8333333333333334,
+            "macro_recall": 0.75,
+            "macro_f1": 0.7083333333333333,
+            "per_class": {
+              "oblong": {
+                "precision": 1.0,
+                "recall": 0.5,
+                "f1": 0.6666666666666666,
+                "support": 2
+              },
+              "oval": {
+                "precision": 1.0,
+                "recall": 0.5,
+                "f1": 0.6666666666666666,
+                "support": 2
+              },
+              "round": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0,
+                "support": 1
+              },
+              "square": {
+                "precision": 0.3333333333333333,
+                "recall": 1.0,
+                "f1": 0.5,
+                "support": 1
+              }
+            },
+            "confusion_labels": [
+              "oblong",
+              "oval",
+              "round",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                1,
+                0,
+                0,
+                1
+              ],
+              [
+                0,
+                1,
+                0,
+                1
+              ],
+              [
+                0,
+                0,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                1
+              ]
+            ]
+          }
+        }
+      },
+      "unknown": {
+        "photos": 1,
+        "models": {
+          "phase2_rules": {
+            "accuracy": 0.0,
+            "macro_precision": 0.0,
+            "macro_recall": 0.0,
+            "macro_f1": 0.0,
+            "per_class": {
+              "round": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 1
+              }
+            },
+            "confusion_labels": [
+              "round",
+              "heart"
+            ],
+            "confusion_matrix": [
+              [
+                0,
+                1
+              ]
+            ]
+          },
+          "combined_landmarks": {
+            "accuracy": 0.0,
+            "macro_precision": 0.0,
+            "macro_recall": 0.0,
+            "macro_f1": 0.0,
+            "per_class": {
+              "round": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 1
+              }
+            },
+            "confusion_labels": [
+              "round",
+              "oval"
+            ],
+            "confusion_matrix": [
+              [
+                0,
+                1
+              ]
+            ]
+          },
+          "image_plus_landmarks": {
+            "accuracy": 1.0,
+            "macro_precision": 1.0,
+            "macro_recall": 1.0,
+            "macro_f1": 1.0,
+            "per_class": {
+              "round": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0,
+                "support": 1
+              }
+            },
+            "confusion_labels": [
+              "round"
+            ],
+            "confusion_matrix": [
+              [
+                1
+              ]
+            ]
+          }
+        }
+      }
+    },
+    "uzy": {
+      "all": {
+        "photos": 101,
+        "models": {
+          "phase2_rules": {
+            "accuracy": 0.42574257425742573,
+            "macro_precision": 0.43842659014825447,
+            "macro_recall": 0.3659055997765675,
+            "macro_f1": 0.39119015829583353,
+            "per_class": {
+              "oblong": {
+                "precision": 0.25,
+                "recall": 0.18181818181818182,
+                "f1": 0.21052631578947367,
+                "support": 11
+              },
+              "oval": {
+                "precision": 0.6829268292682927,
+                "recall": 0.45161290322580644,
+                "f1": 0.5436893203883495,
+                "support": 62
+              },
+              "round": {
+                "precision": 0.38235294117647056,
+                "recall": 0.4642857142857143,
+                "f1": 0.41935483870967744,
+                "support": 28
+              }
+            },
+            "confusion_labels": [
+              "oblong",
+              "oval",
+              "round",
+              "diamond",
+              "heart",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                2,
+                7,
+                1,
+                0,
+                1,
+                0
+              ],
+              [
+                6,
+                28,
+                20,
+                1,
+                0,
+                7
+              ],
+              [
+                0,
+                6,
+                13,
+                1,
+                0,
+                8
+              ]
+            ]
+          },
+          "app_landmarks": {
+            "accuracy": 0.22772277227722773,
+            "macro_precision": 0.42058823529411765,
+            "macro_recall": 0.38954056695992173,
+            "macro_f1": 0.32127728901922453,
+            "per_class": {
+              "oblong": {
+                "precision": 0.35,
+                "recall": 0.6363636363636364,
+                "f1": 0.45161290322580644,
+                "support": 11
+              },
+              "oval": {
+                "precision": 0.5,
+                "recall": 0.03225806451612903,
+                "f1": 0.06060606060606061,
+                "support": 62
+              },
+              "round": {
+                "precision": 0.4117647058823529,
+                "recall": 0.5,
+                "f1": 0.45161290322580644,
+                "support": 28
+              }
+            },
+            "confusion_labels": [
+              "oblong",
+              "oval",
+              "round",
+              "heart",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                7,
+                0,
+                1,
+                3,
+                0
+              ],
+              [
+                13,
+                2,
+                19,
+                18,
+                10
+              ],
+              [
+                0,
+                2,
+                14,
+                4,
+                8
+              ]
+            ]
+          },
+          "combined_landmarks": {
+            "accuracy": 0.27722772277227725,
+            "macro_precision": 0.4696258142705651,
+            "macro_recall": 0.4294791230275101,
+            "macro_f1": 0.34015345268542196,
+            "per_class": {
+              "oblong": {
+                "precision": 0.30434782608695654,
+                "recall": 0.6363636363636364,
+                "f1": 0.4117647058823529,
+                "support": 11
+              },
+              "oval": {
+                "precision": 0.7142857142857143,
+                "recall": 0.08064516129032258,
+                "f1": 0.14492753623188406,
+                "support": 62
+              },
+              "round": {
+                "precision": 0.3902439024390244,
+                "recall": 0.5714285714285714,
+                "f1": 0.463768115942029,
+                "support": 28
+              }
+            },
+            "confusion_labels": [
+              "oblong",
+              "oval",
+              "round",
+              "heart",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                7,
+                0,
+                1,
+                3,
+                0
+              ],
+              [
+                15,
+                5,
+                24,
+                8,
+                10
+              ],
+              [
+                1,
+                2,
+                16,
+                1,
+                8
+              ]
+            ]
+          },
+          "image_plus_landmarks": {
+            "accuracy": 0.39603960396039606,
+            "macro_precision": 0.428324534942182,
+            "macro_recall": 0.43880044686496306,
+            "macro_f1": 0.3906926406926407,
+            "per_class": {
+              "oblong": {
+                "precision": 0.23529411764705882,
+                "recall": 0.36363636363636365,
+                "f1": 0.2857142857142857,
+                "support": 11
+              },
+              "oval": {
+                "precision": 0.6538461538461539,
+                "recall": 0.27419354838709675,
+                "f1": 0.38636363636363635,
+                "support": 62
+              },
+              "round": {
+                "precision": 0.3958333333333333,
+                "recall": 0.6785714285714286,
+                "f1": 0.5,
+                "support": 28
+              }
+            },
+            "confusion_labels": [
+              "oblong",
+              "oval",
+              "round",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                4,
+                5,
+                2,
+                0
+              ],
+              [
+                10,
+                17,
+                27,
+                8
+              ],
+              [
+                3,
+                4,
+                19,
+                2
+              ]
+            ]
+          }
+        }
+      },
+      "female": {
+        "photos": 51,
+        "models": {
+          "phase2_rules": {
+            "accuracy": 0.45098039215686275,
+            "macro_precision": 0.5626856803327392,
+            "macro_recall": 0.40598290598290593,
+            "macro_f1": 0.4567901234567901,
+            "per_class": {
+              "oblong": {
+                "precision": 0.6666666666666666,
+                "recall": 0.3333333333333333,
+                "f1": 0.4444444444444444,
+                "support": 6
+              },
+              "oval": {
+                "precision": 0.7272727272727273,
+                "recall": 0.5,
+                "f1": 0.5925925925925926,
+                "support": 32
+              },
+              "round": {
+                "precision": 0.29411764705882354,
+                "recall": 0.38461538461538464,
+                "f1": 0.3333333333333333,
+                "support": 13
+              }
+            },
+            "confusion_labels": [
+              "oblong",
+              "oval",
+              "round",
+              "diamond",
+              "heart",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                2,
+                3,
+                0,
+                0,
+                1,
+                0
+              ],
+              [
+                1,
+                16,
+                12,
+                1,
+                0,
+                2
+              ],
+              [
+                0,
+                3,
+                5,
+                1,
+                0,
+                4
+              ]
+            ]
+          },
+          "app_landmarks": {
+            "accuracy": 0.21568627450980393,
+            "macro_precision": 0.3819444444444444,
+            "macro_recall": 0.41639957264957267,
+            "macro_f1": 0.34232348111658456,
+            "per_class": {
+              "oblong": {
+                "precision": 0.5,
+                "recall": 0.8333333333333334,
+                "f1": 0.625,
+                "support": 6
+              },
+              "oval": {
+                "precision": 0.3333333333333333,
+                "recall": 0.03125,
+                "f1": 0.05714285714285714,
+                "support": 32
+              },
+              "round": {
+                "precision": 0.3125,
+                "recall": 0.38461538461538464,
+                "f1": 0.3448275862068966,
+                "support": 13
+              }
+            },
+            "confusion_labels": [
+              "oblong",
+              "oval",
+              "round",
+              "heart",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                5,
+                0,
+                0,
+                1,
+                0
+              ],
+              [
+                5,
+                1,
+                11,
+                12,
+                3
+              ],
+              [
+                0,
+                2,
+                5,
+                2,
+                4
+              ]
+            ]
+          },
+          "combined_landmarks": {
+            "accuracy": 0.23529411764705882,
+            "macro_precision": 0.36262626262626263,
+            "macro_recall": 0.44204059829059833,
+            "macro_f1": 0.3363381716322893,
+            "per_class": {
+              "oblong": {
+                "precision": 0.45454545454545453,
+                "recall": 0.8333333333333334,
+                "f1": 0.5882352941176471,
+                "support": 6
+              },
+              "oval": {
+                "precision": 0.3333333333333333,
+                "recall": 0.03125,
+                "f1": 0.05714285714285714,
+                "support": 32
+              },
+              "round": {
+                "precision": 0.3,
+                "recall": 0.46153846153846156,
+                "f1": 0.36363636363636365,
+                "support": 13
+              }
+            },
+            "confusion_labels": [
+              "oblong",
+              "oval",
+              "round",
+              "heart",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                5,
+                0,
+                0,
+                1,
+                0
+              ],
+              [
+                6,
+                1,
+                14,
+                8,
+                3
+              ],
+              [
+                0,
+                2,
+                6,
+                1,
+                4
+              ]
+            ]
+          },
+          "image_plus_landmarks": {
+            "accuracy": 0.47058823529411764,
+            "macro_precision": 0.5305010893246187,
+            "macro_recall": 0.4778311965811966,
+            "macro_f1": 0.4329931972789116,
+            "per_class": {
+              "oblong": {
+                "precision": 0.5,
+                "recall": 0.16666666666666666,
+                "f1": 0.25,
+                "support": 6
+              },
+              "oval": {
+                "precision": 0.6470588235294118,
+                "recall": 0.34375,
+                "f1": 0.4489795918367347,
+                "support": 32
+              },
+              "round": {
+                "precision": 0.4444444444444444,
+                "recall": 0.9230769230769231,
+                "f1": 0.6,
+                "support": 13
+              }
+            },
+            "confusion_labels": [
+              "oblong",
+              "oval",
+              "round",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                1,
+                5,
+                0,
+                0
+              ],
+              [
+                1,
+                11,
+                15,
+                5
+              ],
+              [
+                0,
+                1,
+                12,
+                0
+              ]
+            ]
+          }
+        }
+      },
+      "male": {
+        "photos": 50,
+        "models": {
+          "phase2_rules": {
+            "accuracy": 0.4,
+            "macro_precision": 0.36738906088751283,
+            "macro_recall": 0.3111111111111111,
+            "macro_f1": 0.3299319727891156,
+            "per_class": {
+              "oblong": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 5
+              },
+              "oval": {
+                "precision": 0.631578947368421,
+                "recall": 0.4,
+                "f1": 0.4897959183673469,
+                "support": 30
+              },
+              "round": {
+                "precision": 0.47058823529411764,
+                "recall": 0.5333333333333333,
+                "f1": 0.5,
+                "support": 15
+              }
+            },
+            "confusion_labels": [
+              "oblong",
+              "oval",
+              "round",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                0,
+                4,
+                1,
+                0
+              ],
+              [
+                5,
+                12,
+                8,
+                5
+              ],
+              [
+                0,
+                3,
+                8,
+                4
+              ]
+            ]
+          },
+          "app_landmarks": {
+            "accuracy": 0.24,
+            "macro_precision": 0.5666666666666667,
+            "macro_recall": 0.3444444444444444,
+            "macro_f1": 0.29221244705115673,
+            "per_class": {
+              "oblong": {
+                "precision": 0.2,
+                "recall": 0.4,
+                "f1": 0.26666666666666666,
+                "support": 5
+              },
+              "oval": {
+                "precision": 1.0,
+                "recall": 0.03333333333333333,
+                "f1": 0.06451612903225806,
+                "support": 30
+              },
+              "round": {
+                "precision": 0.5,
+                "recall": 0.6,
+                "f1": 0.5454545454545454,
+                "support": 15
+              }
+            },
+            "confusion_labels": [
+              "oblong",
+              "oval",
+              "round",
+              "heart",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                2,
+                0,
+                1,
+                2,
+                0
+              ],
+              [
+                8,
+                1,
+                8,
+                6,
+                7
+              ],
+              [
+                0,
+                0,
+                9,
+                2,
+                4
+              ]
+            ]
+          },
+          "combined_landmarks": {
+            "accuracy": 0.32,
+            "macro_precision": 0.5476190476190476,
+            "macro_recall": 0.39999999999999997,
+            "macro_f1": 0.3420479302832244,
+            "per_class": {
+              "oblong": {
+                "precision": 0.16666666666666666,
+                "recall": 0.4,
+                "f1": 0.23529411764705882,
+                "support": 5
+              },
+              "oval": {
+                "precision": 1.0,
+                "recall": 0.13333333333333333,
+                "f1": 0.23529411764705882,
+                "support": 30
+              },
+              "round": {
+                "precision": 0.47619047619047616,
+                "recall": 0.6666666666666666,
+                "f1": 0.5555555555555556,
+                "support": 15
+              }
+            },
+            "confusion_labels": [
+              "oblong",
+              "oval",
+              "round",
+              "heart",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                2,
+                0,
+                1,
+                2,
+                0
+              ],
+              [
+                9,
+                4,
+                10,
+                0,
+                7
+              ],
+              [
+                1,
+                0,
+                10,
+                0,
+                4
+              ]
+            ]
+          },
+          "image_plus_landmarks": {
+            "accuracy": 0.32,
+            "macro_precision": 0.39999999999999997,
+            "macro_recall": 0.4222222222222222,
+            "macro_f1": 0.3321937321937322,
+            "per_class": {
+              "oblong": {
+                "precision": 0.2,
+                "recall": 0.6,
+                "f1": 0.3,
+                "support": 5
+              },
+              "oval": {
+                "precision": 0.6666666666666666,
+                "recall": 0.2,
+                "f1": 0.3076923076923077,
+                "support": 30
+              },
+              "round": {
+                "precision": 0.3333333333333333,
+                "recall": 0.4666666666666667,
+                "f1": 0.3888888888888889,
+                "support": 15
+              }
+            },
+            "confusion_labels": [
+              "oblong",
+              "oval",
+              "round",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                3,
+                0,
+                2,
+                0
+              ],
+              [
+                9,
+                6,
+                12,
+                3
+              ],
+              [
+                3,
+                3,
+                7,
+                2
+              ]
+            ]
+          }
+        }
+      }
+    },
+    "facebench": {
+      "all": {
+        "photos": 59,
+        "models": {
+          "phase2_rules": {
+            "accuracy": 0.4745762711864407,
+            "macro_precision": 0.28994453044375645,
+            "macro_recall": 0.3325757575757576,
+            "macro_f1": 0.3061816652649285,
+            "per_class": {
+              "diamond": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 1
+              },
+              "heart": {
+                "precision": 0.2,
+                "recall": 0.2,
+                "f1": 0.2,
+                "support": 5
+              },
+              "oblong": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 7
+              },
+              "oval": {
+                "precision": 0.47058823529411764,
+                "recall": 0.6666666666666666,
+                "f1": 0.5517241379310345,
+                "support": 12
+              },
+              "round": {
+                "precision": 0.631578947368421,
+                "recall": 0.5454545454545454,
+                "f1": 0.5853658536585366,
+                "support": 22
+              },
+              "square": {
+                "precision": 0.4375,
+                "recall": 0.5833333333333334,
+                "f1": 0.5,
+                "support": 12
+              }
+            },
+            "confusion_labels": [
+              "diamond",
+              "heart",
+              "oblong",
+              "oval",
+              "round",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                0,
+                0,
+                0,
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                1,
+                0,
+                2,
+                2,
+                0
+              ],
+              [
+                2,
+                1,
+                0,
+                3,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                8,
+                2,
+                2
+              ],
+              [
+                0,
+                2,
+                0,
+                1,
+                12,
+                7
+              ],
+              [
+                0,
+                1,
+                0,
+                2,
+                2,
+                7
+              ]
+            ]
+          },
+          "app_landmarks": {
+            "accuracy": 0.4067796610169492,
+            "macro_precision": 0.23362573099415207,
+            "macro_recall": 0.29375901875901883,
+            "macro_f1": 0.2514655673140947,
+            "per_class": {
+              "diamond": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 1
+              },
+              "heart": {
+                "precision": 0.2,
+                "recall": 0.4,
+                "f1": 0.26666666666666666,
+                "support": 5
+              },
+              "oblong": {
+                "precision": 0.25,
+                "recall": 0.14285714285714285,
+                "f1": 0.18181818181818182,
+                "support": 7
+              },
+              "oval": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 12
+              },
+              "round": {
+                "precision": 0.5833333333333334,
+                "recall": 0.6363636363636364,
+                "f1": 0.6086956521739131,
+                "support": 22
+              },
+              "square": {
+                "precision": 0.3684210526315789,
+                "recall": 0.5833333333333334,
+                "f1": 0.45161290322580644,
+                "support": 12
+              }
+            },
+            "confusion_labels": [
+              "diamond",
+              "heart",
+              "oblong",
+              "oval",
+              "round",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                0,
+                0,
+                1,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                2,
+                0,
+                1,
+                2,
+                0
+              ],
+              [
+                0,
+                5,
+                1,
+                0,
+                1,
+                0
+              ],
+              [
+                0,
+                3,
+                2,
+                0,
+                2,
+                5
+              ],
+              [
+                0,
+                0,
+                0,
+                1,
+                14,
+                7
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                5,
+                7
+              ]
+            ]
+          },
+          "combined_landmarks": {
+            "accuracy": 0.4576271186440678,
+            "macro_precision": 0.29537037037037034,
+            "macro_recall": 0.3651875901875902,
+            "macro_f1": 0.32432509235578294,
+            "per_class": {
+              "diamond": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 1
+              },
+              "heart": {
+                "precision": 0.4,
+                "recall": 0.4,
+                "f1": 0.4,
+                "support": 5
+              },
+              "oblong": {
+                "precision": 0.4,
+                "recall": 0.5714285714285714,
+                "f1": 0.47058823529411764,
+                "support": 7
+              },
+              "oval": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 12
+              },
+              "round": {
+                "precision": 0.5833333333333334,
+                "recall": 0.6363636363636364,
+                "f1": 0.6086956521739131,
+                "support": 22
+              },
+              "square": {
+                "precision": 0.3888888888888889,
+                "recall": 0.5833333333333334,
+                "f1": 0.4666666666666667,
+                "support": 12
+              }
+            },
+            "confusion_labels": [
+              "diamond",
+              "heart",
+              "oblong",
+              "oval",
+              "round",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                0,
+                0,
+                1,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                2,
+                1,
+                1,
+                1,
+                0
+              ],
+              [
+                0,
+                2,
+                4,
+                0,
+                1,
+                0
+              ],
+              [
+                0,
+                1,
+                4,
+                0,
+                3,
+                4
+              ],
+              [
+                0,
+                0,
+                0,
+                1,
+                14,
+                7
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                5,
+                7
+              ]
+            ]
+          },
+          "image_plus_landmarks": {
+            "accuracy": 0.5254237288135594,
+            "macro_precision": 0.376984126984127,
+            "macro_recall": 0.3562049062049062,
+            "macro_f1": 0.36007936507936505,
+            "per_class": {
+              "diamond": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 1
+              },
+              "heart": {
+                "precision": 0.3333333333333333,
+                "recall": 0.2,
+                "f1": 0.25,
+                "support": 5
+              },
+              "oblong": {
+                "precision": 0.2857142857142857,
+                "recall": 0.2857142857142857,
+                "f1": 0.2857142857142857,
+                "support": 7
+              },
+              "oval": {
+                "precision": 0.3333333333333333,
+                "recall": 0.3333333333333333,
+                "f1": 0.3333333333333333,
+                "support": 12
+              },
+              "round": {
+                "precision": 0.6428571428571429,
+                "recall": 0.8181818181818182,
+                "f1": 0.72,
+                "support": 22
+              },
+              "square": {
+                "precision": 0.6666666666666666,
+                "recall": 0.5,
+                "f1": 0.5714285714285714,
+                "support": 12
+              }
+            },
+            "confusion_labels": [
+              "diamond",
+              "heart",
+              "oblong",
+              "oval",
+              "round",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                0,
+                0,
+                1,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                1,
+                0,
+                2,
+                2,
+                0
+              ],
+              [
+                0,
+                2,
+                2,
+                3,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                4,
+                4,
+                3,
+                1
+              ],
+              [
+                0,
+                0,
+                0,
+                2,
+                18,
+                2
+              ],
+              [
+                0,
+                0,
+                0,
+                1,
+                5,
+                6
+              ]
+            ]
+          }
+        }
+      },
+      "female": {
+        "photos": 31,
+        "models": {
+          "phase2_rules": {
+            "accuracy": 0.45161290322580644,
+            "macro_precision": 0.33333333333333337,
+            "macro_recall": 0.42000000000000004,
+            "macro_f1": 0.3467379679144385,
+            "per_class": {
+              "heart": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 4
+              },
+              "oblong": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 5
+              },
+              "oval": {
+                "precision": 0.4166666666666667,
+                "recall": 1.0,
+                "f1": 0.5882352941176471,
+                "support": 5
+              },
+              "round": {
+                "precision": 0.75,
+                "recall": 0.5,
+                "f1": 0.6,
+                "support": 12
+              },
+              "square": {
+                "precision": 0.5,
+                "recall": 0.6,
+                "f1": 0.5454545454545454,
+                "support": 5
+              }
+            },
+            "confusion_labels": [
+              "heart",
+              "oblong",
+              "oval",
+              "round",
+              "square",
+              "diamond"
+            ],
+            "confusion_matrix": [
+              [
+                0,
+                0,
+                2,
+                2,
+                0,
+                0
+              ],
+              [
+                1,
+                0,
+                2,
+                0,
+                0,
+                2
+              ],
+              [
+                0,
+                0,
+                5,
+                0,
+                0,
+                0
+              ],
+              [
+                2,
+                0,
+                1,
+                6,
+                3,
+                0
+              ],
+              [
+                0,
+                0,
+                2,
+                0,
+                3,
+                0
+              ]
+            ]
+          },
+          "app_landmarks": {
+            "accuracy": 0.41935483870967744,
+            "macro_precision": 0.3369047619047619,
+            "macro_recall": 0.3433333333333334,
+            "macro_f1": 0.31914751914751915,
+            "per_class": {
+              "heart": {
+                "precision": 0.14285714285714285,
+                "recall": 0.25,
+                "f1": 0.18181818181818182,
+                "support": 4
+              },
+              "oblong": {
+                "precision": 0.5,
+                "recall": 0.2,
+                "f1": 0.2857142857142857,
+                "support": 5
+              },
+              "oval": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 5
+              },
+              "round": {
+                "precision": 0.6666666666666666,
+                "recall": 0.6666666666666666,
+                "f1": 0.6666666666666666,
+                "support": 12
+              },
+              "square": {
+                "precision": 0.375,
+                "recall": 0.6,
+                "f1": 0.46153846153846156,
+                "support": 5
+              }
+            },
+            "confusion_labels": [
+              "heart",
+              "oblong",
+              "oval",
+              "round",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                1,
+                0,
+                1,
+                2,
+                0
+              ],
+              [
+                4,
+                1,
+                0,
+                0,
+                0
+              ],
+              [
+                2,
+                1,
+                0,
+                0,
+                2
+              ],
+              [
+                0,
+                0,
+                1,
+                8,
+                3
+              ],
+              [
+                0,
+                0,
+                0,
+                2,
+                3
+              ]
+            ]
+          },
+          "combined_landmarks": {
+            "accuracy": 0.5161290322580645,
+            "macro_precision": 0.419047619047619,
+            "macro_recall": 0.47333333333333333,
+            "macro_f1": 0.4424242424242424,
+            "per_class": {
+              "heart": {
+                "precision": 0.5,
+                "recall": 0.5,
+                "f1": 0.5,
+                "support": 4
+              },
+              "oblong": {
+                "precision": 0.5,
+                "recall": 0.6,
+                "f1": 0.5454545454545454,
+                "support": 5
+              },
+              "oval": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 5
+              },
+              "round": {
+                "precision": 0.6666666666666666,
+                "recall": 0.6666666666666666,
+                "f1": 0.6666666666666666,
+                "support": 12
+              },
+              "square": {
+                "precision": 0.42857142857142855,
+                "recall": 0.6,
+                "f1": 0.5,
+                "support": 5
+              }
+            },
+            "confusion_labels": [
+              "heart",
+              "oblong",
+              "oval",
+              "round",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                2,
+                0,
+                1,
+                1,
+                0
+              ],
+              [
+                2,
+                3,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                3,
+                0,
+                1,
+                1
+              ],
+              [
+                0,
+                0,
+                1,
+                8,
+                3
+              ],
+              [
+                0,
+                0,
+                0,
+                2,
+                3
+              ]
+            ]
+          },
+          "image_plus_landmarks": {
+            "accuracy": 0.5806451612903226,
+            "macro_precision": 0.596078431372549,
+            "macro_recall": 0.47333333333333333,
+            "macro_f1": 0.49429268049957703,
+            "per_class": {
+              "heart": {
+                "precision": 0.5,
+                "recall": 0.25,
+                "f1": 0.3333333333333333,
+                "support": 4
+              },
+              "oblong": {
+                "precision": 0.5,
+                "recall": 0.4,
+                "f1": 0.4444444444444444,
+                "support": 5
+              },
+              "oval": {
+                "precision": 0.3333333333333333,
+                "recall": 0.4,
+                "f1": 0.36363636363636365,
+                "support": 5
+              },
+              "round": {
+                "precision": 0.6470588235294118,
+                "recall": 0.9166666666666666,
+                "f1": 0.7586206896551724,
+                "support": 12
+              },
+              "square": {
+                "precision": 1.0,
+                "recall": 0.4,
+                "f1": 0.5714285714285714,
+                "support": 5
+              }
+            },
+            "confusion_labels": [
+              "heart",
+              "oblong",
+              "oval",
+              "round",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                1,
+                0,
+                1,
+                2,
+                0
+              ],
+              [
+                1,
+                2,
+                2,
+                0,
+                0
+              ],
+              [
+                0,
+                2,
+                2,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                1,
+                11,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                3,
+                2
+              ]
+            ]
+          }
+        }
+      },
+      "male": {
+        "photos": 28,
+        "models": {
+          "phase2_rules": {
+            "accuracy": 0.5,
+            "macro_precision": 0.3409090909090909,
+            "macro_recall": 0.4333333333333333,
+            "macro_f1": 0.36811391223155926,
+            "per_class": {
+              "diamond": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 1
+              },
+              "heart": {
+                "precision": 0.5,
+                "recall": 1.0,
+                "f1": 0.6666666666666666,
+                "support": 1
+              },
+              "oblong": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 2
+              },
+              "oval": {
+                "precision": 0.6,
+                "recall": 0.42857142857142855,
+                "f1": 0.5,
+                "support": 7
+              },
+              "round": {
+                "precision": 0.5454545454545454,
+                "recall": 0.6,
+                "f1": 0.5714285714285714,
+                "support": 10
+              },
+              "square": {
+                "precision": 0.4,
+                "recall": 0.5714285714285714,
+                "f1": 0.47058823529411764,
+                "support": 7
+              }
+            },
+            "confusion_labels": [
+              "diamond",
+              "heart",
+              "oblong",
+              "oval",
+              "round",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                0,
+                0,
+                0,
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                1,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                1,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                3,
+                2,
+                2
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                6,
+                4
+              ],
+              [
+                0,
+                1,
+                0,
+                0,
+                2,
+                4
+              ]
+            ]
+          },
+          "app_landmarks": {
+            "accuracy": 0.39285714285714285,
+            "macro_precision": 0.19949494949494948,
+            "macro_recall": 0.36190476190476195,
+            "macro_f1": 0.2483164983164983,
+            "per_class": {
+              "diamond": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 1
+              },
+              "heart": {
+                "precision": 0.3333333333333333,
+                "recall": 1.0,
+                "f1": 0.5,
+                "support": 1
+              },
+              "oblong": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 2
+              },
+              "oval": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 7
+              },
+              "round": {
+                "precision": 0.5,
+                "recall": 0.6,
+                "f1": 0.5454545454545454,
+                "support": 10
+              },
+              "square": {
+                "precision": 0.36363636363636365,
+                "recall": 0.5714285714285714,
+                "f1": 0.4444444444444444,
+                "support": 7
+              }
+            },
+            "confusion_labels": [
+              "diamond",
+              "heart",
+              "oblong",
+              "oval",
+              "round",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                0,
+                0,
+                1,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                1,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                1,
+                0,
+                0,
+                1,
+                0
+              ],
+              [
+                0,
+                1,
+                1,
+                0,
+                2,
+                3
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                6,
+                4
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                3,
+                4
+              ]
+            ]
+          },
+          "combined_landmarks": {
+            "accuracy": 0.39285714285714285,
+            "macro_precision": 0.18560606060606064,
+            "macro_recall": 0.2785714285714286,
+            "macro_f1": 0.2205387205387205,
+            "per_class": {
+              "diamond": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 1
+              },
+              "heart": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 1
+              },
+              "oblong": {
+                "precision": 0.25,
+                "recall": 0.5,
+                "f1": 0.3333333333333333,
+                "support": 2
+              },
+              "oval": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 7
+              },
+              "round": {
+                "precision": 0.5,
+                "recall": 0.6,
+                "f1": 0.5454545454545454,
+                "support": 10
+              },
+              "square": {
+                "precision": 0.36363636363636365,
+                "recall": 0.5714285714285714,
+                "f1": 0.4444444444444444,
+                "support": 7
+              }
+            },
+            "confusion_labels": [
+              "diamond",
+              "heart",
+              "oblong",
+              "oval",
+              "round",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                0,
+                0,
+                1,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                1,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                1,
+                0,
+                1,
+                0
+              ],
+              [
+                0,
+                1,
+                1,
+                0,
+                2,
+                3
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                6,
+                4
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                3,
+                4
+              ]
+            ]
+          },
+          "image_plus_landmarks": {
+            "accuracy": 0.4642857142857143,
+            "macro_precision": 0.25685425685425683,
+            "macro_recall": 0.2595238095238095,
+            "macro_f1": 0.2576312576312576,
+            "per_class": {
+              "diamond": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 1
+              },
+              "heart": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 1
+              },
+              "oblong": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 2
+              },
+              "oval": {
+                "precision": 0.3333333333333333,
+                "recall": 0.2857142857142857,
+                "f1": 0.3076923076923077,
+                "support": 7
+              },
+              "round": {
+                "precision": 0.6363636363636364,
+                "recall": 0.7,
+                "f1": 0.6666666666666666,
+                "support": 10
+              },
+              "square": {
+                "precision": 0.5714285714285714,
+                "recall": 0.5714285714285714,
+                "f1": 0.5714285714285714,
+                "support": 7
+              }
+            },
+            "confusion_labels": [
+              "diamond",
+              "heart",
+              "oblong",
+              "oval",
+              "round",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                0,
+                0,
+                1,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                1,
+                0,
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                2,
+                2,
+                2,
+                1
+              ],
+              [
+                0,
+                0,
+                0,
+                1,
+                7,
+                2
+              ],
+              [
+                0,
+                0,
+                0,
+                1,
+                2,
+                4
+              ]
+            ]
+          }
+        }
+      }
+    },
+    "roboflow_holdout": {
+      "all": {
+        "photos": 22,
+        "models": {
+          "phase2_rules": {
+            "accuracy": 0.36363636363636365,
+            "macro_precision": 0.2619047619047619,
+            "macro_recall": 0.27166666666666667,
+            "macro_f1": 0.2555844155844156,
+            "per_class": {
+              "diamond": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 1
+              },
+              "oblong": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 5
+              },
+              "oval": {
+                "precision": 0.3333333333333333,
+                "recall": 0.4,
+                "f1": 0.36363636363636365,
+                "support": 5
+              },
+              "round": {
+                "precision": 0.14285714285714285,
+                "recall": 0.3333333333333333,
+                "f1": 0.2,
+                "support": 3
+              },
+              "square": {
+                "precision": 0.8333333333333334,
+                "recall": 0.625,
+                "f1": 0.7142857142857143,
+                "support": 8
+              }
+            },
+            "confusion_labels": [
+              "diamond",
+              "oblong",
+              "oval",
+              "round",
+              "square",
+              "heart"
+            ],
+            "confusion_matrix": [
+              [
+                0,
+                1,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                4,
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                2,
+                2,
+                0,
+                1
+              ],
+              [
+                0,
+                1,
+                0,
+                1,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                3,
+                5,
+                0
+              ]
+            ]
+          },
+          "app_landmarks": {
+            "accuracy": 0.3181818181818182,
+            "macro_precision": 0.3761904761904762,
+            "macro_recall": 0.23166666666666663,
+            "macro_f1": 0.24444444444444446,
+            "per_class": {
+              "diamond": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 1
+              },
+              "oblong": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 5
+              },
+              "oval": {
+                "precision": 1.0,
+                "recall": 0.2,
+                "f1": 0.3333333333333333,
+                "support": 5
+              },
+              "round": {
+                "precision": 0.16666666666666666,
+                "recall": 0.3333333333333333,
+                "f1": 0.2222222222222222,
+                "support": 3
+              },
+              "square": {
+                "precision": 0.7142857142857143,
+                "recall": 0.625,
+                "f1": 0.6666666666666666,
+                "support": 8
+              }
+            },
+            "confusion_labels": [
+              "diamond",
+              "oblong",
+              "oval",
+              "round",
+              "square",
+              "heart"
+            ],
+            "confusion_matrix": [
+              [
+                0,
+                1,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                1,
+                0,
+                4
+              ],
+              [
+                0,
+                1,
+                1,
+                1,
+                1,
+                1
+              ],
+              [
+                0,
+                1,
+                0,
+                1,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                3,
+                5,
+                0
+              ]
+            ]
+          },
+          "combined_landmarks": {
+            "accuracy": 0.36363636363636365,
+            "macro_precision": 0.37857142857142856,
+            "macro_recall": 0.25666666666666665,
+            "macro_f1": 0.25666666666666665,
+            "per_class": {
+              "diamond": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 1
+              },
+              "oblong": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 5
+              },
+              "oval": {
+                "precision": 1.0,
+                "recall": 0.2,
+                "f1": 0.3333333333333333,
+                "support": 5
+              },
+              "round": {
+                "precision": 0.14285714285714285,
+                "recall": 0.3333333333333333,
+                "f1": 0.2,
+                "support": 3
+              },
+              "square": {
+                "precision": 0.75,
+                "recall": 0.75,
+                "f1": 0.75,
+                "support": 8
+              }
+            },
+            "confusion_labels": [
+              "diamond",
+              "oblong",
+              "oval",
+              "round",
+              "square",
+              "heart"
+            ],
+            "confusion_matrix": [
+              [
+                0,
+                1,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                3,
+                0,
+                2
+              ],
+              [
+                0,
+                2,
+                1,
+                1,
+                1,
+                0
+              ],
+              [
+                0,
+                1,
+                0,
+                1,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                2,
+                6,
+                0
+              ]
+            ]
+          },
+          "image_plus_landmarks": {
+            "accuracy": 0.6818181818181818,
+            "macro_precision": 0.5577777777777777,
+            "macro_recall": 0.5333333333333333,
+            "macro_f1": 0.5373262032085562,
+            "per_class": {
+              "diamond": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 1
+              },
+              "oblong": {
+                "precision": 0.4,
+                "recall": 0.4,
+                "f1": 0.4,
+                "support": 5
+              },
+              "oval": {
+                "precision": 0.5,
+                "recall": 0.6,
+                "f1": 0.5454545454545454,
+                "support": 5
+              },
+              "round": {
+                "precision": 1.0,
+                "recall": 0.6666666666666666,
+                "f1": 0.8,
+                "support": 3
+              },
+              "square": {
+                "precision": 0.8888888888888888,
+                "recall": 1.0,
+                "f1": 0.9411764705882353,
+                "support": 8
+              }
+            },
+            "confusion_labels": [
+              "diamond",
+              "oblong",
+              "oval",
+              "round",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                0,
+                1,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                2,
+                3,
+                0,
+                0
+              ],
+              [
+                0,
+                1,
+                3,
+                0,
+                1
+              ],
+              [
+                0,
+                1,
+                0,
+                2,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                8
+              ]
+            ]
+          }
+        }
+      },
+      "male": {
+        "photos": 22,
+        "models": {
+          "phase2_rules": {
+            "accuracy": 0.36363636363636365,
+            "macro_precision": 0.2619047619047619,
+            "macro_recall": 0.27166666666666667,
+            "macro_f1": 0.2555844155844156,
+            "per_class": {
+              "diamond": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 1
+              },
+              "oblong": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 5
+              },
+              "oval": {
+                "precision": 0.3333333333333333,
+                "recall": 0.4,
+                "f1": 0.36363636363636365,
+                "support": 5
+              },
+              "round": {
+                "precision": 0.14285714285714285,
+                "recall": 0.3333333333333333,
+                "f1": 0.2,
+                "support": 3
+              },
+              "square": {
+                "precision": 0.8333333333333334,
+                "recall": 0.625,
+                "f1": 0.7142857142857143,
+                "support": 8
+              }
+            },
+            "confusion_labels": [
+              "diamond",
+              "oblong",
+              "oval",
+              "round",
+              "square",
+              "heart"
+            ],
+            "confusion_matrix": [
+              [
+                0,
+                1,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                4,
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                2,
+                2,
+                0,
+                1
+              ],
+              [
+                0,
+                1,
+                0,
+                1,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                3,
+                5,
+                0
+              ]
+            ]
+          },
+          "app_landmarks": {
+            "accuracy": 0.3181818181818182,
+            "macro_precision": 0.3761904761904762,
+            "macro_recall": 0.23166666666666663,
+            "macro_f1": 0.24444444444444446,
+            "per_class": {
+              "diamond": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 1
+              },
+              "oblong": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 5
+              },
+              "oval": {
+                "precision": 1.0,
+                "recall": 0.2,
+                "f1": 0.3333333333333333,
+                "support": 5
+              },
+              "round": {
+                "precision": 0.16666666666666666,
+                "recall": 0.3333333333333333,
+                "f1": 0.2222222222222222,
+                "support": 3
+              },
+              "square": {
+                "precision": 0.7142857142857143,
+                "recall": 0.625,
+                "f1": 0.6666666666666666,
+                "support": 8
+              }
+            },
+            "confusion_labels": [
+              "diamond",
+              "oblong",
+              "oval",
+              "round",
+              "square",
+              "heart"
+            ],
+            "confusion_matrix": [
+              [
+                0,
+                1,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                1,
+                0,
+                4
+              ],
+              [
+                0,
+                1,
+                1,
+                1,
+                1,
+                1
+              ],
+              [
+                0,
+                1,
+                0,
+                1,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                3,
+                5,
+                0
+              ]
+            ]
+          },
+          "combined_landmarks": {
+            "accuracy": 0.36363636363636365,
+            "macro_precision": 0.37857142857142856,
+            "macro_recall": 0.25666666666666665,
+            "macro_f1": 0.25666666666666665,
+            "per_class": {
+              "diamond": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 1
+              },
+              "oblong": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 5
+              },
+              "oval": {
+                "precision": 1.0,
+                "recall": 0.2,
+                "f1": 0.3333333333333333,
+                "support": 5
+              },
+              "round": {
+                "precision": 0.14285714285714285,
+                "recall": 0.3333333333333333,
+                "f1": 0.2,
+                "support": 3
+              },
+              "square": {
+                "precision": 0.75,
+                "recall": 0.75,
+                "f1": 0.75,
+                "support": 8
+              }
+            },
+            "confusion_labels": [
+              "diamond",
+              "oblong",
+              "oval",
+              "round",
+              "square",
+              "heart"
+            ],
+            "confusion_matrix": [
+              [
+                0,
+                1,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                3,
+                0,
+                2
+              ],
+              [
+                0,
+                2,
+                1,
+                1,
+                1,
+                0
+              ],
+              [
+                0,
+                1,
+                0,
+                1,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                2,
+                6,
+                0
+              ]
+            ]
+          },
+          "image_plus_landmarks": {
+            "accuracy": 0.6818181818181818,
+            "macro_precision": 0.5577777777777777,
+            "macro_recall": 0.5333333333333333,
+            "macro_f1": 0.5373262032085562,
+            "per_class": {
+              "diamond": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 1
+              },
+              "oblong": {
+                "precision": 0.4,
+                "recall": 0.4,
+                "f1": 0.4,
+                "support": 5
+              },
+              "oval": {
+                "precision": 0.5,
+                "recall": 0.6,
+                "f1": 0.5454545454545454,
+                "support": 5
+              },
+              "round": {
+                "precision": 1.0,
+                "recall": 0.6666666666666666,
+                "f1": 0.8,
+                "support": 3
+              },
+              "square": {
+                "precision": 0.8888888888888888,
+                "recall": 1.0,
+                "f1": 0.9411764705882353,
+                "support": 8
+              }
+            },
+            "confusion_labels": [
+              "diamond",
+              "oblong",
+              "oval",
+              "round",
+              "square"
+            ],
+            "confusion_matrix": [
+              [
+                0,
+                1,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                2,
+                3,
+                0,
+                0
+              ],
+              [
+                0,
+                1,
+                3,
+                0,
+                1
+              ],
+              [
+                0,
+                1,
+                0,
+                2,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                8
+              ]
+            ]
+          }
+        }
+      }
+    }
+  }
+}
