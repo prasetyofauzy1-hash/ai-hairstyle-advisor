@@ -43,7 +43,15 @@ The [current FFHQ test labels](../ml/datasets/ffhq_labeling/human_labels_test.cs
 | Downloaded and MD5-verified FFHQ photos | 2 | 6 | 10 | 18 | 33 | 12 | 81 |
 | FFHQ photos passing `FaceAnalyzer` quality gates | 2 | 5 | 7 | 12 | 23 | 12 | 61 |
 
-Before scoring, check photo and identity overlap with **both** niten19 and the FFHQ pseudo-label training set; hold back uncertain matches. Report per-class support and results separately: two qualifying Diamond examples do not support a reliable Diamond score or a replacement six-class benchmark. If the CelebA-HQ part is approved later, verify its image-ID mapping, quality and leakage before combining it. Do not substitute Triangle for Heart or Rectangle for Oblong without provenance that supports the mapping. No retraining or test split changes were made.
+The [separate FaceBench benchmark](../research/results/phase3/facebench_ffhq/README.md) excludes candidate training-identity matches against both niten19 and the FFHQ pseudo-label train split before scoring. The screen left 11 photos with no Diamond or Oblong, so this is not a replacement six-class benchmark. If the CelebA-HQ part is approved later, verify its image-ID mapping, quality and leakage before combining it. Do not substitute Triangle for Heart or Rectangle for Oblong without provenance that supports the mapping. No retraining or test split changes were made.
+
+| Model | FaceBench FFHQ macro-F1 (11 photos) | [Uzy FFHQ macro-F1](../research/results/phase3/kaggle_plus_ffhq_ai/README.md) (101 photos) |
+|---|---:|---:|
+| Phase 2 rules | 0.342 | 0.391 |
+| Kaggle-only MLP | 0.312 | 0.321 |
+| Kaggle + FFHQ AI pseudo-labels MLP | 0.310 | 0.340 |
+
+The scores are not directly comparable: FaceBench averages Heart, Oval, Round and Square; Uzy averages Oblong, Oval and Round. Each benchmark report includes its own confusion matrices.
 
 To stage the FaceBench FFHQ photos and an attribution manifest locally for non-commercial research, first obtain NVIDIA's `ffhq-dataset-v2.json` from the [official FFHQ distribution](https://github.com/NVlabs/ffhq-dataset#overview). Then run:
 
@@ -54,6 +62,20 @@ python -m ml.datasets.facebench_ffhq data/raw/ffhq-dataset-v2.json \
 ```
 
 This downloads the pinned FaceBench annotation release, keeps the six shape answers on FFHQ, skips IDs already in the project's FFHQ manifest, and checks photos against NVIDIA's MD5 values. It retains the upstream labels and per-photo credits; the manifest is a **candidate** evaluation set, not a quality- or identity-filtered split. Keep photos local, cite both sources, retain Flickr attribution and observe the applicable non-commercial and share-alike terms.
+
+To reproduce the benchmark, unpack the full niten19 mirror archive into `data/raw/niten19` (the root below is the directory containing both `training_set` and `testing_set`). The [nfzmhn archive](https://huggingface.co/datasets/nfzmhn/face_shape/blob/fb498ced096bba0c679865336fb5a0a92d5a792b/archive.zip) audited here has SHA-256 `4b0c3f42f8f02ac0dda5d7b332394240d50ae9d440fea424ce953681dd025efe`.
+
+```sh
+python -m ml.datasets.build_features "data/raw/niten19/FaceShape Dataset" \
+    --out data/processed/niten19
+python -m ml.evaluation.facebench data/raw/facebench_ffhq/manifest.csv \
+    --images data/raw/facebench_ffhq/images \
+    --ffhq-train data/raw/ffhq \
+    --niten-embeddings data/processed/niten19/embeddings.npy \
+    --out research/results/phase3/facebench_ffhq
+```
+
+The scorer downloads any missing FFHQ training photos and checks their manifest MD5s. The exact trained-row indices are not part of either model bundle, and the two models used different niten19 splits. The check therefore uses a conservative superset: both source folders of niten19 and all 496 FFHQ train IDs, including photos not used in fitting. After quality gating, it excludes FaceBench photos without an SFace embedding or with cosine similarity ≥ 0.363 to **any** embedded reference. This uses the same threshold as the repository's identity grouping but a pairwise maximum rather than average-linkage clusters: a single possible match is enough to exclude a photo. A match is not proof of the same identity, and the check cannot rule out misses. Keep the source photos and embeddings local.
 
 ## 2. Facial landmarks
 

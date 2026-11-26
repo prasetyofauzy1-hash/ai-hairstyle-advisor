@@ -1,0 +1,310 @@
+{
+  "candidate_photos": 81,
+  "quality_passed": 61,
+  "missing_identity_embedding": 0,
+  "cosine_threshold": 0.363,
+  "references": {
+    "niten19 archive": {
+      "photos": 5000,
+      "embedded": 4998,
+      "matches": 41
+    },
+    "FFHQ train split": {
+      "photos": 496,
+      "embedded": 496,
+      "matches": 33
+    }
+  },
+  "identity_matches_excluded": 50,
+  "test_photos": 11,
+  "class_counts": {
+    "diamond": 0,
+    "heart": 1,
+    "oblong": 0,
+    "oval": 5,
+    "round": 4,
+    "square": 1
+  },
+  "macro_labels": [
+    "heart",
+    "oval",
+    "round",
+    "square"
+  ],
+  "models": {
+    "Phase 2 rules": {
+      "accuracy": 0.45454545454545453,
+      "macro_precision": 0.3833333333333333,
+      "macro_recall": 0.4625,
+      "macro_f1": 0.3422619047619047,
+      "per_class": {
+        "heart": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 1
+        },
+        "oval": {
+          "precision": 1.0,
+          "recall": 0.6,
+          "f1": 0.75,
+          "support": 5
+        },
+        "round": {
+          "precision": 0.3333333333333333,
+          "recall": 0.25,
+          "f1": 0.2857142857142857,
+          "support": 4
+        },
+        "square": {
+          "precision": 0.2,
+          "recall": 1.0,
+          "f1": 0.3333333333333333,
+          "support": 1
+        }
+      },
+      "confusion_labels": [
+        "diamond",
+        "heart",
+        "oblong",
+        "oval",
+        "round",
+        "square"
+      ],
+      "confusion_matrix": [
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          3,
+          1,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          1,
+          3
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ]
+      ]
+    },
+    "Kaggle-only MLP": {
+      "accuracy": 0.2727272727272727,
+      "macro_precision": 0.2857142857142857,
+      "macro_recall": 0.5625,
+      "macro_f1": 0.3125,
+      "per_class": {
+        "heart": {
+          "precision": 0.5,
+          "recall": 1.0,
+          "f1": 0.6666666666666666,
+          "support": 1
+        },
+        "oval": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 5
+        },
+        "round": {
+          "precision": 0.5,
+          "recall": 0.25,
+          "f1": 0.3333333333333333,
+          "support": 4
+        },
+        "square": {
+          "precision": 0.14285714285714285,
+          "recall": 1.0,
+          "f1": 0.25,
+          "support": 1
+        }
+      },
+      "confusion_labels": [
+        "diamond",
+        "heart",
+        "oblong",
+        "oval",
+        "round",
+        "square"
+      ],
+      "confusion_matrix": [
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0,
+          0,
+          1,
+          3
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          1,
+          3
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ]
+      ],
+      "artifact": "face_shape_kaggle_niten19.joblib",
+      "artifact_sha256": "736e0c852bde9bf5e559c323b4d2516459288b321f4ed7c1f27ec2d41bc64ce5"
+    },
+    "Kaggle + FFHQ AI pseudo-labels MLP": {
+      "accuracy": 0.2727272727272727,
+      "macro_precision": 0.24999999999999997,
+      "macro_recall": 0.5625,
+      "macro_f1": 0.30952380952380953,
+      "per_class": {
+        "heart": {
+          "precision": 0.5,
+          "recall": 1.0,
+          "f1": 0.6666666666666666,
+          "support": 1
+        },
+        "oval": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 5
+        },
+        "round": {
+          "precision": 0.3333333333333333,
+          "recall": 0.25,
+          "f1": 0.2857142857142857,
+          "support": 4
+        },
+        "square": {
+          "precision": 0.16666666666666666,
+          "recall": 1.0,
+          "f1": 0.2857142857142857,
+          "support": 1
+        }
+      },
+      "confusion_labels": [
+        "diamond",
+        "heart",
+        "oblong",
+        "oval",
+        "round",
+        "square"
+      ],
+      "confusion_matrix": [
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0,
+          0,
+          2,
+          2
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          1,
+          3
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ]
+      ],
+      "artifact": "face_shape_kaggle_ffhq_ai.joblib",
+      "artifact_sha256": "f3adbd8eb2c6ce2b7e64c18c7268c69cf5569a13e6f8ca3bd1b4319e97144abd"
+    }
+  }
+}
