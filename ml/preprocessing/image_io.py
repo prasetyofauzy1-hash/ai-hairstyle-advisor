@@ -19,6 +19,8 @@ def decode_image(data: bytes) -> np.ndarray:
     """Decode JPEG/PNG/WebP bytes to an RGB uint8 array (EXIF orientation applied, metadata dropped)."""
     if len(data) > MAX_BYTES:
         raise ImageDecodeError("image_too_large")
+    if not data:
+        raise ImageDecodeError("unsupported_or_corrupt_image")
     buf = np.frombuffer(data, dtype=np.uint8)
     bgr = cv2.imdecode(buf, cv2.IMREAD_COLOR)
     if bgr is None:

@@ -15,7 +15,9 @@ from sklearn.svm import SVC
 from threadpoolctl import threadpool_limits
 
 from ml.classification.learned import DEFAULT_MODEL
+from ml.classification.rule_based import SHAPES
 from ml.datasets.face_crops import face_assets
+from ml.datasets.ffhq_features import SUBSET
 from ml.datasets.roboflow_men import load_split
 from ml.evaluation.facebench import _read, benchmark_inputs, screened_frame
 from ml.evaluation.gender_estimates import estimates
@@ -70,7 +72,8 @@ def fit(configuration: dict, image: np.ndarray, frame: pd.DataFrame):
     return model, scaler
 
 
-def select(train: pd.DataFrame, features: dict[str, np.ndarray], *, foundation: bool = False) -> tuple[dict, dict]:
+def select(train: pd.DataFrame, features: dict[str, np.ndarray], *, foundation: bool = False,
+           hybrid_only: bool = False) -> tuple[dict, dict]:
     y = train["label"].to_numpy()
     seed, folds = cv_folds(y, train["identity_group"].to_numpy())
     trials = []
@@ -81,7 +84,7 @@ def select(train: pd.DataFrame, features: dict[str, np.ndarray], *, foundation: 
             configs = [{"backbone": name, "geometry": False, "lr": lr, "power": 0.5} for lr in (0.0003, 0.001)]
         else:
             configs = [{"backbone": name, "geometry": geometry, "C": c, "power": power}
-                       for geometry in (False, True)
+                       for geometry in ((True,) if hybrid_only else (False, True))
                        for c in ((1.0, 3.0) if foundation else (1.0, 10.0))
                        for power in ((0.5,) if foundation else (0.0, 0.5))]
         for config in configs:
@@ -98,6 +101,8 @@ def select(train: pd.DataFrame, features: dict[str, np.ndarray], *, foundation: 
             "foundation_ensemble": [t for t in trials if t["backbone"].endswith("_sface")],
             "mobile_partial": [t for t in trials if t["backbone"] == "mobile_tail"],
         }
+    elif hybrid_only:
+        families = {"image_plus_landmarks": trials}
     else:
         families = {"direct_image": [t for t in trials if not t["geometry"]],
                     "image_plus_landmarks": [t for t in trials if t["geometry"]]}
@@ -141,6 +146,20 @@ def encode(names, photos: list[Path], cache: Path, workers: int) -> dict[str, np
     return features
 
 
+def expansion_cohort(features: Path, facebench_manifest: Path, first_group: int) -> pd.DataFrame:
+    frame = pd.read_csv(features, dtype={"ffhq_id": str})
+    ids = frame["ffhq_id"]
+    forbidden = {f'{int(row["ffhq_id"]):05d}' for path in (SUBSET / "manifest.csv", facebench_manifest)
+                 for row in _read(path)}
+    if (frame.empty or ids.duplicated().any() or not ids.str.fullmatch(r"[0-9]{5}", na=False).all()
+            or forbidden.intersection(ids) or not frame["image"].eq(ids + ".png").all()
+            or not frame["source_split"].eq("train").all() or not frame["label_source"].eq("ai_pseudo_label").all()
+            or not frame["passed"].eq(True).all() or not frame["label"].isin(SHAPES).all()
+            or not np.isfinite(frame[FEATURE_NAMES].to_numpy(float)).all()):
+        raise ValueError("Expansion requires distinct quality-passing training-only FFHQ pseudo-labels")
+    return frame.assign(identity_group=first_group + np.arange(len(frame)))
+
+
 def training_cohorts(args: argparse.Namespace):
     kaggle = load(args.kaggle_features)
     tr, te = holdout_split(kaggle["label"].to_numpy(), kaggle["identity_group"].to_numpy())
@@ -151,6 +170,13 @@ def training_cohorts(args: argparse.Namespace):
     rf_train, rf_test = load_split(args.roboflow_data / "manifest.csv", args.roboflow_features, args.roboflow_split)
     rf_train["identity_group"] = ffhq["identity_group"].max() + 1 + np.arange(len(rf_train))
     training = [(kaggle.iloc[tr], args.niten_images), (ffhq, args.ffhq_images), (rf_train, rf_root)]
+    extra_features = getattr(args, "ffhq_expansion_features", None)
+    extra_images = getattr(args, "ffhq_expansion_images", None)
+    if bool(extra_features) != bool(extra_images):
+        raise ValueError("Supply both --ffhq-expansion-features and --ffhq-expansion-images")
+    if extra_features:
+        extra = expansion_cohort(extra_features, args.facebench_manifest, rf_train["identity_group"].max() + 1)
+        training.append((extra, extra_images))
     return training, (kaggle.iloc[te], uzy, rf_test)
 
 
@@ -184,19 +210,25 @@ def run(args: argparse.Namespace) -> dict:
     training, holdouts = training_cohorts(args)
     train = pd.concat([frame for frame, _ in training], ignore_index=True)
     encoder, names = encode, (*BACKBONES, SFACE)
-    if args.foundation:
+    expanded = len(training) == 4
+    if expanded:
+        if args.foundation:
+            raise ValueError("Expansion retrains the PR #14 SFace + landmark hybrid, not the foundation sweep")
+        names = (SFACE,)
+    elif args.foundation:
         from ml.training.foundation_features import REPRESENTATIONS, encode_foundation
 
         encoder, names = encode_foundation, tuple(REPRESENTATIONS)
     features = encoder(names, [p for frame, root in training for p in paths(frame, root)], args.cache, args.workers)
-    selection, selection_report = select(train, features, foundation=args.foundation)
+    selection, selection_report = select(train, features, foundation=args.foundation, hybrid_only=expanded)
     fitted = {key: fit(config, features[config["backbone"]], train) for key, config in selection.items()}
     print(f"Training-only selection: {selection}", flush=True)
 
     benchmarks = benchmark_cohorts(args, holdouts)
     baselines = {"app_landmarks": joblib.load(DEFAULT_MODEL),
                  "combined_landmarks": joblib.load(DEFAULT_MODEL.with_name(ARTIFACT))}
-    report = {"training": dict(zip(("niten19", "ffhq_ai", "roboflow"), [len(f) for f, _ in training], strict=True)),
+    sources = ("niten19", "ffhq_ai", "roboflow", "ffhq_ai_expansion") if expanded else ("niten19", "ffhq_ai", "roboflow")
+    report = {"training": dict(zip(sources, [len(f) for f, _ in training], strict=True)),
               "selection": selection_report, "benchmarks": {}}
     for key, (frame, root, ffhq_ids) in benchmarks.items():
         photos = paths(frame, root)
@@ -217,6 +249,8 @@ def add_cohort_arguments(parser) -> None:
                  "facebench-images", "attributes", "identity-review", "roboflow-data", "roboflow-features",
                  "roboflow-split", "niten-images", "gender-model", "cache"):
         parser.add_argument(f"--{name}", type=Path, required=True)
+    parser.add_argument("--ffhq-expansion-features", type=Path)
+    parser.add_argument("--ffhq-expansion-images", type=Path)
     parser.add_argument("--workers", type=int, default=4)
 
 

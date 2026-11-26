@@ -51,5 +51,10 @@ because of strong head tilt or expression.
 
 Diamond is severely under-represented, with only four usable examples.
 
+The separate [FFHQ expansion](expansion/) contains 253 additional AI-reviewed training candidates, of which 118
+received usable pseudo-labels (17 Diamond). It does not change the original 600-photo manifest, split, or human
+labels. See the [expansion runbook](../../../research/results/phase3/ffhq_ai_expansion/README.md) for screening,
+provenance, and benchmark results.
+
 FFHQ is © NVIDIA under CC BY-NC-SA 4.0 (the dataset); individual photos carry the Flickr licenses listed here.
 NVIDIA asks that FFHQ not be used to develop face recognition; identity grouping here is only for leakage-free splits.
