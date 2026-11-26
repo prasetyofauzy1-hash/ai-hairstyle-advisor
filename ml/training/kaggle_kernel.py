@@ -15,8 +15,11 @@ SEED = 42
 
 
 def digest(path: Path) -> str:
+    sha = hashlib.sha256()
     with path.open("rb") as source:
-        return hashlib.file_digest(source, "sha256").hexdigest()
+        for chunk in iter(lambda: source.read(1024 * 1024), b""):
+            sha.update(chunk)
+    return sha.hexdigest()
 
 
 def grouped_folds(y: np.ndarray, groups: np.ndarray, maximum: int = 5):
