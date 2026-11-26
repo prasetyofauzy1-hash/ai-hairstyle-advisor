@@ -52,19 +52,33 @@ def training_reference(images: Path, workers: int) -> np.ndarray:
     return embeddings
 
 
-def score(rows: list[dict], embeddings: np.ndarray, references: dict[str, np.ndarray]) -> dict:
+def score(rows: list[dict], embeddings: np.ndarray, references: dict[str, np.ndarray],
+          identity_review: list[dict]) -> dict:
     quality = np.array([r["passed"] for r in rows], dtype=bool)
     valid = np.isfinite(embeddings).all(axis=1)
     screenable = quality & valid
-    matched = np.zeros(len(rows), dtype=bool)
+    flagged = np.zeros(len(rows), dtype=bool)
     reference_counts = {}
     for name, ref in references.items():
         usable = ref[np.isfinite(ref).all(axis=1)]
         if not len(usable):
             raise ValueError(f"No usable identity embeddings in {name}")
         close = screenable & (max_cosine(embeddings, usable) >= SAME_PERSON_COSINE)
-        matched |= close
+        flagged |= close
         reference_counts[name] = {"photos": len(ref), "embedded": len(usable), "matches": int(close.sum())}
+    review = {r["facebench_file"]: r for r in identity_review}
+    if len(review) != len(identity_review):
+        raise ValueError("Duplicate FaceBench photos in identity review")
+    files = np.array([r["image"] for r in rows])
+    flagged_files = set(files[flagged])
+    if (not set(review) <= set(files[screenable])
+            or {name for name, row in review.items() if row["sface_flagged"] == "yes"} != flagged_files
+            or any(row["sface_flagged"] not in {"yes", "no"} for row in review.values())):
+        raise ValueError("Identity review does not cover the current FaceBench screen")
+    if any(row["decision"] not in {"confirmed", "not_confirmed"} for row in review.values()):
+        raise ValueError("Invalid FaceBench identity review decision")
+    confirmed = {name for name, row in review.items() if row["decision"] == "confirmed"}
+    matched = np.isin(files, list(confirmed))
     keep = screenable & ~matched
     if not keep.any():
         raise ValueError("No FaceBench photos remain after quality and identity screening")
@@ -92,6 +106,9 @@ def score(rows: list[dict], embeddings: np.ndarray, references: dict[str, np.nda
         "missing_identity_embedding": int((quality & ~valid).sum()),
         "cosine_threshold": SAME_PERSON_COSINE,
         "references": reference_counts,
+        "sface_flagged": int(flagged.sum()),
+        "identity_reviewed": len(review),
+        "sface_flagged_confirmed": len(flagged_files & confirmed),
         "identity_matches_excluded": int(matched.sum()),
         "test_photos": int(keep.sum()),
         "class_counts": {label: int((truth == label).sum()) for label in LABELS},
@@ -107,16 +124,19 @@ def markdown(report: dict) -> str:
         "../../../../docs/datasets.md#follow-up-public-pre-labeled-evaluation-data-2026-11-26).", "",
         f"Of {report['candidate_photos']} FaceBench FFHQ photos, {report['quality_passed']} passed quality checks. "
         f"Of those, {report['missing_identity_embedding']} lacked an identity embedding and "
-        f"{report['identity_matches_excluded']} were flagged as possible matches to at least one reference photo "
-        f"at SFace cosine ≥ {report['cosine_threshold']:.3f}. **{report['test_photos']} photos were scored.**", "",
+        f"{report['sface_flagged']} were flagged as possible matches at SFace cosine ≥ {report['cosine_threshold']:.3f}. "
+        f"The [identity audit](identity_review.csv) confirmed {report['sface_flagged_confirmed']} of those flags. "
+        f"Only the {report['identity_matches_excluded']} confirmed matches across "
+        f"{report['identity_reviewed']} reviewed photos were excluded for identity. "
+        f"**{report['test_photos']} photos were scored.**", "",
         "| Reference pool | Photos | Embedded | FaceBench photos flagged |", "|---|---:|---:|---:|",
     ]
     for name, ref in report["references"].items():
         lines.append(f"| {name} | {ref['photos']} | {ref['embedded']} | {ref['matches']} |")
     lines += [
         "", "The pools conservatively include all niten19 archive photos and the full FFHQ train split, "
-        "not just the rows used to fit the artifacts. Flags are candidate matches, not verified identities. "
-        "No embeddings, filenames or per-photo predictions are published.", "",
+        "not just the rows used to fit the artifacts. Unconfirmed is not proof of different identities. "
+        "No photos, embeddings, names or per-photo predictions are published.", "",
         "| True shape | Photos |", "|---|---:|",
     ]
     lines.extend(f"| {label} | {count} |" for label, count in report["class_counts"].items())
@@ -140,7 +160,8 @@ def markdown(report: dict) -> str:
     return "\n".join(lines) + "\n"
 
 
-def run(manifest: Path, images: Path, ffhq_train: Path, niten_embeddings: Path, out: Path, workers: int) -> dict:
+def run(manifest: Path, images: Path, ffhq_train: Path, niten_embeddings: Path, out: Path, workers: int,
+        identity_review: Path) -> dict:
     niten = np.load(niten_embeddings)
     if niten.shape != (5000, 128):
         raise ValueError("Expected embeddings from all 5,000 niten19 archive photos")
@@ -153,7 +174,7 @@ def run(manifest: Path, images: Path, ffhq_train: Path, niten_embeddings: Path, 
         items.append((images, row["local_file"], row["label"], "test"))
     rows, embeddings = analyze_items(items, workers)
     ffhq = training_reference(ffhq_train, workers)
-    report = score(rows, embeddings, {"niten19 archive": niten, "FFHQ train split": ffhq})
+    report = score(rows, embeddings, {"niten19 archive": niten, "FFHQ train split": ffhq}, _read(identity_review))
     out.mkdir(parents=True, exist_ok=True)
     (out / "metrics.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     (out / "README.md").write_text(markdown(report), encoding="utf-8")
@@ -166,12 +187,14 @@ def main() -> None:
     parser.add_argument("--images", type=Path, required=True, help="FaceBench FFHQ candidate photos")
     parser.add_argument("--ffhq-train", type=Path, required=True, help="Local cache for the existing FFHQ train photos")
     parser.add_argument("--niten-embeddings", type=Path, required=True, help="embeddings.npy from ml.datasets.build_features")
+    parser.add_argument("--identity-review", type=Path, required=True, help="CSV with the audited identity decisions")
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--workers", type=int, default=4)
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO)
     logging.getLogger("ml.pipeline").setLevel(logging.WARNING)
-    report = run(args.manifest, args.images, args.ffhq_train, args.niten_embeddings, args.out, args.workers)
+    report = run(args.manifest, args.images, args.ffhq_train, args.niten_embeddings, args.out, args.workers,
+                 args.identity_review)
     print(f"Scored {report['test_photos']} FaceBench photos; results in {args.out}")
 
 

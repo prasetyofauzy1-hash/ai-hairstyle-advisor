@@ -43,15 +43,15 @@ The [current FFHQ test labels](../ml/datasets/ffhq_labeling/human_labels_test.cs
 | Downloaded and MD5-verified FFHQ photos | 2 | 6 | 10 | 18 | 33 | 12 | 81 |
 | FFHQ photos passing `FaceAnalyzer` quality gates | 2 | 5 | 7 | 12 | 23 | 12 | 61 |
 
-The [separate FaceBench benchmark](../research/results/phase3/facebench_ffhq/README.md) excludes candidate training-identity matches against both niten19 and the FFHQ pseudo-label train split before scoring. The screen left 11 photos with no Diamond or Oblong, so this is not a replacement six-class benchmark. If the CelebA-HQ part is approved later, verify its image-ID mapping, quality and leakage before combining it. Do not substitute Triangle for Heart or Rectangle for Oblong without provenance that supports the mapping. No retraining or test split changes were made.
+The original SFace-only screen flagged 50 of 61 quality-passing photos and would have left 11 to score. The [identity audit](../research/results/phase3/facebench_ffhq/identity_review.csv) corroborated two of those 50 as matches to the FFHQ train split; both references are marked `ragu` (unsure) and were not used to fit the model. We still excluded those two photos to keep the [separate FaceBench benchmark](../research/results/phase3/facebench_ffhq/README.md) independent of the full designated training pool. All six classes remain, but with just one Diamond example the scores cannot establish a reliable model ranking or replace the Uzy benchmark. If the CelebA-HQ part is approved later, verify its image-ID mapping, quality and leakage before combining it. Do not substitute Triangle for Heart or Rectangle for Oblong without provenance that supports the mapping. No retraining or test split changes were made.
 
-| Model | FaceBench FFHQ macro-F1 (11 photos) | [Uzy FFHQ macro-F1](../research/results/phase3/kaggle_plus_ffhq_ai/README.md) (101 photos) |
+| Model | FaceBench FFHQ macro-F1 (59 photos) | [Uzy FFHQ macro-F1](../research/results/phase3/kaggle_plus_ffhq_ai/README.md) (101 photos) |
 |---|---:|---:|
-| Phase 2 rules | 0.342 | 0.391 |
-| Kaggle-only MLP | 0.312 | 0.321 |
-| Kaggle + FFHQ AI pseudo-labels MLP | 0.310 | 0.340 |
+| Phase 2 rules | 0.306 | 0.391 |
+| Kaggle-only MLP | 0.251 | 0.321 |
+| Kaggle + FFHQ AI pseudo-labels MLP | 0.324 | 0.340 |
 
-The scores are not directly comparable: FaceBench averages Heart, Oval, Round and Square; Uzy averages Oblong, Oval and Round. Each benchmark report includes its own confusion matrices.
+The scores are not directly comparable: FaceBench averages six shapes; Uzy averages Oblong, Oval and Round. Each benchmark report includes its own confusion matrices.
 
 To stage the FaceBench FFHQ photos and an attribution manifest locally for non-commercial research, first obtain NVIDIA's `ffhq-dataset-v2.json` from the [official FFHQ distribution](https://github.com/NVlabs/ffhq-dataset#overview). Then run:
 
@@ -72,10 +72,15 @@ python -m ml.evaluation.facebench data/raw/facebench_ffhq/manifest.csv \
     --images data/raw/facebench_ffhq/images \
     --ffhq-train data/raw/ffhq \
     --niten-embeddings data/processed/niten19/embeddings.npy \
+    --identity-review research/results/phase3/facebench_ffhq/identity_review.csv \
     --out research/results/phase3/facebench_ffhq
 ```
 
-The scorer downloads any missing FFHQ training photos and checks their manifest MD5s. The exact trained-row indices are not part of either model bundle, and the two models used different niten19 splits. The check therefore uses a conservative superset: both source folders of niten19 and all 496 FFHQ train IDs, including photos not used in fitting. After quality gating, it excludes FaceBench photos without an SFace embedding or with cosine similarity ≥ 0.363 to **any** embedded reference. This uses the same threshold as the repository's identity grouping but a pairwise maximum rather than average-linkage clusters: a single possible match is enough to exclude a photo. A match is not proof of the same identity, and the check cannot rule out misses. Keep the source photos and embeddings local.
+The scorer downloads any missing FFHQ training photos and checks their manifest MD5s. The exact trained-row indices are not part of either model bundle, and the two models used different niten19 splits. The check therefore uses a conservative superset: both source folders of niten19 and all 496 FFHQ train IDs, including photos not used in fitting. The scorer reproduces the original SFace screen and requires a decision for every SFace flag. After the original quality and embedding gates, it excludes only confirmed identity matches from the audit.
+
+**Identity audit.** Cosine 0.363 is [OpenCV's SFace threshold on LFW](https://github.com/opencv/opencv/blob/4.x/doc/tutorials/dnn/dnn_face/dnn_face.markdown), not just a grouping threshold. The original benchmark applied it to the maximum of thousands of individual comparisons per query, not to a known pair or to an average-linkage group. A threshold crossing in that search is a candidate, not verified leakage.
+
+We independently searched the two galleries using [dlib's face recognition ResNet](https://dlib.net/face_recognition.py.html) (model v1, dlib 20.0.1). For each RGB image, we downscaled the longer side to at most 480 px, used dlib's frontal HOG detector (retrying with one upsampling step if needed), aligned with its five-point predictor, and compared the unnormalized 128-D descriptors by Euclidean distance without jitter. All 81 FaceBench photos, 4,992 of 5,000 niten19 photos and all 496 FFHQ training photos had a dlib descriptor. The independent dlib screen at distance < 0.6 flagged 54 of 61 eligible photos, including eight not flagged by SFace. We visually reviewed the nearest pairs from both models for all 58 flagged photos, all 214 pairs passing both thresholds, and 26 FFHQ pairs with a shared source photographer. Shared capture context corroborated two matches; the correct reference in one of them fell below the SFace threshold despite a different pair flagging the query. The [decision CSV](../research/results/phase3/facebench_ffhq/identity_review.csv) contains dataset-local filenames, model scores, and the reason for each decision. Unconfirmed pairs remain in the benchmark; that does not prove leakage is absent. Keep photos and embeddings local.
 
 ## 2. Facial landmarks
 
