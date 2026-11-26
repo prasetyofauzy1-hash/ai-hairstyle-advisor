@@ -104,6 +104,17 @@ We set an identity-grouped 63/22 train/holdout split with representation of all 
 
 Sources without image archives could not be screened for image quality, exact/perceptual duplicates, or identity overlap. The original [Shashied audit](#follow-up-public-pre-labeled-evaluation-data-2026-11-26) downloaded Diamond photos but still has unverified photo rights and labels. A usable next source needs accessible photos, documented annotation and photo permissions, and enough distinct Diamond identities to reserve an independent holdout.
 
+### Image-backbone follow-up
+
+The [pretrained backbone experiment](../research/results/phase3/image_backbones/README.md) uses the established splits and reports the four separate benchmarks. No new source was admitted:
+
+| Candidate | Finding |
+|---|---|
+| [Plant ID Shape face v9](https://universe.roboflow.com/plant-id/shape-face-oumca/dataset/9) | Lists 2,896 images in a multi-label project, with Diamond and gender/age labels alongside shape classes. Anonymous classification export returned HTTP 401; class counts, single-shape labels, annotation provenance, photo rights, and independence are unverified. |
+| [Face Research Lab London Set](https://figshare.com/articles/dataset/Face_Research_Lab_London_Set/5047666) | 102 adult faces with landmark coordinates and demographic metadata, not human categorical face-shape labels. Using a geometry rule to generate shapes would not provide an independent benchmark for the rule. |
+| [Face Shape Preprocessed](https://www.kaggle.com/datasets/zeyadkhalid/faceshape-processed) | Five familiar classes without Diamond; anonymous archive returned HTTP 404. Origin/overlap not verified. |
+| [Xception face-shape paper](https://doi.org/10.15294/rji.v1i2.70774) | Uses the same niten19 dataset, not a new human test. |
+
 ## 2. Facial landmarks
 
 | Resource | License | Notes |
