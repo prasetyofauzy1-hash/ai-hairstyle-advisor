@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 
 from ml.datasets.face_crops import SIZE, square_crop
+from ml.training.foundation_features import fuse
 from ml.training.train_face_shape_image import baseline_predictions, encode, select, subset_metrics
 
 
@@ -73,3 +74,35 @@ def test_app_baseline_is_not_scored_on_overlapping_niten19_holdout(monkeypatch):
     assert len(calls) == 1 and calls[0] is baselines["combined_landmarks"]
     for benchmark in ("uzy", "facebench", "roboflow_holdout"):
         assert set(baseline_predictions(benchmark, frame, baselines)) == {"phase2_rules", *baselines}
+
+
+def test_fusion_gives_equal_weight_to_unit_vectors_regardless_of_dimension():
+    a = np.array([[1.0]])
+    b = np.array([[0.6, 0.8]])
+    combined = fuse([a, b])
+    np.testing.assert_allclose(np.linalg.norm(combined, axis=1), 1.0)
+    np.testing.assert_allclose(np.linalg.norm(combined[:, :1], axis=1), np.linalg.norm(combined[:, 1:], axis=1))
+
+
+def test_foundation_selection_keeps_families_and_locked_reference_separate(monkeypatch):
+    train = pd.DataFrame({"label": np.repeat(["oval", "round"], 12),
+                          "identity_group": np.repeat(np.arange(12), 2)})
+    features = {key: train[["identity_group"]].to_numpy()
+                for key in ("dino", "clip", "dino_sface", "clip_sface", "dino_clip_sface", "sface", "mobile_tail")}
+
+    def fit(config, training_image, training_frame):
+        class Classifier:
+            def predict(self, held_image):
+                assert not (set(training_image.ravel()) & set(held_image.ravel()))
+                return np.where(held_image.ravel() < 6, "oval", "round")
+
+        return Classifier(), None
+
+    monkeypatch.setattr("ml.training.train_face_shape_image.fit", fit)
+    selected, report = select(train, features, foundation=True)
+    assert len(report["trials"]) == 22
+    assert not selected["foundation_image"]["geometry"]
+    assert selected["foundation_hybrid"]["geometry"]
+    assert selected["foundation_ensemble"]["backbone"].endswith("_sface")
+    assert selected["mobile_partial"]["backbone"] == "mobile_tail"
+    assert selected["pr14_hybrid"] == {"backbone": "sface", "geometry": True, "C": 1.0, "power": 0.5}

@@ -59,30 +59,51 @@ def full_features(image: np.ndarray, frame: pd.DataFrame, scaler: StandardScaler
 def fit(configuration: dict, image: np.ndarray, frame: pd.DataFrame):
     y = frame["label"].to_numpy()
     ffhq = frame["source_split"].eq("train").to_numpy() & frame["ffhq_id"].notna().to_numpy()
+    sample_weight = weights(y, ffhq, configuration["power"], 1.0)
+    if configuration["backbone"] == "mobile_tail":
+        from ml.training.mobile_tail import train_tail
+
+        return train_tail(image, y, sample_weight, configuration["lr"]), None
     scaler = StandardScaler().fit(frame[FEATURE_NAMES].to_numpy(float)) if configuration["geometry"] else None
     model = SVC(C=configuration["C"], gamma="scale", random_state=SEED)
-    model.fit(full_features(image, frame, scaler), y, sample_weight=weights(y, ffhq, configuration["power"], 1.0))
+    model.fit(full_features(image, frame, scaler), y, sample_weight=sample_weight)
     return model, scaler
 
 
-def select(train: pd.DataFrame, features: dict[str, np.ndarray]) -> tuple[dict, dict]:
+def select(train: pd.DataFrame, features: dict[str, np.ndarray], *, foundation: bool = False) -> tuple[dict, dict]:
     y = train["label"].to_numpy()
     seed, folds = cv_folds(y, train["identity_group"].to_numpy())
     trials = []
     for name, image in features.items():
-        for geometry in (False, True):
-            for c in (1.0, 10.0):
-                for power in (0.0, 0.5):
-                    config = {"backbone": name, "geometry": geometry, "C": c, "power": power}
-                    scores = []
-                    for tr, va in folds:
-                        model, scaler = fit(config, image[tr], train.iloc[tr])
-                        pred = model.predict(full_features(image[va], train.iloc[va], scaler))
-                        scores.append(f1_score(y[va], pred, average="macro", zero_division=0))
-                    trials.append({**config, "cv_macro_f1": float(np.mean(scores))})
-    selected = {family: max((trial for trial in trials if trial["geometry"] == use_geometry),
-                            key=lambda trial: trial["cv_macro_f1"])
-                for family, use_geometry in (("direct_image", False), ("image_plus_landmarks", True))}
+        if foundation and name == SFACE:
+            continue
+        if name == "mobile_tail":
+            configs = [{"backbone": name, "geometry": False, "lr": lr, "power": 0.5} for lr in (0.0003, 0.001)]
+        else:
+            configs = [{"backbone": name, "geometry": geometry, "C": c, "power": power}
+                       for geometry in (False, True)
+                       for c in ((1.0, 3.0) if foundation else (1.0, 10.0))
+                       for power in ((0.5,) if foundation else (0.0, 0.5))]
+        for config in configs:
+            scores = []
+            for tr, va in folds:
+                model, scaler = fit(config, image[tr], train.iloc[tr])
+                pred = model.predict(full_features(image[va], train.iloc[va], scaler))
+                scores.append(f1_score(y[va], pred, average="macro", zero_division=0))
+            trials.append({**config, "cv_macro_f1": float(np.mean(scores))})
+    if foundation:
+        families = {
+            "foundation_image": [t for t in trials if "_" not in t["backbone"] and not t["geometry"]],
+            "foundation_hybrid": [t for t in trials if "_" not in t["backbone"] and t["geometry"]],
+            "foundation_ensemble": [t for t in trials if t["backbone"].endswith("_sface")],
+            "mobile_partial": [t for t in trials if t["backbone"] == "mobile_tail"],
+        }
+    else:
+        families = {"direct_image": [t for t in trials if not t["geometry"]],
+                    "image_plus_landmarks": [t for t in trials if t["geometry"]]}
+    selected = {family: max(options, key=lambda trial: trial["cv_macro_f1"]) for family, options in families.items()}
+    if foundation:
+        selected["pr14_hybrid"] = {"backbone": SFACE, "geometry": True, "C": 1.0, "power": 0.5}
     return selected, {"cv_seed": seed, "cv_folds": len(folds), "selected": selected, "trials": trials}
 
 
@@ -136,9 +157,13 @@ def run(args: argparse.Namespace) -> dict:
     rf_train["identity_group"] = ffhq["identity_group"].max() + 1 + np.arange(len(rf_train))
     training = [(kaggle.iloc[tr], args.niten_images), (ffhq, args.ffhq_images), (rf_train, rf_root)]
     train = pd.concat([frame for frame, _ in training], ignore_index=True)
-    features = encode((*BACKBONES, SFACE), [p for frame, root in training for p in paths(frame, root)],
-                      args.cache, args.workers)
-    selection, selection_report = select(train, features)
+    encoder, names = encode, (*BACKBONES, SFACE)
+    if args.foundation:
+        from ml.training.foundation_features import REPRESENTATIONS, encode_foundation
+
+        encoder, names = encode_foundation, tuple(REPRESENTATIONS)
+    features = encoder(names, [p for frame, root in training for p in paths(frame, root)], args.cache, args.workers)
+    selection, selection_report = select(train, features, foundation=args.foundation)
     fitted = {key: fit(config, features[config["backbone"]], train) for key, config in selection.items()}
     print(f"Training-only selection: {selection}", flush=True)
 
@@ -164,7 +189,7 @@ def run(args: argparse.Namespace) -> dict:
         else:
             gender = cohort_estimates(args.attributes, ffhq_ids, key).to_numpy()
         predictions = baseline_predictions(key, frame, baselines)
-        test_features = encode({c["backbone"] for c in selection.values()}, photos, args.cache, args.workers)
+        test_features = encoder(sorted({c["backbone"] for c in selection.values()}), photos, args.cache, args.workers)
         for model_name, (model, scaler) in fitted.items():
             predictions[model_name] = model.predict(
                 full_features(test_features[selection[model_name]["backbone"]], frame, scaler),
@@ -181,6 +206,7 @@ def main() -> None:
                  "roboflow-split", "niten-images", "gender-model", "cache", "out"):
         parser.add_argument(f"--{name}", type=Path, required=True)
     parser.add_argument("--workers", type=int, default=4)
+    parser.add_argument("--foundation", action="store_true", help="run the pinned CPU DINOv2/CLIP experiment")
     args = parser.parse_args()
     if args.workers < 1:
         parser.error("--workers must be at least 1")
