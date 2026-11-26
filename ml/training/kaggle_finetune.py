@@ -186,9 +186,9 @@ def credentials(owner: str) -> dict[str, str]:
 def check_remote_private(kaggle, dataset: str) -> None:
     with tempfile.TemporaryDirectory() as tmp:
         kaggle("datasets", "metadata", dataset, "-p", tmp)
-        meta = read_json(Path(tmp) / "dataset-metadata.json")
+        meta = read_json(Path(tmp) / "dataset-metadata.json").get("info")
         owner, slug = dataset.split("/")
-        if (meta.get("isPrivate") is not True or meta.get("ownerUser") != owner
+        if (not isinstance(meta, dict) or meta.get("isPrivate") is not True or meta.get("ownerUser") != owner
                 or meta.get("datasetSlug") != slug or meta.get("collaborators")):
             raise ValueError("Kaggle did not confirm an unshared private dataset in the configured account")
 

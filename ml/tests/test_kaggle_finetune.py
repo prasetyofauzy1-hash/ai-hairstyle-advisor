@@ -101,15 +101,29 @@ def test_submit_uses_only_verified_private_training_data(staged, monkeypatch):
         expected, result = next(responses)
         assert command[:len(expected)] == expected
         if command[:2] == ("datasets", "metadata"):
-            workflow.write_json(Path(command[-1]) / "dataset-metadata.json", {
+            workflow.write_json(Path(command[-1]) / "dataset-metadata.json", {"info": {
                 "isPrivate": True, "ownerUser": staged.owner, "datasetSlug": "face-shape-train",
-            })
+            }})
         return result
 
     monkeypatch.setattr(workflow, "cli", fake_cli)
     workflow.submit(staged)
     assert scored == [(staged.workspace, staged.workspace / "outputs")]
     assert list(responses) == []
+
+
+@pytest.mark.parametrize("info", [
+    None,
+    {"isPrivate": False, "ownerUser": "private-owner", "datasetSlug": "private-data"},
+    {"isPrivate": True, "ownerUser": "another-owner", "datasetSlug": "private-data"},
+    {"isPrivate": True, "ownerUser": "private-owner", "datasetSlug": "private-data", "collaborators": ["other"]},
+])
+def test_remote_dataset_requires_confirmed_unshared_privacy(info):
+    def fake_cli(*command):
+        workflow.write_json(Path(command[-1]) / "dataset-metadata.json", {"info": info})
+
+    with pytest.raises(ValueError, match="unshared private dataset"):
+        workflow.check_remote_private(fake_cli, "private-owner/private-data")
 
 
 def test_grouped_folds_keep_identity_together():
