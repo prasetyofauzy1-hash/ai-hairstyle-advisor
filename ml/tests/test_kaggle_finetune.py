@@ -8,6 +8,7 @@ import pandas as pd
 import pytest
 
 from ml.training import kaggle_finetune as workflow, kaggle_kernel as kernel
+from ml.training import kaggle_stronger as stronger
 from ml.training.kaggle_kernel import grouped_folds
 
 
@@ -56,6 +57,52 @@ def test_rejects_training_photo_in_holdout(staged):
     (photos / "uzy.jpg").write_bytes((photos / "train.jpg").read_bytes())
     with pytest.raises(ValueError, match="Exact training-photo overlap with uzy"):
         workflow.package(staged)
+
+
+def test_stronger_stage_keeps_same_training_only_mount(staged, tmp_path):
+    workflow.package(staged)
+    before, ids = workflow.validate(staged.workspace)
+    target = tmp_path / "stronger"
+
+    stronger.stage(staged.workspace, target)
+
+    after, staged_ids = workflow.validate(target)
+    assert staged_ids == ids
+    assert after["archives"] == before["archives"]
+    assert after["kernel_sha256"] != before["kernel_sha256"]
+    assert b'DEFAULT_EXPERIMENT = "stronger"' in (target / "kernel/kaggle_kernel.py").read_bytes()
+    assert workflow.read_json(target / "kernel/kernel-metadata.json")["machine_shape"] == "NvidiaTeslaT4"
+
+
+def test_fusion_weight_is_selected_on_all_grouped_validation_folds():
+    classes = np.array(["oblong", "oval", "round"])
+    labels = np.tile(classes, 3)
+    groups = np.arange(len(labels))
+    _, folds = grouped_folds(labels, groups, maximum=3)
+    correct = np.tile(np.eye(3), (3, 1))
+    neural = correct.copy()
+    neural[::2] = (correct[::2] + 0.2 * np.roll(correct[::2], 1, axis=1)) / 1.2
+    hybrid = correct.copy()
+    hybrid[1::2] = np.roll(correct[1::2], 1, axis=1)
+
+    report = stronger.choose_fusion(labels, classes, folds, neural, hybrid)
+
+    assert report["selected"]["neural_weight"] == 0.75
+    assert report["selected"]["fold_macro_f1"] == [1.0] * 3
+    neural[0] = np.nan
+    with pytest.raises(ValueError, match="incomplete class probabilities"):
+        stronger.choose_fusion(labels, classes, folds, neural, hybrid)
+
+
+def test_fusion_rejects_swapped_pixels_with_identical_labels(tmp_path, monkeypatch):
+    archive = tmp_path / "train.npz"
+    frame = pd.DataFrame({"label": ["oval", "oval"], "identity_group": [1, 2]})
+    pixels = np.array([[[[0, 0, 0]]], [[[255, 0, 0]]]], dtype=np.uint8)
+    np.savez(archive, label=frame["label"].to_numpy(dtype=str), group=frame["identity_group"], pixels=pixels)
+    monkeypatch.setattr(stronger, "face_assets", lambda *args: pixels[::-1])
+
+    with pytest.raises(ValueError, match="row order differ"):
+        stronger.check_alignment(archive, frame, [], Namespace(cache=None, workers=1))
 
 
 def test_credentials_require_configured_owner(tmp_path, monkeypatch):
