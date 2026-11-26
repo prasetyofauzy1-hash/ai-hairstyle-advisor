@@ -3,6 +3,7 @@ from types import SimpleNamespace
 
 import numpy as np
 import pytest
+from PIL import Image
 
 from ml.datasets import ffhq_expand
 from ml.datasets.ffhq_expand import identity_flags
@@ -29,6 +30,20 @@ def test_reference_bundle_keeps_hashes_and_indices_when_decoding_fails(tmp_path,
         assert data["sha256"].tolist() == [ffhq_expand.kernel.digest(p) for p in (corrupt, other)]
         assert data["dlib_index"].tolist() == [1]
     assert "1 unreadable reference photos" in capsys.readouterr().out
+
+
+def test_sheets_removes_stale_numbered_pages(tmp_path):
+    photo = tmp_path / "photo.png"
+    Image.new("RGB", (8, 8)).save(photo)
+    target = tmp_path / "sheets"
+    ffhq_expand.sheets([photo] * 17, target)
+    assert (target / "02.jpg").is_file()
+    unrelated = target / "notes.jpg"
+    unrelated.touch()
+
+    ffhq_expand.sheets([photo], target)
+
+    assert {page.name for page in target.iterdir()} == {"01.jpg", "notes.jpg"}
 
 
 def test_identity_screen_rejects_joint_and_single_strong_matches():

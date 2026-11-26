@@ -7,6 +7,7 @@ import csv
 import hashlib
 import json
 import multiprocessing as mp
+import re
 import socket
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 from pathlib import Path
@@ -170,6 +171,9 @@ def diamond_probabilities(pixels, path):
 
 def sheets(photos, target):
     target.mkdir(exist_ok=True)
+    for page in target.iterdir():
+        if re.fullmatch(r"[0-9]{2,}\.jpg", page.name) and page.is_file():
+            page.unlink()
     for start in range(0, len(photos), 16):
         canvas = Image.new("RGB", (4 * 256, 4 * 278), "#eee")
         draw = ImageDraw.Draw(canvas)
