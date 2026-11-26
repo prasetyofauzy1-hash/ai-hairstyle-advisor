@@ -38,7 +38,7 @@ SHAPE_EFFECT_RULES: dict[str, dict[str, tuple[int, str]]] = {
     "heart": {
         "volume_jaw": (1, "Volume di sekitar dagu bisa mengimbangi dahi yang lebar."),
         "bangs_side": (1, "Poni samping bisa membuat dahi terlihat tidak terlalu lebar."),
-        "side_part": (1, "Belahan samping bisa membuat dahi tampak tidak terlalu lebar."),
+        "side_part": (1, "Belahan samping bisa membuat dahi terlihat tidak terlalu lebar."),
         "volume_top": (-1, "Volume di atas bisa membuat dahi tampak lebih lebar."),
         "face_exposed": (-1, "Rambut yang disisir ke belakang memperlihatkan seluruh lebar dahi."),
     },

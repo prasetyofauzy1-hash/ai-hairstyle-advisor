@@ -5,6 +5,7 @@ The score is a sum of rule points, not a percentage or probability. User-facing 
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass, field, replace
 
 from ml.classification.rule_based import SHAPE_LABELS_ID, SHAPES
@@ -13,7 +14,8 @@ from ml.recommendation.catalog import (GENDERS, HAIR_TYPES, LABELS_ID, LENGTHS, 
                                        load_catalog)
 
 SCORE_NOTE = "Poin mengikuti panduan penataan rambut, bukan persentase kecocokan atau jaminan hasil."
-NO_IMAGE_NOTE = "Gambar referensi belum tersedia."
+NO_IMAGE_NOTE = ("Belum ada foto contoh dengan lisensi yang jelas. Gambar yang ditampilkan adalah ilustrasi umum "
+                 "gaya ini, bukan foto dan bukan hasil pada wajah Anda.")
 FILTER_LABELS = {"gender": "Gaya rambut", "max_maintenance": "Tingkat perawatan", "avoid_bangs": "Hindari poni",
                  "formal": "Untuk kantor atau acara formal"}
 RELAXED = {"gender": None, "max_maintenance": None, "avoid_bangs": False, "formal": False}
@@ -46,6 +48,37 @@ class UserProfile:
             raise ValueError(f"unknown secondary_face_shape {self.secondary_face_shape!r}")
 
 
+GUIDE_PREFIX = "Panduan ini menyarankan potongan ini untuk rambut "
+_EFFECT = re.compile(r"^(.+?) (bisa membuat|membuat) (.+)$")
+
+
+def _join(items: list[str]) -> str:
+    items = [items[0]] + [x[0].lower() + x[1:] for x in items[1:]]
+    return items[0] if len(items) == 1 else ", ".join(items[:-1]) + " dan " + items[-1]
+
+
+def merge_reasons(reasons: list[str]) -> list[str]:
+    """Merge reasons that share an outcome ("X bisa membuat dahi ..." + "Y bisa membuat dahi ...") or are both
+    hair guidance ("... untuk rambut lurus" + "... untuk rambut dengan ketebalan sedang") into one sentence each."""
+    groups: dict[tuple, list[str]] = {}
+    for r in reasons:
+        if r.startswith(GUIDE_PREFIX):
+            groups.setdefault(("guide",), []).append(r[len(GUIDE_PREFIX):].rstrip("."))
+        elif m := _EFFECT.match(r):
+            groups.setdefault(("effect", m[2], m[3]), []).append(m[1])
+        else:
+            groups.setdefault(("plain", r), [])
+    out = []
+    for key, parts in groups.items():
+        if key[0] == "guide":
+            out.append(GUIDE_PREFIX + " ".join(parts) + ".")
+        elif key[0] == "effect":
+            out.append(f"{_join(parts)} {key[1]} {key[2]}")
+        else:
+            out.append(key[1])
+    return out
+
+
 @dataclass
 class Recommendation:
     style: Hairstyle
@@ -56,9 +89,9 @@ class Recommendation:
     def explanation(self) -> str:
         good = [r for _, p, r in self.terms if p > 0]
         bad = [r for _, p, r in self.terms if p < 0]
-        text = " ".join(good) if good else "Gaya ini sesuai dengan pilihan yang Anda masukkan, tetapi panduan kami tidak memberi alasan kecocokan tambahan."
+        text = " ".join(merge_reasons(good)) if good else "Gaya ini sesuai dengan pilihan yang Anda masukkan, tetapi panduan kami tidak memberi alasan kecocokan tambahan."
         if bad:
-            text += " Perlu diperhatikan: " + " ".join(bad)
+            text += " Perlu diperhatikan: " + " ".join(merge_reasons(bad))
         return text
 
     def to_dict(self, rank: int) -> dict:

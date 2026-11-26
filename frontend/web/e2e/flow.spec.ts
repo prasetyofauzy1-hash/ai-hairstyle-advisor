@@ -22,6 +22,8 @@ test("upload, analyze, recommend, delete", async ({ page }) => {
   await page.getByRole("button", { name: "Tampilkan rekomendasi" }).click();
   await expect(page.getByText(/^4\. Rekomendasi/)).toBeVisible();
   await expect(page.locator("ol > li")).toHaveCount(5);
+  await expect(page.locator("ol > li").getByRole("img", { name: /^Ilustrasi / })).toHaveCount(5);
+  await expect(page.getByText("Ilustrasi umum, bukan foto").first()).toBeVisible();
   await page.locator("ol > li details").first().evaluate((d) => ((d as HTMLDetailsElement).open = true));
   if (SHOTS) await page.screenshot({ path: `${SHOTS}/3-rekomendasi.png`, fullPage: true });
 

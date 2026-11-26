@@ -205,3 +205,28 @@ def test_secondary_shape_note():
     res = recommend(UserProfile("oblong", "straight", "thin", secondary_face_shape="oval"))
     assert any("skor kedua tertinggi" in n for n in res["notes"])
     assert not any("skor kedua tertinggi" in n for n in recommend(UserProfile("oblong", "straight", "thin"))["notes"])
+
+
+def test_merge_reasons_combines_shared_outcomes_and_hair_guidance():
+    from ml.recommendation.engine import merge_reasons
+    assert merge_reasons([
+        "Poni samping bisa membuat dahi terlihat tidak terlalu lebar.",
+        "Belahan samping bisa membuat dahi terlihat tidak terlalu lebar.",
+        "Panduan ini menyarankan potongan ini untuk rambut lurus.",
+        "Panduan ini menyarankan potongan ini untuk rambut dengan ketebalan sedang.",
+    ]) == [
+        "Poni samping dan belahan samping bisa membuat dahi terlihat tidak terlalu lebar.",
+        "Panduan ini menyarankan potongan ini untuk rambut lurus dengan ketebalan sedang.",
+    ]
+
+
+def test_explanations_do_not_repeat_themselves():
+    for shape in SHAPES:
+        for hair in HAIR_TYPES:
+            for thick in THICKNESSES:
+                for r in recommend(UserProfile(shape, hair, thick))["recommendations"]:
+                    sentences = [x.strip() for x in r["explanation"].replace("Perlu diperhatikan:", ".").split(".")]
+                    sentences = [x for x in sentences if x]
+                    assert len(sentences) == len(set(sentences)), r["explanation"]
+                    assert r["explanation"].count("Panduan ini menyarankan") <= 1, r["explanation"]
+                    assert r["explanation"].count(" dahi terlihat tidak terlalu lebar") <= 1, r["explanation"]
