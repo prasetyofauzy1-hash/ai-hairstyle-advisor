@@ -1,3 +1,5 @@
+from argparse import Namespace
+
 import numpy as np
 import pandas as pd
 import pytest
@@ -37,3 +39,20 @@ def test_cohort_averages_observed_shapes_and_keeps_unknown(monkeypatch):
     assert result["male"]["models"]["model"]["macro_f1"] == 1.0
     assert result["female"]["models"]["model"]["macro_f1"] == 1.0
     assert result["unknown"]["models"]["model"]["macro_f1"] == 0.0
+
+
+def test_run_rejects_missing_attributes_checkout(tmp_path):
+    with pytest.raises(ValueError, match="--attributes must point to a DCGM FFHQ attributes checkout"):
+        retrain.run(Namespace(attributes=tmp_path / "missing"))
+
+
+def test_cohort_estimates_requires_at_least_one_known_gender(tmp_path):
+    attributes = tmp_path / "json"
+    attributes.mkdir()
+    (attributes / "00001.json").write_text("[]", encoding="utf-8")
+    photos = pd.Series(["1", "2", "3"])
+    with pytest.raises(ValueError, match="No known gender estimates for FaceBench"):
+        retrain.cohort_estimates(tmp_path, photos, "FaceBench")
+
+    (attributes / "00002.json").write_text('[{"faceAttributes": {"gender": "male"}}]', encoding="utf-8")
+    assert retrain.cohort_estimates(tmp_path, photos, "FaceBench").tolist() == ["unknown", "male", "unknown"]

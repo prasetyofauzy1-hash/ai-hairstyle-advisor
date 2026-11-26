@@ -92,6 +92,13 @@ def estimate(attributes: Path, ffhq_id: str) -> str:
     return value if value in {"male", "female"} else "unknown"
 
 
+def cohort_estimates(attributes: Path, photos: pd.Series, name: str) -> pd.Series:
+    estimates = photos.map(lambda photo: estimate(attributes, photo))
+    if not estimates.isin({"male", "female"}).any():
+        raise ValueError(f"No known gender estimates for {name} in --attributes {attributes}")
+    return estimates
+
+
 def cohort(frame: pd.DataFrame, gender: pd.Series) -> dict:
     return pd.crosstab(gender, frame["label"]).to_dict(orient="index")
 
@@ -112,10 +119,14 @@ def score_cohort(frame: pd.DataFrame, gender: pd.Series, models: dict) -> dict:
 
 
 def run(args: argparse.Namespace) -> dict:
+    if not (args.attributes / "json").is_dir():
+        raise ValueError(f"--attributes must point to a DCGM FFHQ attributes checkout with a json directory: {args.attributes}")
     kaggle = load(args.kaggle_features)
     tr, te = holdout_split(kaggle["label"].to_numpy(), kaggle["identity_group"].to_numpy())
     _, ffhq_train, uzy = load_ffhq(args.ffhq_features)
     ffhq_train = ffhq_train[~ffhq_train["identity_group"].isin(uzy["identity_group"])].copy()
+    train_gender = cohort_estimates(args.attributes, ffhq_train["ffhq_id"], "FFHQ AI training")
+    uzy_gender = cohort_estimates(args.attributes, uzy["ffhq_id"], "Uzy")
     ffhq_train["identity_group"] += kaggle["identity_group"].max() + 1
     fit = pd.concat([kaggle.iloc[tr], ffhq_train], ignore_index=True)
     model, selection = select(fit)
@@ -123,10 +134,8 @@ def run(args: argparse.Namespace) -> dict:
     inputs = benchmark_inputs(args.facebench_manifest, args.facebench_images, args.ffhq_images,
                               args.niten_embeddings, args.workers)
     facebench, _ = screened_frame(*inputs, _read(args.identity_review))
+    facebench_gender = cohort_estimates(args.attributes, facebench["image"].map(lambda photo: Path(photo).stem), "FaceBench")
     models = {"prior": joblib.load(DEFAULT_MODEL.with_name(ARTIFACT)), "retrained": model}
-    uzy_gender = uzy["ffhq_id"].map(lambda photo: estimate(args.attributes, photo))
-    facebench_gender = facebench["image"].map(lambda photo: estimate(args.attributes, Path(photo).stem))
-    train_gender = ffhq_train["ffhq_id"].map(lambda photo: estimate(args.attributes, photo))
     return {
         "selection": selection,
         "training": {"niten19": len(tr), "ffhq_ai": len(ffhq_train), "ffhq_ai_cohort": cohort(ffhq_train, train_gender)},
