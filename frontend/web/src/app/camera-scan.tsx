@@ -5,8 +5,8 @@ import { SHAPES } from "@/lib/api";
 import { createCameraDetector } from "@/lib/camera-detector";
 import { assessCameraFrame, estimateFaceShape, faceBounds, FACE_OUTLINE, measureLightAndSharpness } from "@/lib/camera-scan";
 
-const WASM_ROOT = "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.32/wasm";
-const MODEL_URL = "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task";
+const WASM_ROOT = "/mediapipe/wasm";
+const MODEL_URL = "/mediapipe/face_landmarker.task";
 const FALLBACK = "Gunakan pilihan unggah foto.";
 const CHOOSE = "Tahan posisi sebentar untuk memilih foto terbaik.";
 const SAMPLE_MS = 100;

@@ -6,6 +6,8 @@ recommendations with explanations, tips and score breakdown → delete.
 
 `/api/*` and `/docs` are proxied to the backend (`BACKEND_URL`, default `http://127.0.0.1:8000`), so the browser talks to one origin.
 
+`npm run dev` and `npm run build` prepare same-origin camera assets: the locked MediaPipe WASM package and a SHA-256-verified Face Landmarker model. The model is downloaded during preparation only if neither the generated assets nor the local ML cache has a verified copy.
+
 ```bash
 npm ci
 npm run build && npm run start          # http://localhost:3000, backend must be running

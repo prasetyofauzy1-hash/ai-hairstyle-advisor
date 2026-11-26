@@ -100,8 +100,11 @@ test("live scan shows a shape and only submits the selected photo after confirma
   }, `data:image/jpeg;base64,${readFileSync(SAMPLE).toString("base64")}`);
 
   let posts = 0;
+  const assetRequests: URL[] = [];
   page.on("request", (request) => {
-    if (request.method() === "POST" && new URL(request.url()).pathname === "/api/analyses") {
+    const url = new URL(request.url());
+    if (/(?:face_landmarker\.task|vision_wasm_.*\.(?:wasm|js))$/.test(url.pathname)) assetRequests.push(url);
+    if (request.method() === "POST" && url.pathname === "/api/analyses") {
       posts++;
     }
   });
@@ -111,6 +114,12 @@ test("live scan shows a shape and only submits the selected photo after confirma
   await expect(page.getByText(/Perkiraan bentuk saat memindai: (Oval|Bulat|Persegi|Lonjong|Hati|Wajik)/)).toBeVisible({ timeout: 30_000 });
   const capture = page.getByRole("button", { name: "Gunakan foto terbaik" });
   await expect(capture).toBeEnabled({ timeout: 15_000 });
+  expect(assetRequests.map(({ pathname }) => pathname)).toEqual(expect.arrayContaining([
+    "/mediapipe/face_landmarker.task",
+    expect.stringMatching(/^\/mediapipe\/wasm\/vision_wasm_.*\.wasm$/),
+    expect.stringMatching(/^\/mediapipe\/wasm\/vision_wasm_.*\.js$/),
+  ]));
+  expect(new Set(assetRequests.map(({ origin }) => origin))).toEqual(new Set([new URL(page.url()).origin]));
   if (SHOTS) await page.screenshot({ path: `${SHOTS}/pindai-wajah-langsung.png`, fullPage: true });
   await capture.click();
   await expect(page.getByRole("img", { name: "Pratinjau foto" })).toBeVisible();
