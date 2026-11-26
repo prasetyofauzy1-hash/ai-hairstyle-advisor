@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 
 from ml.datasets.face_crops import SIZE, square_crop
-from ml.training.train_face_shape_image import encode, select, subset_metrics
+from ml.training.train_face_shape_image import baseline_predictions, encode, select, subset_metrics
 
 
 def test_crop_preserves_aspect_ratio():
@@ -55,3 +55,21 @@ def test_face_specific_representation_does_not_load_imagenet_backbones(monkeypat
     monkeypatch.setattr("ml.training.train_face_shape_image.face_assets", face_assets)
     result = encode({"sface"}, [tmp_path / "photo.jpg"], tmp_path, 1)
     assert result["sface"].shape == (1, 128)
+
+
+def test_app_baseline_is_not_scored_on_overlapping_niten19_holdout(monkeypatch):
+    frame = pd.DataFrame({"feature": [1.0]})
+    baselines = {name: {"feature_names": ["feature"], "prediction": ["oval"]}
+                 for name in ("app_landmarks", "combined_landmarks")}
+    calls = []
+
+    def predict(bundle, features):
+        calls.append(bundle)
+        return np.array(bundle["prediction"])
+
+    monkeypatch.setattr("ml.training.train_face_shape_image.phase2_rules", lambda frame: np.array(["oval"]))
+    monkeypatch.setattr("ml.training.train_face_shape_image.predict_bundle", predict)
+    assert set(baseline_predictions("niten19_holdout", frame, baselines)) == {"phase2_rules", "combined_landmarks"}
+    assert len(calls) == 1 and calls[0] is baselines["combined_landmarks"]
+    for benchmark in ("uzy", "facebench", "roboflow_holdout"):
+        assert set(baseline_predictions(benchmark, frame, baselines)) == {"phase2_rules", *baselines}

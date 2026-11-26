@@ -44,11 +44,13 @@ per-class precision/recall/F1 and support, the full gender breakdown including u
 
 | Held-out benchmark | Photos | Phase 2 rules | App landmarks | Combined landmarks | SFace only | SFace + landmarks |
 |---|---:|---:|---:|---:|---:|---:|
-| niten19 | 682 | 0.340 / 0.325 | 0.578 / 0.562 | 0.522 / 0.517 | 0.607 / 0.593 | **0.636 / 0.638** |
+| niten19 | 682 | 0.340 / 0.325 | n/a | 0.522 / 0.517 | 0.607 / 0.593 | **0.636 / 0.638** |
 | Uzy | 101 | **0.426** / 0.391 | 0.228 / 0.321 | 0.277 / 0.340 | 0.376 / 0.319 | 0.416 / **0.416** |
 | FaceBench | 59 | 0.475 / 0.306 | 0.407 / 0.251 | 0.458 / 0.324 | 0.424 / 0.246 | **0.508 / 0.349** |
 | Roboflow | 22 | 0.364 / 0.256 | 0.318 / 0.244 | 0.364 / 0.257 | 0.455 / 0.366 | **0.636 / 0.481** |
 
+The app landmark baseline is not scored on this niten19 holdout, which overlaps the deployed artifact's older
+training split (see the [combined landmark experiment](../kaggle_plus_ffhq_ai/README.md#every-candidate)).
 The hybrid improved both metrics over the app and combined landmark artifacts on **both** independent human
 benchmarks. The photo-only model did not: both external macro-F1 scores were lower than the app artifact.
 On Uzy the hybrid correctly classified one fewer photo than the Phase 2 rules despite the higher macro-F1.
@@ -58,8 +60,8 @@ source and subgroup coverage is too limited to justify an app model swap.
 
 | Held-out benchmark | Estimated cohort | Photos | App landmarks | SFace only | SFace + landmarks |
 |---|---|---:|---:|---:|---:|
-| niten19 | Female | 675 | 0.579 / 0.563 | 0.606 / 0.592 | 0.634 / 0.636 |
-| niten19 | Male | 6 | 0.333 / 0.292 | 0.667 / 0.625 | 0.833 / 0.833 |
+| niten19 | Female | 675 | n/a | 0.606 / 0.592 | 0.634 / 0.636 |
+| niten19 | Male | 6 | n/a | 0.667 / 0.625 | 0.833 / 0.833 |
 | Uzy | Female | 51 | 0.216 / 0.342 | 0.392 / 0.358 | 0.451 / 0.413 |
 | Uzy | Male | 50 | 0.240 / 0.292 | 0.360 / 0.276 | 0.380 / 0.403 |
 | FaceBench | Female | 31 | 0.419 / 0.319 | 0.387 / 0.270 | 0.581 / 0.500 |

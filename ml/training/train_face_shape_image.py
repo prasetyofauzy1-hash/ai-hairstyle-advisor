@@ -100,6 +100,15 @@ def paths(frame: pd.DataFrame, root: Path) -> list[Path]:
     return [root / image for image in frame["image"]]
 
 
+def baseline_predictions(benchmark: str, frame: pd.DataFrame, baselines: dict) -> dict[str, np.ndarray]:
+    predictions = {"phase2_rules": phase2_rules(frame)}
+    for name, bundle in baselines.items():
+        if benchmark == "niten19_holdout" and name == "app_landmarks":
+            continue
+        predictions[name] = predict_bundle(bundle, frame[bundle["feature_names"]].to_numpy(float))
+    return predictions
+
+
 def encode(names, photos: list[Path], cache: Path, workers: int) -> dict[str, np.ndarray]:
     vision = sorted(set(names) - {SFACE})
     features = {}
@@ -154,9 +163,7 @@ def run(args: argparse.Namespace) -> dict:
             gender = np.asarray(estimates(photos, args.gender_model, args.workers))
         else:
             gender = cohort_estimates(args.attributes, ffhq_ids, key).to_numpy()
-        predictions = {"phase2_rules": phase2_rules(frame)}
-        predictions.update({name: predict_bundle(bundle, frame[bundle["feature_names"]].to_numpy(float))
-                            for name, bundle in baselines.items()})
+        predictions = baseline_predictions(key, frame, baselines)
         test_features = encode({c["backbone"] for c in selection.values()}, photos, args.cache, args.workers)
         for model_name, (model, scaler) in fitted.items():
             predictions[model_name] = model.predict(
