@@ -1,11 +1,13 @@
+import sys
 from argparse import Namespace
 from pathlib import Path
+from types import SimpleNamespace
 
 import numpy as np
 import pandas as pd
 import pytest
 
-from ml.training import kaggle_finetune as workflow
+from ml.training import kaggle_finetune as workflow, kaggle_kernel as kernel
 from ml.training.kaggle_kernel import grouped_folds
 
 
@@ -134,3 +136,48 @@ def test_grouped_folds_keep_identity_together():
     for train, valid in folds:
         assert set(groups[train]).isdisjoint(groups[valid])
         assert set(labels[train]) == set(labels[valid]) == {0, 1}
+
+
+@pytest.mark.parametrize("launcher", ["colab_kernel_launcher.py", "ipykernel_launcher.py"])
+def test_kernel_editor_uses_kaggle_defaults(monkeypatch, launcher):
+    archive = Path("/kaggle/input/private-dataset/train.npz")
+    monkeypatch.setattr(sys, "argv", [launcher, "-f", "/runtime/kernel-1.json"])
+    monkeypatch.setattr(Path, "rglob", lambda root, pattern: [archive] if root == Path("/kaggle/input") else [])
+    calls = []
+    monkeypatch.setattr(kernel, "train", lambda *args, **kwargs: calls.append((args, kwargs)))
+
+    kernel.main()
+    assert calls == [((archive, Path("/kaggle/working")), {"smoke": False})]
+
+
+@pytest.mark.parametrize("launcher", ["kaggle_kernel.py", "colab_kernel_launcher.py"])
+def test_kernel_rejects_unrecognized_cli_option(monkeypatch, capsys, launcher):
+    monkeypatch.setattr(sys, "argv", [launcher, "--smkoe"])
+    with pytest.raises(SystemExit, match="2"):
+        kernel.main()
+    assert "unrecognized arguments: --smkoe" in capsys.readouterr().err
+
+
+def test_editor_source_checksum_matches_script(monkeypatch):
+    expected = kernel.digest(Path(kernel.__file__))
+    monkeypatch.delattr(kernel, "__file__")
+    assert kernel.source_digest() == expected
+
+
+def test_kernel_logs_gpu_diagnostics_before_cuda_guard(monkeypatch, capsys, tmp_path):
+    torch = SimpleNamespace(
+        __version__="test+cpu", version=SimpleNamespace(cuda=None),
+        cuda=SimpleNamespace(is_available=lambda: False), device=lambda kind: kind,
+    )
+    monkeypatch.setitem(sys.modules, "torch", torch)
+
+    def nvidia_smi(command, **kwargs):
+        assert command[0] == "nvidia-smi"
+        return SimpleNamespace(returncode=0, stdout="Tesla T4, 555.01\n", stderr="")
+
+    monkeypatch.setattr(kernel.subprocess, "run", nvidia_smi)
+    with pytest.raises(RuntimeError, match="A Kaggle CUDA GPU must be enabled"):
+        kernel.train(tmp_path / "missing.npz", tmp_path)
+    output = capsys.readouterr().out
+    assert "torch.__version__=test+cpu; torch.version.cuda=None; torch.cuda.is_available()=False" in output
+    assert "nvidia-smi exit 0: Tesla T4, 555.01" in output

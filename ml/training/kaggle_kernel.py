@@ -5,6 +5,9 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import linecache
+import subprocess
+import sys
 from pathlib import Path
 
 import numpy as np
@@ -20,6 +23,15 @@ def digest(path: Path) -> str:
         for chunk in iter(lambda: source.read(1024 * 1024), b""):
             sha.update(chunk)
     return sha.hexdigest()
+
+
+def source_digest() -> str:
+    if "__file__" in globals():
+        return digest(Path(__file__))
+    source = "".join(linecache.getlines(main.__code__.co_filename))
+    if not source:
+        raise RuntimeError("Save the kernel source to a .py file and run it as a script to record its checksum")
+    return hashlib.sha256(source.encode("utf-8")).hexdigest()
 
 
 def grouped_folds(y: np.ndarray, groups: np.ndarray, maximum: int = 5):
@@ -83,12 +95,27 @@ def predict(model, pixels: np.ndarray, device) -> np.ndarray:
     return np.concatenate(predictions)
 
 
+def cuda_diagnostics(torch) -> bool:
+    available = torch.cuda.is_available()
+    print(f"torch.__version__={torch.__version__}; torch.version.cuda={torch.version.cuda}; "
+          f"torch.cuda.is_available()={available}", flush=True)
+    try:
+        result = subprocess.run(["nvidia-smi", "--query-gpu=name,driver_version", "--format=csv,noheader"],
+                                capture_output=True, text=True, timeout=10)
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        print(f"nvidia-smi unavailable: {exc}", flush=True)
+    else:
+        print(f"nvidia-smi exit {result.returncode}: {(result.stdout or result.stderr).strip()}", flush=True)
+    return available
+
+
 def train(archive: Path, out: Path, *, smoke: bool = False) -> dict:
     import torch
 
     device = torch.device("cpu" if smoke else "cuda")
-    if not smoke and not torch.cuda.is_available():
+    if not smoke and not cuda_diagnostics(torch):
         raise RuntimeError("A Kaggle CUDA GPU must be enabled; use --smoke only for local CPU verification")
+    kernel_sha256 = source_digest()
     with np.load(archive, allow_pickle=False) as data:
         if set(data.files) != {"pixels", "label", "group"}:
             raise ValueError("Training input must contain pixels, label and training-only group fields")
@@ -114,7 +141,7 @@ def train(archive: Path, out: Path, *, smoke: bool = False) -> dict:
     model = fit(pixels, y, len(classes), lr=best["lr"], epochs=epochs, device=device, pretrained=not smoke)
     out.mkdir(parents=True, exist_ok=True)
     torch.save({"state_dict": model.cpu().state_dict(), "classes": classes.tolist()}, out / "resnet18.pt")
-    report = {"archive_sha256": digest(archive), "kernel_sha256": digest(Path(__file__)),
+    report = {"archive_sha256": digest(archive), "kernel_sha256": kernel_sha256,
               "training_rows": len(y), "device": device.type,
               "smoke": smoke, "seed": seed, "folds": len(folds), "epochs": epochs, "selected": best, "trials": trials,
               "checkpoint_sha256": digest(out / "resnet18.pt")}
@@ -128,7 +155,12 @@ def main() -> None:
     parser.add_argument("--train", type=Path)
     parser.add_argument("--out", type=Path, default=Path("/kaggle/working"))
     parser.add_argument("--smoke", action="store_true")
-    args = parser.parse_args()
+    if Path(sys.argv[0]).stem in {"colab_kernel_launcher", "ipykernel_launcher"}:
+        args, unknown = parser.parse_known_args()
+        if unknown and not (len(unknown) == 2 and unknown[0] == "-f" and unknown[1].endswith(".json")):
+            parser.error(f"unrecognized arguments: {' '.join(unknown)}")
+    else:
+        args = parser.parse_args()
     if args.train is None:
         candidates = list(Path("/kaggle/input").rglob("train.npz"))
         if len(candidates) != 1:

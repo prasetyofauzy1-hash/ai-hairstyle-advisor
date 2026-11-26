@@ -67,6 +67,11 @@ python "$workspace/kernel/kaggle_kernel.py" --train "$workspace/train/train.npz"
 The smoke run picks at most four groups per class, uses random initial weights and runs two CPU folds without
 a checkpoint download. Its outputs cannot be used for benchmark scoring.
 
+In the Kaggle editor, the script accepts the notebook launcher's injected connection-file argument.
+Without explicit paths, it finds the single attached `train.npz` and writes to `/kaggle/working`.
+For a scoreable checksum, run the unchanged staged `.py` file. Before training, the log records the PyTorch
+version, CUDA build and availability, and the GPU name and driver reported by `nvidia-smi`.
+
 ## Submit once Fauzy's account and upload permissions are confirmed
 
 Install the optional client (`python -m pip install kaggle==2.2.5 six==1.17.0`) in the research environment.
