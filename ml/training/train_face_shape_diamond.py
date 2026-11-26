@@ -19,7 +19,9 @@ from sklearn.svm import SVC
 
 from ml.classification.learned import DEFAULT_MODEL
 from ml.datasets.ffhq_features import SUBSET
+from ml.datasets.roboflow_men import load_split
 from ml.evaluation.facebench import _read, benchmark_inputs, screened_frame
+from ml.evaluation.gender_estimates import estimates
 from ml.feature_extraction.geometry import FEATURE_NAMES
 from ml.training.train_face_shape import SEED, holdout_split, load, metrics
 from ml.training.train_face_shape_ffhq import ARTIFACT, load_ffhq, predict_bundle
@@ -129,6 +131,13 @@ def run(args: argparse.Namespace) -> dict:
     uzy_gender = cohort_estimates(args.attributes, uzy["ffhq_id"], "Uzy")
     ffhq_train["identity_group"] += kaggle["identity_group"].max() + 1
     fit = pd.concat([kaggle.iloc[tr], ffhq_train], ignore_index=True)
+    use_roboflow = args.roboflow_split is not None
+    if use_roboflow:
+        roboflow_train, roboflow_test = load_split(
+            args.roboflow_data / "manifest.csv", args.roboflow_features, args.roboflow_split,
+        )
+        roboflow_train["identity_group"] = fit["identity_group"].max() + 1 + np.arange(len(roboflow_train))
+        fit = pd.concat([fit, roboflow_train], ignore_index=True)
     model, selection = select(fit)
 
     inputs = benchmark_inputs(args.facebench_manifest, args.facebench_images, args.ffhq_images,
@@ -136,7 +145,7 @@ def run(args: argparse.Namespace) -> dict:
     facebench, _ = screened_frame(*inputs, _read(args.identity_review))
     facebench_gender = cohort_estimates(args.attributes, facebench["image"].map(lambda photo: Path(photo).stem), "FaceBench")
     models = {"prior": joblib.load(DEFAULT_MODEL.with_name(ARTIFACT)), "retrained": model}
-    return {
+    report = {
         "selection": selection,
         "training": {"niten19": len(tr), "ffhq_ai": len(ffhq_train), "ffhq_ai_cohort": cohort(ffhq_train, train_gender)},
         "uzy": score_cohort(uzy, uzy_gender, models),
@@ -146,6 +155,22 @@ def run(args: argparse.Namespace) -> dict:
             sorted(set(kaggle.iloc[te]["label"])),
         ),
     }
+    if use_roboflow:
+        k_test = kaggle.iloc[te]
+        sources = [(k_test, args.niten_images), (roboflow_train, args.roboflow_data / "images"),
+                   (roboflow_test, args.roboflow_data / "images")]
+        genders = estimates([root / name for frame, root in sources for name in frame["image"]],
+                            args.gender_model, args.workers)
+        k_gender, rf_train_gender, rf_test_gender = [
+            pd.Series(values, index=frame.index)
+            for (frame, _), values in zip(sources, np.split(genders, [len(k_test), len(k_test) + len(roboflow_train)]),
+                                          strict=True)
+        ]
+        report["training"]["roboflow_cohort"] = cohort(roboflow_train, rf_train_gender)
+        report["niten19_holdout"] = score_cohort(k_test, k_gender, models)
+        report["roboflow_holdout"] = score_cohort(roboflow_test, rf_test_gender, models)
+        del report["niten19_holdout_retrained"]
+    return report
 
 
 def main() -> None:
@@ -154,14 +179,23 @@ def main() -> None:
                  "facebench-images", "attributes", "out"):
         parser.add_argument(f"--{name}", type=Path, required=True)
     parser.add_argument("--identity-review", type=Path, required=True)
+    roboflow_options = ("roboflow-data", "roboflow-features", "roboflow-split", "niten-images", "gender-model")
+    for name in roboflow_options:
+        parser.add_argument(f"--{name}", type=Path)
     parser.add_argument("--workers", type=int, default=4)
     args = parser.parse_args()
+    options = [getattr(args, name.replace("-", "_")) for name in roboflow_options]
+    if any(options) and not all(options):
+        parser.error("Roboflow retraining requires " + ", ".join(f"--{name}" for name in roboflow_options))
     logging.basicConfig(level=logging.INFO)
     logging.getLogger("ml.pipeline").setLevel(logging.WARNING)
     report = run(args)
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     print(f"Scored {report['uzy']['all']['photos']} Uzy and {report['facebench']['all']['photos']} FaceBench photos")
+    if "roboflow_holdout" in report:
+        print(f"Scored {report['roboflow_holdout']['all']['photos']} Roboflow and "
+              f"{report['niten19_holdout']['all']['photos']} niten19 holdout photos")
 
 
 if __name__ == "__main__":

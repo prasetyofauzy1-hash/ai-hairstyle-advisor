@@ -1,5 +1,7 @@
 # Diamond and male coverage: weighted retraining
 
+This is the experiment **before** the authenticated Roboflow export was available. See the [Roboflow follow-up](roboflow.md) for the expanded training run and new holdout.
+
 The candidate improved macro-F1 on Uzy's labels and on both male-estimate subsets, but regressed on FaceBench overall and still missed its only Diamond example. No additional photo source cleared the [dataset audit](../../../../docs/datasets.md#follow-up-diamond-and-male-trainingevaluation-coverage). This experiment does not change either test set or replace the app's model.
 
 ## Test results
