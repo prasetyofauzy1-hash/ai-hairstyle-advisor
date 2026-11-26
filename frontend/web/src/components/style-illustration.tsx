@@ -25,12 +25,12 @@ export const STYLE_SPECS: Record<string, Spec> = {
   asymmetrical_bob: s("jaw", "normal", 2, "none", "side", "straight", "asym"),
   lob: s("shoulder", "normal", 2, "none", "side", "straight"),
   layered_lob: s("shoulder", "normal", 3, "none", "side", "wavy", "layers"),
-  shag: s("shoulder", "full", 6, "side", "none", "wavy", "layers"),
+  shag: s("shoulder", "full", 6, "curtain", "none", "wavy", "layers"),
   curtain_bangs_medium: s("shoulder", "normal", 3, "curtain", "center", "straight", "layers"),
   wolf_cut: s("shoulder", "full", 8, "none", "center", "wavy", "layers"),
   curly_shoulder_layers: s("shoulder", "full", 6, "none", "none", "curly", "layers"),
   medium_blunt: s("shoulder", "normal", 2, "none", "center", "straight", "blunt"),
-  hush_cut: s("shoulder", "normal", 4, "curtain", "none", "wavy", "layers"),
+  hush_cut: s("shoulder", "normal", 4, "side", "none", "wavy", "layers"),
   long_layers: s("long", "normal", 3, "none", "center", "straight", "layers"),
   sleek_long_straight: s("long", "normal", 1, "none", "center", "straight", "blunt"),
   long_waves_side_part: s("long", "full", 3, "none", "side", "wavy"),
@@ -56,13 +56,13 @@ export const STYLE_SPECS: Record<string, Spec> = {
   medium_slick_back: s("jaw", "normal", 6, "none", "none", "straight", "slick"),
   man_bun: s("none", "normal", 2, "none", "none", "straight", "slick", "bun"),
   bro_flow: s("shoulder", "normal", 5, "none", "none", "wavy", "slick"),
-  modern_mullet: s("mullet", "tight", 6, "short", "none", "wavy", "jagged"),
+  modern_mullet: s("mullet", "tight", 6, "none", "none", "wavy", "jagged"),
   short_afro: s("none", "full", 8, "none", "none", "coily", "afro"),
   high_top_fade: s("none", "tight", 0, "none", "none", "coily", "hightop"),
   short_twists: s("ear", "normal", 8, "none", "none", "twists"),
   side_swept_taper: s("none", "tight", 5, "side", "side", "straight"),
   curly_fringe: s("none", "tight", 6, "full", "none", "curly", "jagged"),
-  long_layered_men: s("shoulder", "full", 4, "none", "center", "wavy", "layers"),
+  long_layered_men: s("long", "full", 4, "none", "center", "wavy", "layers"),
   afro_rounded_medium: s("none", "full", 16, "none", "none", "coily", "afro"),
   twist_out: s("shoulder", "full", 8, "none", "none", "coily", "layers"),
   box_braids_side_part: s("long", "normal", 2, "none", "side", "braids"),
@@ -91,7 +91,7 @@ function backPath(sp: Spec, sideW: number): string | null {
   if (ex.includes("aline"))
     return `M${L} 64 L${Lb} ${yb - 10} L50 ${yb + 2} L70 ${yb + 2} L${Rb} ${yb - 10} L${R} 64 Z`;
   if (ex.includes("vcut"))
-    return `M${L} 64 L${Lb} ${yb} L50 ${yb - 14} L70 ${yb - 14} L${Rb} ${yb} L${R} 64 Z`;
+    return `M${L} 64 L${Lb} ${yb - 18} L50 ${yb} L70 ${yb} L${Rb} ${yb - 18} L${R} 64 Z`;
   if (ex.includes("layers")) {
     const scallops = (from: number, to: number) => {
       const step = (to - from) / 3;
