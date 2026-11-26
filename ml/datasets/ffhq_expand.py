@@ -130,8 +130,9 @@ def reference_bundle(args):
     unreadable = sum(faces is None for faces in per_image)
     indices = [i for i, faces in enumerate(per_image) for _ in (faces or [])]
     dlib = np.asarray([face for faces in per_image for face in (faces or [])], dtype=np.float32).reshape(-1, 128)
-    np.savez_compressed(args.references, sha256=hashes, sface=sface, dlib=dlib,
-                        dlib_index=np.asarray(indices, dtype=int))
+    with args.references.open("wb") as archive:
+        np.savez_compressed(archive, sha256=hashes, sface=sface, dlib=dlib,
+                            dlib_index=np.asarray(indices, dtype=int))
     print(f"Skipped dlib embeddings for {unreadable} unreadable reference photos.", flush=True)
     print(f"Archived hashes and identity-screen features locally for {len(paths)} reference photos.", flush=True)
 

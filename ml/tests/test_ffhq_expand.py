@@ -10,14 +10,15 @@ from ml.feature_extraction.geometry import FEATURE_NAMES
 from ml.training.train_face_shape_image import expansion_cohort
 
 
-def test_reference_bundle_keeps_hashes_and_indices_when_decoding_fails(tmp_path, monkeypatch, capsys):
+@pytest.mark.parametrize("archive_name", ["references.npz", "references"])
+def test_reference_bundle_keeps_hashes_and_indices_when_decoding_fails(tmp_path, monkeypatch, capsys, archive_name):
     corrupt = tmp_path / "corrupt.jpg"
     corrupt.write_bytes(b"")
     other = tmp_path / "other.jpg"
     other.write_bytes(b"other")
     paths = tmp_path / "photos.txt"
     paths.write_text(f"{corrupt}\n{other}\n")
-    archive = tmp_path / "references.npz"
+    archive = tmp_path / archive_name
     monkeypatch.setattr(ffhq_expand, "analyze_items", lambda *_: ([], np.zeros((2, 128))))
     monkeypatch.setattr(ffhq_expand, "dlib_embeddings",
                         lambda photos, _: [ffhq_expand.dlib_faces(photos[0]), [np.ones(128)]])
