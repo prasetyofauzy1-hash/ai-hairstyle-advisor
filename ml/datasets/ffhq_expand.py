@@ -24,7 +24,7 @@ from ml.datasets.ffhq_features import SUBSET, _read
 from ml.datasets.ffhq_select import FIELDS, candidates, fetch
 from ml.datasets.identity import SAME_PERSON_COSINE
 from ml.evaluation.gender_estimates import estimates
-from ml.preprocessing.image_io import load_image
+from ml.preprocessing.image_io import ImageDecodeError, load_image
 from ml.training import kaggle_kernel as kernel
 from ml.training.train_face_shape_diamond import estimate
 
@@ -101,7 +101,10 @@ def init_dlib(landmarks, recognizer):
 
 
 def dlib_faces(path):
-    rgb = load_image(path)
+    try:
+        rgb = load_image(path)
+    except (ImageDecodeError, OSError):
+        return None
     factor = min(1, 480 / max(rgb.shape[:2]))
     if factor < 1:
         rgb = cv2.resize(rgb, None, fx=factor, fy=factor, interpolation=cv2.INTER_AREA)
@@ -124,9 +127,12 @@ def reference_bundle(args):
     hashes = [kernel.digest(path) for path in paths]
     _, sface = analyze_items([(p.parent, p.name, "", "reference") for p in paths], args.workers)
     per_image = dlib_embeddings(paths, args)
-    indices = [i for i, faces in enumerate(per_image) for _ in faces]
-    dlib = [face for faces in per_image for face in faces]
-    np.savez_compressed(args.references, sha256=hashes, sface=sface, dlib=dlib, dlib_index=indices)
+    unreadable = sum(faces is None for faces in per_image)
+    indices = [i for i, faces in enumerate(per_image) for _ in (faces or [])]
+    dlib = np.asarray([face for faces in per_image for face in (faces or [])], dtype=np.float32).reshape(-1, 128)
+    np.savez_compressed(args.references, sha256=hashes, sface=sface, dlib=dlib,
+                        dlib_index=np.asarray(indices, dtype=int))
+    print(f"Skipped dlib embeddings for {unreadable} unreadable reference photos.", flush=True)
     print(f"Archived hashes and identity-screen features locally for {len(paths)} reference photos.", flush=True)
 
 
@@ -183,7 +189,7 @@ def screen(args):
     print(f"Quality gates and SFace: {len(good)} of {len(rows)} accepted.", flush=True)
     photos = [all_photos[i] for i in good]
     per_image = dlib_embeddings(photos, args)
-    one_face = [i for i, values in enumerate(per_image) if len(values) == 1]
+    one_face = [i for i, values in enumerate(per_image) if values is not None and len(values) == 1]
     good = np.asarray(good)[one_face]
     dlib = np.asarray([per_image[i][0] for i in one_face])
     sface = sface[good]
