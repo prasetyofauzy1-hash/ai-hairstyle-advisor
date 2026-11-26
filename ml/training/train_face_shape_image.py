@@ -141,12 +141,7 @@ def encode(names, photos: list[Path], cache: Path, workers: int) -> dict[str, np
     return features
 
 
-def run(args: argparse.Namespace) -> dict:
-    import torch
-
-    torch.set_num_threads(args.workers)
-    if not (args.attributes / "json").is_dir():
-        raise ValueError("--attributes must contain the DCGM FFHQ attributes json directory")
+def training_cohorts(args: argparse.Namespace):
     kaggle = load(args.kaggle_features)
     tr, te = holdout_split(kaggle["label"].to_numpy(), kaggle["identity_group"].to_numpy())
     _, ffhq, uzy = load_ffhq(args.ffhq_features)
@@ -156,6 +151,37 @@ def run(args: argparse.Namespace) -> dict:
     rf_train, rf_test = load_split(args.roboflow_data / "manifest.csv", args.roboflow_features, args.roboflow_split)
     rf_train["identity_group"] = ffhq["identity_group"].max() + 1 + np.arange(len(rf_train))
     training = [(kaggle.iloc[tr], args.niten_images), (ffhq, args.ffhq_images), (rf_train, rf_root)]
+    return training, (kaggle.iloc[te], uzy, rf_test)
+
+
+def benchmark_cohorts(args: argparse.Namespace, holdouts, *, allow_download: bool = True) -> dict:
+    niten19, uzy, rf_test = holdouts
+    facebench, _ = screened_frame(
+        *benchmark_inputs(args.facebench_manifest, args.facebench_images, args.ffhq_images,
+                          args.niten_embeddings, args.workers, allow_download=allow_download),
+        _read(args.identity_review),
+    )
+    return {
+        "niten19_holdout": (niten19, args.niten_images, None),
+        "uzy": (uzy, args.ffhq_images, uzy["ffhq_id"]),
+        "facebench": (facebench, args.facebench_images, facebench["image"].map(lambda photo: Path(photo).stem)),
+        "roboflow_holdout": (rf_test, args.roboflow_data / "images", None),
+    }
+
+
+def benchmark_gender(args: argparse.Namespace, key: str, photos: list[Path], ffhq_ids) -> np.ndarray:
+    if ffhq_ids is None:
+        return np.asarray(estimates(photos, args.gender_model, args.workers))
+    return cohort_estimates(args.attributes, ffhq_ids, key).to_numpy()
+
+
+def run(args: argparse.Namespace) -> dict:
+    import torch
+
+    torch.set_num_threads(args.workers)
+    if not (args.attributes / "json").is_dir():
+        raise ValueError("--attributes must contain the DCGM FFHQ attributes json directory")
+    training, holdouts = training_cohorts(args)
     train = pd.concat([frame for frame, _ in training], ignore_index=True)
     encoder, names = encode, (*BACKBONES, SFACE)
     if args.foundation:
@@ -167,27 +193,14 @@ def run(args: argparse.Namespace) -> dict:
     fitted = {key: fit(config, features[config["backbone"]], train) for key, config in selection.items()}
     print(f"Training-only selection: {selection}", flush=True)
 
-    facebench, _ = screened_frame(
-        *benchmark_inputs(args.facebench_manifest, args.facebench_images, args.ffhq_images,
-                          args.niten_embeddings, args.workers),
-        _read(args.identity_review),
-    )
-    benchmarks = {
-        "niten19_holdout": (kaggle.iloc[te], args.niten_images, None),
-        "uzy": (uzy, args.ffhq_images, uzy["ffhq_id"]),
-        "facebench": (facebench, args.facebench_images, facebench["image"].map(lambda photo: Path(photo).stem)),
-        "roboflow_holdout": (rf_test, rf_root, None),
-    }
+    benchmarks = benchmark_cohorts(args, holdouts)
     baselines = {"app_landmarks": joblib.load(DEFAULT_MODEL),
                  "combined_landmarks": joblib.load(DEFAULT_MODEL.with_name(ARTIFACT))}
     report = {"training": dict(zip(("niten19", "ffhq_ai", "roboflow"), [len(f) for f, _ in training], strict=True)),
               "selection": selection_report, "benchmarks": {}}
     for key, (frame, root, ffhq_ids) in benchmarks.items():
         photos = paths(frame, root)
-        if ffhq_ids is None:
-            gender = np.asarray(estimates(photos, args.gender_model, args.workers))
-        else:
-            gender = cohort_estimates(args.attributes, ffhq_ids, key).to_numpy()
+        gender = benchmark_gender(args, key, photos, ffhq_ids)
         predictions = baseline_predictions(key, frame, baselines)
         test_features = encoder(sorted({c["backbone"] for c in selection.values()}), photos, args.cache, args.workers)
         for model_name, (model, scaler) in fitted.items():
@@ -199,13 +212,18 @@ def run(args: argparse.Namespace) -> dict:
     return report
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser(description=__doc__)
+def add_cohort_arguments(parser) -> None:
     for name in ("kaggle-features", "ffhq-features", "ffhq-images", "niten-embeddings", "facebench-manifest",
                  "facebench-images", "attributes", "identity-review", "roboflow-data", "roboflow-features",
-                 "roboflow-split", "niten-images", "gender-model", "cache", "out"):
+                 "roboflow-split", "niten-images", "gender-model", "cache"):
         parser.add_argument(f"--{name}", type=Path, required=True)
     parser.add_argument("--workers", type=int, default=4)
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    add_cohort_arguments(parser)
+    parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--foundation", action="store_true", help="run the pinned CPU DINOv2/CLIP experiment")
     args = parser.parse_args()
     if args.workers < 1:
