@@ -52,8 +52,8 @@ def training_reference(images: Path, workers: int) -> np.ndarray:
     return embeddings
 
 
-def score(rows: list[dict], embeddings: np.ndarray, references: dict[str, np.ndarray],
-          identity_review: list[dict]) -> dict:
+def screened_frame(rows: list[dict], embeddings: np.ndarray, references: dict[str, np.ndarray],
+                   identity_review: list[dict]) -> tuple[pd.DataFrame, dict]:
     quality = np.array([r["passed"] for r in rows], dtype=bool)
     valid = np.isfinite(embeddings).all(axis=1)
     screenable = quality & valid
@@ -85,22 +85,7 @@ def score(rows: list[dict], embeddings: np.ndarray, references: dict[str, np.nda
 
     frame = pd.DataFrame([r for r, retain in zip(rows, keep, strict=True) if retain])
     truth = frame["label"].to_numpy()
-    supported = sorted(set(truth))
-
-    def evaluate(predictions: np.ndarray) -> dict:
-        result = metrics(truth, predictions, supported)
-        result["confusion_labels"] = LABELS
-        result["confusion_matrix"] = confusion_matrix(truth, predictions, labels=LABELS).tolist()
-        return result
-
-    results = {"Phase 2 rules": evaluate(phase2_rules(frame))}
-    for name, path in MODELS.items():
-        bundle = joblib.load(path)
-        result = evaluate(predict_bundle(bundle, frame[bundle["feature_names"]].to_numpy(float)))
-        result["artifact"] = path.name
-        result["artifact_sha256"] = hashlib.sha256(path.read_bytes()).hexdigest()
-        results[name] = result
-    return {
+    return frame, {
         "candidate_photos": len(rows),
         "quality_passed": int(quality.sum()),
         "missing_identity_embedding": int((quality & ~valid).sum()),
@@ -112,9 +97,29 @@ def score(rows: list[dict], embeddings: np.ndarray, references: dict[str, np.nda
         "identity_matches_excluded": int(matched.sum()),
         "test_photos": int(keep.sum()),
         "class_counts": {label: int((truth == label).sum()) for label in LABELS},
-        "macro_labels": supported,
-        "models": results,
+        "macro_labels": sorted(set(truth)),
     }
+
+
+def score(rows: list[dict], embeddings: np.ndarray, references: dict[str, np.ndarray],
+          identity_review: list[dict]) -> dict:
+    frame, report = screened_frame(rows, embeddings, references, identity_review)
+    truth = frame["label"].to_numpy()
+
+    def evaluate(predictions: np.ndarray) -> dict:
+        result = metrics(truth, predictions, report["macro_labels"])
+        result["confusion_labels"] = LABELS
+        result["confusion_matrix"] = confusion_matrix(truth, predictions, labels=LABELS).tolist()
+        return result
+
+    results = {"Phase 2 rules": evaluate(phase2_rules(frame))}
+    for name, path in MODELS.items():
+        bundle = joblib.load(path)
+        result = evaluate(predict_bundle(bundle, frame[bundle["feature_names"]].to_numpy(float)))
+        result["artifact"] = path.name
+        result["artifact_sha256"] = hashlib.sha256(path.read_bytes()).hexdigest()
+        results[name] = result
+    return {**report, "models": results}
 
 
 def markdown(report: dict) -> str:
@@ -160,8 +165,8 @@ def markdown(report: dict) -> str:
     return "\n".join(lines) + "\n"
 
 
-def run(manifest: Path, images: Path, ffhq_train: Path, niten_embeddings: Path, out: Path, workers: int,
-        identity_review: Path) -> dict:
+def benchmark_inputs(manifest: Path, images: Path, ffhq_train: Path, niten_embeddings: Path, workers: int
+                     ) -> tuple[list[dict], np.ndarray, dict[str, np.ndarray]]:
     niten = np.load(niten_embeddings)
     if niten.shape != (5000, 128):
         raise ValueError("Expected embeddings from all 5,000 niten19 archive photos")
@@ -174,7 +179,12 @@ def run(manifest: Path, images: Path, ffhq_train: Path, niten_embeddings: Path, 
         items.append((images, row["local_file"], row["label"], "test"))
     rows, embeddings = analyze_items(items, workers)
     ffhq = training_reference(ffhq_train, workers)
-    report = score(rows, embeddings, {"niten19 archive": niten, "FFHQ train split": ffhq}, _read(identity_review))
+    return rows, embeddings, {"niten19 archive": niten, "FFHQ train split": ffhq}
+
+
+def run(manifest: Path, images: Path, ffhq_train: Path, niten_embeddings: Path, out: Path, workers: int,
+        identity_review: Path) -> dict:
+    report = score(*benchmark_inputs(manifest, images, ffhq_train, niten_embeddings, workers), _read(identity_review))
     out.mkdir(parents=True, exist_ok=True)
     (out / "metrics.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     (out / "README.md").write_text(markdown(report), encoding="utf-8")
