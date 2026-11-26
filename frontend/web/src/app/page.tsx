@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import CameraScan from "./camera-scan";
 import {
   Analysis, HAIR_TYPES, LENGTHS, MAINT, RecRequest, Recs, SHAPE_HINTS, SHAPES, THICKNESS,
   createAnalysis, deleteAnalysis, getRecommendations,
@@ -39,6 +40,7 @@ function Select({ name, value, onChange, options, empty }: {
 
 export default function Home() {
   const [file, setFile] = useState<File | null>(null);
+  const [cameraOpen, setCameraOpen] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
   const [consent, setConsent] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -146,7 +148,7 @@ export default function Home() {
         <p className="text-xs font-semibold uppercase tracking-widest text-[var(--accent)]">Proyek riset · nonkomersial</p>
         <h1 className="mt-1 text-3xl font-semibold tracking-tight sm:text-4xl">AI Hairstyle Advisor</h1>
         <p className="mt-2 max-w-2xl text-[var(--muted)]">
-          Unggah foto wajah tampak depan. Sistem mengukur proporsi wajah, memperkirakan bentuk wajah,
+          Pindai wajah dengan kamera atau unggah foto wajah tampak depan. Sistem mengukur proporsi wajah, memperkirakan bentuk wajah,
           lalu merekomendasikan gaya rambut beserta alasannya.
         </p>
       </header>
@@ -155,40 +157,49 @@ export default function Home() {
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
         <section className={card}>
-          <h2 className="text-lg font-semibold">1. Unggah foto</h2>
+          <h2 className="text-lg font-semibold">1. Foto wajah</h2>
           {deleted && (
             <div className="mt-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-900">
               {deletedPhoto ? "Analisis, foto, dan rekomendasi Anda sudah dihapus dari server." : "Analisis dan rekomendasi Anda sudah dihapus dari server."}
             </div>
           )}
-          <label className="mt-4 flex aspect-[4/5] cursor-pointer focus-within:ring-2 focus-within:ring-[var(--accent)] focus-within:ring-offset-2 items-center justify-center overflow-hidden rounded-lg border-2 border-dashed border-[var(--border)] bg-stone-50">
-            {preview ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={preview} alt="Pratinjau foto" className="h-full w-full object-cover" onError={() => reject(UNREADABLE)} />
-            ) : file ? (
-              <span className="px-6 text-center text-sm text-[var(--muted)]">Pratinjau tidak tersedia untuk {file.name}</span>
-            ) : (
-              <span className="px-6 text-center text-sm text-[var(--muted)]">Klik untuk memilih foto (JPEG, PNG, atau WebP, maks. 8 MB)</span>
-            )}
-            <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" aria-label="Pilih foto"
-              onChange={(e) => { pick(e.target.files?.[0] ?? null); e.target.value = ""; }} />
-          </label>
-          <p className="mt-3 text-xs text-[var(--muted)]">Tips: wajah menghadap kamera, cahaya merata, tanpa kacamata hitam, dahi terlihat.</p>
+          {cameraOpen ? (
+            <CameraScan onCancel={() => setCameraOpen(false)} onCapture={(photo) => { pick(photo); setCameraOpen(false); }} />
+          ) : (
+            <>
+              <button type="button" className={`${btnGhost} mt-4 w-full disabled:opacity-40`} disabled={busy} onClick={() => setCameraOpen(true)}>
+                Pindai wajah dengan kamera
+              </button>
+              <label className="mt-4 flex aspect-[4/5] cursor-pointer focus-within:ring-2 focus-within:ring-[var(--accent)] focus-within:ring-offset-2 items-center justify-center overflow-hidden rounded-lg border-2 border-dashed border-[var(--border)] bg-stone-50">
+                {preview ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={preview} alt="Pratinjau foto" className="h-full w-full object-cover" onError={() => reject(UNREADABLE)} />
+                ) : file ? (
+                  <span className="px-6 text-center text-sm text-[var(--muted)]">Pratinjau tidak tersedia untuk {file.name}</span>
+                ) : (
+                  <span className="px-6 text-center text-sm text-[var(--muted)]">Klik untuk memilih foto (JPEG, PNG, atau WebP, maks. 8 MB)</span>
+                )}
+                <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" aria-label="Pilih foto"
+                  onChange={(e) => { pick(e.target.files?.[0] ?? null); e.target.value = ""; }} />
+              </label>
+              <p className="mt-3 text-xs text-[var(--muted)]">Tips: wajah menghadap kamera, cahaya merata, tanpa kacamata hitam, dahi terlihat.</p>
 
-          <label className="mt-4 flex items-start gap-3 rounded-lg bg-stone-50 p-3 text-sm">
-            <input type="checkbox" className="mt-0.5 h-4 w-4" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
-            <span>
-              Saya setuju aplikasi <strong>menyimpan foto ini</strong>. Jika tidak dicentang, foto tetap dikirim untuk dianalisis,
-              tetapi tidak disimpan. Hasil analisis tetap disimpan meski fotonya tidak. Foto yang belum memenuhi syarat
-              kualitas tidak disimpan. Anda bisa menghapus semuanya kapan saja.
-            </span>
-          </label>
+              <label className="mt-4 flex items-start gap-3 rounded-lg bg-stone-50 p-3 text-sm">
+                <input type="checkbox" className="mt-0.5 h-4 w-4" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
+                <span>
+                  Saya setuju aplikasi <strong>menyimpan foto ini</strong>. Jika tidak dicentang, foto tetap dikirim untuk dianalisis,
+                  tetapi tidak disimpan. Hasil analisis tetap disimpan meski fotonya tidak. Foto yang belum memenuhi syarat
+                  kualitas tidak disimpan. Anda bisa menghapus semuanya kapan saja.
+                </span>
+              </label>
 
-          <button className={`${btn} mt-4 w-full`} disabled={!file || busy} onClick={analyze}>
-            {busy && action === "analyze" ? "Menganalisis..." : "Analisis wajah"}
-          </button>
-          {error && errorAt === "upload" && (
-            <div role="alert" className="mt-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900">{error}</div>
+              <button className={`${btn} mt-4 w-full`} disabled={!file || busy} onClick={analyze}>
+                {busy && action === "analyze" ? "Menganalisis..." : "Analisis wajah"}
+              </button>
+              {error && errorAt === "upload" && (
+                <div role="alert" className="mt-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900">{error}</div>
+              )}
+            </>
           )}
         </section>
 
