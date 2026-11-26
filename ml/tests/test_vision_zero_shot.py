@@ -16,7 +16,8 @@ def test_blind_workflow_stages_and_scores_exact_cohort_rows(tmp_path, monkeypatc
     for cohort in vision.HOLDOUTS:
         path = vision.archive(package, cohort)
         path.parent.mkdir(parents=True)
-        np.savez(path, label=labels, pixels=np.zeros((len(labels), 144, 144, 3), dtype=np.uint8))
+        pixels = np.stack([np.full((144, 144, 3), i, dtype=np.uint8) for i in range(len(labels))])
+        np.savez(path, label=labels, pixels=pixels)
         ledger["gender"][cohort] = gender
         ledger["archives"][cohort] = {"sha256": vision.digest(path)}
     monkeypatch.setattr(vision, "validate", lambda _: (ledger, {}))
@@ -30,7 +31,7 @@ def test_blind_workflow_stages_and_scores_exact_cohort_rows(tmp_path, monkeypatc
     mapping = workspace / "private-mapping.csv"
     rows = vision.read_csv(mapping)
     assert [row["cohort"] for row in rows] != sorted(row["cohort"] for row in rows)
-    assert set(rows[0]) == {"tile", "cohort", "archive_row"}
+    assert set(rows[0]) == {"tile", "cohort", "archive_row", "archive_sha256"}
     blind = tmp_path / "blind.csv"
     predictions = tmp_path / "predictions.csv"
     calls = [(row["tile"], labels[int(row["archive_row"])]) for row in rows]
@@ -49,3 +50,9 @@ def test_blind_workflow_stages_and_scores_exact_cohort_rows(tmp_path, monkeypatc
     assert results["niten19_holdout"]["all"]["photos"] == 2
     for cohort in vision.HOLDOUTS:
         assert results[cohort]["male"]["models"]["vision_zero_shot"]["accuracy"] == 1.0
+
+    rebuilt = vision.archive(package, "uzy")
+    np.savez(rebuilt, label=labels[::-1], pixels=pixels[::-1])
+    ledger["archives"]["uzy"]["sha256"] = vision.digest(rebuilt)
+    with pytest.raises(ValueError, match="holdout archive hashes"):
+        vision.score(package, predictions, tmp_path / "rebuilt-metrics.json")

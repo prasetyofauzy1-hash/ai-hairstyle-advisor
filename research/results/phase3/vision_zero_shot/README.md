@@ -20,8 +20,9 @@ best trained models. No external model API or API key, cloud training, or user's
   for each crop, with no examples, retries, or feedback. The completed blinded CSV was frozen
   before scoring (SHA-256
   `8e2b3743ed7f65f7768c412125e32c9b5dc90ffd16e64495bfea990203ec7484`).
-  [Published predictions](predictions.csv) are keyed only by cohort and zero-based row position in
-  its frozen, hash-checked archive. No photos, sheets, source IDs, or private mapping are published.
+  [Published predictions](predictions.csv) use cohort and zero-based row position, bound to the
+  SHA-256 of the archive shown during staging. Scoring rejects a different archive even if the
+  row numbers still match. No photos, sheets, source IDs, or private mapping are published.
 
 ## Results
 

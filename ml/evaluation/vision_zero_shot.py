@@ -48,7 +48,7 @@ def read_csv(path):
 
 
 def stage(package, workspace):
-    validate(package)
+    ledger, _ = validate(package)
     workspace.mkdir(mode=0o700)
     images, pages = workspace / "images", workspace / "pages"
     images.mkdir()
@@ -71,26 +71,30 @@ def stage(package, workspace):
             x, y = (offset % 5) * 160, (offset // 5) * 181
             canvas.paste(image, (x + 8, y))
             draw.text((x + 8, y + 148), f"{tile:03d}", fill="black")
-            mapping.append((tile, cohort, row))
+            mapping.append((tile, cohort, row, ledger["archives"][cohort]["sha256"]))
         canvas.save(pages / f"page-{start // PAGE_SIZE + 1:02d}.png")
-    write_csv(workspace / "private-mapping.csv", ("tile", "cohort", "archive_row"), mapping)
+    write_csv(workspace / "private-mapping.csv", ("tile", "cohort", "archive_row", "archive_sha256"), mapping)
     print(f"Staged {len(items)} blinded crops.")
 
 
 def freeze(mapping, blind, output):
-    keys = {int(row["tile"]): (row["cohort"], int(row["archive_row"])) for row in read_csv(mapping)}
+    keys = {int(row["tile"]): (row["cohort"], int(row["archive_row"]), row["archive_sha256"])
+            for row in read_csv(mapping)}
     calls = read_csv(blind)
     decisions = {int(row["tile"]): row["prediction"] for row in calls}
     if len(decisions) != len(calls) or decisions.keys() != keys.keys() or set(decisions.values()) - set(SHAPES):
         raise ValueError("Every blinded tile needs exactly one valid prediction")
-    write_csv(output, ("cohort", "archive_row", "prediction"),
+    write_csv(output, ("cohort", "archive_row", "archive_sha256", "prediction"),
               sorted((*keys[tile], prediction) for tile, prediction in decisions.items()))
     print(f"Froze {len(decisions)} predictions before scoring.")
 
 
 def score(package, predictions, output):
     ledger, _ = validate(package)
+    archive_hashes = {k: ledger["archives"][k]["sha256"] for k in HOLDOUTS}
     rows = read_csv(predictions)
+    if any(row.get("archive_sha256") != archive_hashes.get(row["cohort"], "") for row in rows):
+        raise ValueError("Predictions do not match the validated holdout archive hashes")
     decisions = {(row["cohort"], int(row["archive_row"])): row["prediction"] for row in rows}
     if len(decisions) != len(rows) or set(decisions.values()) - set(SHAPES):
         raise ValueError("Invalid or duplicate prediction")
@@ -110,7 +114,7 @@ def score(package, predictions, output):
     if expected != decisions.keys():
         raise ValueError("Predictions contain unexpected benchmark rows")
     write_json(output, {"prediction_sha256": digest(predictions), "niten19_sample_seed": SEED,
-                        "archive_sha256": {k: ledger["archives"][k]["sha256"] for k in HOLDOUTS},
+                        "archive_sha256": archive_hashes,
                         "benchmarks": benchmarks})
     print(f"Scored {len(expected)} frozen predictions across {len(benchmarks)} holdouts.")
 
