@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { SHAPES } from "@/lib/api";
 import { createCameraDetector } from "@/lib/camera-detector";
-import { assessCameraFrame, estimateFaceShape, faceBounds, FACE_OUTLINE, measureLightAndSharpness } from "@/lib/camera-scan";
+import { assessCameraFrame, estimateFaceShape, faceBounds, FACE_OUTLINE, measureClippedFraction, measureLightAndSharpness } from "@/lib/camera-scan";
 
 const WASM_ROOT = "/mediapipe/wasm";
 const MODEL_URL = "/mediapipe/face_landmarker.task";
@@ -41,7 +41,7 @@ export default function CameraScan({ onCapture, onCancel }: { onCapture: (photo:
     let best = document.createElement("canvas");
     let selected = document.createElement("canvas");
     const sample = document.createElement("canvas");
-    const frameContext = frame.getContext("2d");
+    const frameContext = frame.getContext("2d", { willReadFrequently: true });
     let bestContext = best.getContext("2d");
     let selectedContext = selected.getContext("2d");
     const sampleContext = sample.getContext("2d", { willReadFrequently: true });
@@ -117,7 +117,16 @@ export default function CameraScan({ onCapture, onCancel }: { onCapture: (photo:
             sample.height = Math.max(3, Math.min(512, Math.round(256 * cropHeight / cropWidth)));
             sampleContext.drawImage(frame, x * width, y * height, cropWidth, cropHeight, 0, 0, sample.width, sample.height);
             const metrics = measureLightAndSharpness(sampleContext.getImageData(0, 0, sample.width, sample.height));
-            const quality = assessCameraFrame(points, width, height, matrix, metrics);
+            const pixelLeft = Math.trunc(x * width), pixelTop = Math.trunc(y * height);
+            const pixelRight = Math.min(width - 1, Math.trunc(right * width));
+            const pixelBottom = Math.min(height - 1, Math.trunc(bottom * height));
+            const facePixels = frameContext.getImageData(pixelLeft, pixelTop, pixelRight - pixelLeft + 1, pixelBottom - pixelTop + 1);
+            const pixelLandmarks = points.map((point) => ({
+              x: Math.trunc(point.x * width) - pixelLeft,
+              y: Math.trunc(point.y * height) - pixelTop,
+            }));
+            const clippedFraction = measureClippedFraction(facePixels, pixelLandmarks);
+            const quality = assessCameraFrame(points, width, height, matrix, { ...metrics, clippedFraction });
             hint = quality.hint;
             if (quality.frontal) shape = estimateFaceShape(points, width, height);
             overlay.beginPath();

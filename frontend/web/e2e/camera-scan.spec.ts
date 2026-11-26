@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { createCameraDetector } from "../src/lib/camera-detector";
-import { assessCameraFrame, estimateFaceShape, measureLightAndSharpness } from "../src/lib/camera-scan";
+import { assessCameraFrame, estimateFaceShape, measureClippedFraction, measureLightAndSharpness } from "../src/lib/camera-scan";
 
 const SAMPLE = path.resolve(__dirname, "../../../ml/datasets/samples/mae_jemison.jpg");
 const SHOTS = process.env.SCREENSHOT_DIR;
@@ -52,15 +52,42 @@ test("camera guidance rejects poor frames and ranks usable frames", () => {
   points[454].x = .65;
   const frontal = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
   const turned = [.87, 0, -.5, 0, 0, 1, 0, 0, .5, 0, .87, 0, 0, 0, 0, 1];
-  const good = assessCameraFrame(points, 640, 480, frontal, { brightness: 128, sharpness: 60 });
-  const fair = assessCameraFrame(points, 640, 480, frontal, { brightness: 90, sharpness: 50 });
+  const good = assessCameraFrame(points, 640, 480, frontal, { brightness: 128, sharpness: 60, clippedFraction: 0 });
+  const fair = assessCameraFrame(points, 640, 480, frontal, { brightness: 90, sharpness: 50, clippedFraction: 0 });
   expect(good.score).toBeGreaterThan(fair.score!);
-  expect(assessCameraFrame(points, 640, 480, turned, { brightness: 128, sharpness: 60 })).toMatchObject({ score: null, frontal: false });
-  expect(assessCameraFrame(points, 640, 480, frontal, { brightness: 20, sharpness: 60 }).hint).toContain("lebih terang");
+  expect(assessCameraFrame(points, 640, 480, turned, { brightness: 128, sharpness: 60, clippedFraction: 0 })).toMatchObject({ score: null, frontal: false });
+  expect(assessCameraFrame(points, 640, 480, frontal, { brightness: 20, sharpness: 60, clippedFraction: 0 }).hint).toContain("lebih terang");
   const flat = measureLightAndSharpness({ width: 5, height: 5, data: new Uint8ClampedArray(100).fill(128), colorSpace: "srgb" });
   expect(flat).toEqual({ brightness: 128, sharpness: 0 });
-  expect(assessCameraFrame(points, 640, 480, frontal, flat).hint).toContain("buram");
+  expect(assessCameraFrame(points, 640, 480, frontal, { ...flat, clippedFraction: 0 }).hint).toContain("buram");
   expect(estimateFaceShape(points, 640, 480)).toBeNull();
+});
+
+test("counts clipped RGB highlights inside the face hull and rejects more than 15 percent", () => {
+  const image: ImageData = { width: 7, height: 6, data: new Uint8ClampedArray(7 * 6 * 4).fill(128), colorSpace: "srgb" };
+  const channel = (x: number, y: number, c: number) => (y * image.width + x) * 4 + c;
+  image.data[channel(5, 4, 0)] = 255;
+  expect(measureClippedFraction(image, [{ x: 1, y: 1 }, { x: 5, y: 1 }, { x: 1, y: 4 }])).toBe(0);
+  image.data[channel(5, 4, 0)] = 128;
+  image.data[channel(0, 1, 0)] = 255;
+  image.data[channel(1, 1, 0)] = 250;
+  image.data[channel(2, 2, 1)] = 250;
+  image.data[channel(3, 3, 2)] = 250;
+  image.data[channel(4, 3, 0)] = 249;
+  image.data[channel(5, 4, 3)] = 255;
+  const hull = [{ x: 1, y: 1 }, { x: 3, y: 2 }, { x: 1, y: 4 }, { x: 5, y: 1 }, { x: 5, y: 4 }];
+  const points = Array.from({ length: 478 }, () => ({ x: .5, y: .5 }));
+  points[234].x = .35;
+  points[454].x = .65;
+  const frontal = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
+  const assess = () => assessCameraFrame(points, 640, 480, frontal, {
+    brightness: 128, sharpness: 60, clippedFraction: measureClippedFraction(image, hull),
+  });
+  expect(measureClippedFraction(image, hull)).toBe(.15);
+  expect(assess().score).not.toBeNull();
+  image.data[channel(4, 3, 0)] = 250;
+  expect(measureClippedFraction(image, hull)).toBe(.2);
+  expect(assess()).toMatchObject({ score: null, hint: "Kurangi cahaya langsung ke wajah." });
 });
 
 test("camera denial falls back to manual upload in Indonesian", async ({ page }) => {

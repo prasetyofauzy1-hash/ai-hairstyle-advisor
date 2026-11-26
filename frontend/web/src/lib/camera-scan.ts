@@ -55,11 +55,56 @@ export function estimateFaceShape(points: Point[], width: number, height: number
 }
 
 export function faceBounds(points: Point[]) {
-  const outline = FACE_OUTLINE.map((index) => points[index]);
   return {
-    left: Math.min(...outline.map((p) => p.x)), right: Math.max(...outline.map((p) => p.x)),
-    top: Math.min(...outline.map((p) => p.y)), bottom: Math.max(...outline.map((p) => p.y)),
+    left: Math.min(...points.map((p) => p.x)), right: Math.max(...points.map((p) => p.x)),
+    top: Math.min(...points.map((p) => p.y)), bottom: Math.max(...points.map((p) => p.y)),
   };
+}
+
+function convexHull(points: Point[]) {
+  const sorted = [...points].sort((a, b) => a.x - b.x || a.y - b.y);
+  if (sorted.length < 2) return sorted;
+  const half = (ordered: Point[]) => {
+    const side: Point[] = [];
+    for (const p of ordered) {
+      while (side.length >= 2) {
+        const a = side[side.length - 2], b = side[side.length - 1];
+        if ((b.x - a.x) * (p.y - a.y) > (b.y - a.y) * (p.x - a.x)) break;
+        side.pop();
+      }
+      side.push(p);
+    }
+    return side.slice(0, -1);
+  };
+  return [...half(sorted), ...half(sorted.reverse())];
+}
+
+export function measureClippedFraction({ data, width, height }: ImageData, pixelLandmarks: Point[]) {
+  const hull = convexHull(pixelLandmarks);
+  let clipped = 0, count = 0;
+  for (let y = 0; y < height; y++) {
+    let left = Infinity, right = -Infinity;
+    for (let i = 0; i < hull.length; i++) {
+      const a = hull[i], b = hull[(i + 1) % hull.length];
+      if (y < Math.min(a.y, b.y) || y > Math.max(a.y, b.y)) continue;
+      if (a.y === b.y) {
+        left = Math.min(left, a.x, b.x);
+        right = Math.max(right, a.x, b.x);
+      } else {
+        const x = a.x + (y - a.y) * (b.x - a.x) / (b.y - a.y);
+        left = Math.min(left, x);
+        right = Math.max(right, x);
+      }
+    }
+    const start = Math.max(0, Math.ceil(left)), end = Math.min(width - 1, Math.floor(right));
+    if (start > end) continue;
+    count += end - start + 1;
+    for (let x = start; x <= end; x++) {
+      const i = (y * width + x) * 4;
+      if (data[i] >= 250 || data[i + 1] >= 250 || data[i + 2] >= 250) clipped++;
+    }
+  }
+  return count ? clipped / count : 0;
 }
 
 export function measureLightAndSharpness({ data, width, height }: ImageData) {
@@ -87,7 +132,7 @@ export function measureLightAndSharpness({ data, width, height }: ImageData) {
 
 export function assessCameraFrame(
   points: Point[], width: number, height: number, matrix: number[],
-  { brightness, sharpness }: ReturnType<typeof measureLightAndSharpness>,
+  { brightness, sharpness, clippedFraction }: ReturnType<typeof measureLightAndSharpness> & { clippedFraction: number },
 ): { hint: string; score: number | null; frontal: boolean } {
   const { left, right, top, bottom } = faceBounds(points);
   const centerOffset = Math.max(Math.abs((left + right) / 2 - .5), Math.abs((top + bottom) / 2 - .5));
@@ -104,7 +149,7 @@ export function assessCameraFrame(
   if (faceWidth < 150) return unavailable("Dekatkan wajah ke kamera.");
   if (!frontal) return unavailable("Hadapkan wajah lurus dan sejajarkan kamera dengan mata.");
   if (brightness < 50) return unavailable("Cari tempat dengan pencahayaan lebih terang.");
-  if (brightness > 215) return unavailable("Kurangi cahaya langsung ke wajah.");
+  if (brightness > 215 || clippedFraction > .15) return unavailable("Kurangi cahaya langsung ke wajah.");
   if (sharpness < 15) return unavailable("Wajah tampak buram. Tahan posisi sebentar.");
   const score = 1 - centerOffset + (1 - pose) + (1 - Math.abs(brightness - 128) / 128) + Math.min(sharpness / 100, 1);
   return { hint: "Posisi wajah dan cahaya sudah sesuai.", score, frontal };
