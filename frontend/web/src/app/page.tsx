@@ -6,6 +6,7 @@ import {
   Analysis, HAIR_TYPES, LENGTHS, MAINT, RecRequest, Recs, SHAPE_HINTS, SHAPES, THICKNESS,
   createAnalysis, deleteAnalysis, getRecommendations,
 } from "@/lib/api";
+import { StyleIllustration } from "@/components/style-illustration";
 
 type Saved = { id: string; token: string; createdAt: string; imageStored: boolean };
 const SAVED_KEY = "hairstyle-advisor:analyses";
@@ -314,9 +315,17 @@ export default function Home() {
                       <h3 className="font-semibold">{r.rank}. {r.name}</h3>
                       <span className="shrink-0 rounded bg-stone-100 px-2 py-0.5 text-xs tabular-nums">{r.score} {r.score_unit}</span>
                     </div>
-                    <p className="mt-1 text-xs text-[var(--muted)]">Panjang: {r.length} · Perawatan: {r.maintenance}</p>
-                    <p className="mt-2 text-sm">{r.description}</p>
-                    <p className="mt-2 text-sm"><strong>Alasan dan hal yang perlu diperhatikan:</strong> {r.explanation}</p>
+                    <div className="mt-2 flex gap-4">
+                      <figure className="w-24 shrink-0 sm:w-28">
+                        <StyleIllustration id={r.id} name={r.name} className="w-full rounded-md bg-stone-50" />
+                        <figcaption className="mt-1 text-center text-[11px] leading-tight text-[var(--muted)]">Ilustrasi umum, bukan foto</figcaption>
+                      </figure>
+                      <div className="min-w-0">
+                        <p className="text-xs text-[var(--muted)]">Panjang: {r.length} · Perawatan: {r.maintenance}</p>
+                        <p className="mt-2 text-sm">{r.description}</p>
+                        <p className="mt-2 text-sm"><strong>Alasan dan hal yang perlu diperhatikan:</strong> {r.explanation}</p>
+                      </div>
+                    </div>
                     <div className="mt-3 grid gap-3 text-sm sm:grid-cols-2">
                       <div><p className="font-medium">Kelebihan</p><ul className="list-disc pl-5">{r.advantages.map((a) => <li key={a}>{a}</li>)}</ul></div>
                       <div><p className="font-medium">Tips penataan</p><ul className="list-disc pl-5">{r.styling_tips.map((t) => <li key={t}>{t}</li>)}</ul></div>

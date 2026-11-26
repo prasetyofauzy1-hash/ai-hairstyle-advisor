@@ -13,7 +13,8 @@ from ml.recommendation.catalog import (GENDERS, HAIR_TYPES, LABELS_ID, LENGTHS, 
                                        load_catalog)
 
 SCORE_NOTE = "Poin mengikuti panduan penataan rambut, bukan persentase kecocokan atau jaminan hasil."
-NO_IMAGE_NOTE = "Gambar referensi belum tersedia."
+NO_IMAGE_NOTE = ("Belum ada foto contoh dengan lisensi yang jelas. Gambar yang ditampilkan adalah ilustrasi umum "
+                 "gaya ini, bukan foto dan bukan hasil pada wajah Anda.")
 FILTER_LABELS = {"gender": "Gaya rambut", "max_maintenance": "Tingkat perawatan", "avoid_bangs": "Hindari poni",
                  "formal": "Untuk kantor atau acara formal"}
 RELAXED = {"gender": None, "max_maintenance": None, "avoid_bangs": False, "formal": False}

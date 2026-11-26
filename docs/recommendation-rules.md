@@ -99,7 +99,7 @@ points, not a percentage or probability).
 - Catalog metadata (hair types, thickness, effects, maintenance) was written for this project and has not been reviewed
   by a stylist. Coverage is uneven: for `pria` + `coily`, oblong and heart faces get 4 results instead of 5
   (see `research/results/phase4/sanity_review.md`).
-- No reference images yet: images need clear licenses, and none were added rather than using unlicensed photos.
+- No reference photos yet: images need clear licenses, and none were added rather than using unlicensed photos. The web app shows a hand-drawn front-view illustration per style instead (`frontend/web/src/components/style-illustration.tsx`), labelled "Ilustrasi umum, bukan foto". These are schematic drawings, not photos and not a try-on on the user's face.
 - Face shape comes from Phase 3, whose model covers 5 shapes (no Diamond) with test macro-F1 0.476 and has no male faces
   in training. Diamond is accepted here only as manual or rule-baseline input. A wrong face shape changes the face-shape
   terms; hair type, thickness, gender and length terms do not depend on it.
