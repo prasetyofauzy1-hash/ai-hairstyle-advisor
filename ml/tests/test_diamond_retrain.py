@@ -56,3 +56,9 @@ def test_cohort_estimates_requires_at_least_one_known_gender(tmp_path):
 
     (attributes / "00002.json").write_text('[{"faceAttributes": {"gender": "male"}}]', encoding="utf-8")
     assert retrain.cohort_estimates(tmp_path, photos, "FaceBench").tolist() == ["unknown", "male", "unknown"]
+
+
+def test_score_cohort_rejects_all_unknown_estimates():
+    frame = pd.DataFrame({"label": ["oval"]})
+    with pytest.raises(ValueError, match="No known gender estimates for Roboflow holdout"):
+        retrain.score_cohort(frame, pd.Series(["unknown"]), {}, name="Roboflow holdout")

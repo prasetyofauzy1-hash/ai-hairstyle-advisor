@@ -105,7 +105,9 @@ def cohort(frame: pd.DataFrame, gender: pd.Series) -> dict:
     return pd.crosstab(gender, frame["label"]).to_dict(orient="index")
 
 
-def score_cohort(frame: pd.DataFrame, gender: pd.Series, models: dict) -> dict:
+def score_cohort(frame: pd.DataFrame, gender: pd.Series, models: dict, *, name: str = "benchmark") -> dict:
+    if not gender.isin({"male", "female"}).any():
+        raise ValueError(f"No known gender estimates for {name}")
     y = frame["label"].to_numpy()
     prediction = {name: predict_bundle(model, frame[model["feature_names"]].to_numpy(float))
                   for name, model in models.items()}
@@ -148,8 +150,8 @@ def run(args: argparse.Namespace) -> dict:
     report = {
         "selection": selection,
         "training": {"niten19": len(tr), "ffhq_ai": len(ffhq_train), "ffhq_ai_cohort": cohort(ffhq_train, train_gender)},
-        "uzy": score_cohort(uzy, uzy_gender, models),
-        "facebench": score_cohort(facebench, facebench_gender, models),
+        "uzy": score_cohort(uzy, uzy_gender, models, name="Uzy"),
+        "facebench": score_cohort(facebench, facebench_gender, models, name="FaceBench"),
         "niten19_holdout_retrained": metrics(
             kaggle.iloc[te]["label"].to_numpy(), predict_bundle(model, kaggle.iloc[te][FEATURE_NAMES].to_numpy(float)),
             sorted(set(kaggle.iloc[te]["label"])),
@@ -166,9 +168,11 @@ def run(args: argparse.Namespace) -> dict:
             for (frame, _), values in zip(sources, np.split(genders, [len(k_test), len(k_test) + len(roboflow_train)]),
                                           strict=True)
         ]
+        if not rf_train_gender.isin({"male", "female"}).any():
+            raise ValueError("No known gender estimates for Roboflow training")
         report["training"]["roboflow_cohort"] = cohort(roboflow_train, rf_train_gender)
-        report["niten19_holdout"] = score_cohort(k_test, k_gender, models)
-        report["roboflow_holdout"] = score_cohort(roboflow_test, rf_test_gender, models)
+        report["niten19_holdout"] = score_cohort(k_test, k_gender, models, name="niten19 holdout")
+        report["roboflow_holdout"] = score_cohort(roboflow_test, rf_test_gender, models, name="Roboflow holdout")
         del report["niten19_holdout_retrained"]
     return report
 

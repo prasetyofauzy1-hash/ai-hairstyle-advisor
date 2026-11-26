@@ -27,7 +27,7 @@ def _init(path: Path) -> None:
 def _estimate(path: Path) -> str:
     image = cv2.imread(str(path))
     if image is None:
-        return "unknown"
+        raise ValueError(f"Cannot read photo for gender estimation: {path}")
     scale = min(1, 480 / max(image.shape[:2]))
     if scale < 1:
         image = cv2.resize(image, None, fx=scale, fy=scale)
