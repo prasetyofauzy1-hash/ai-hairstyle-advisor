@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import type { FaceLandmarker } from "@mediapipe/tasks-vision";
 import { SHAPES } from "@/lib/api";
+import { createCameraDetector } from "@/lib/camera-detector";
 import { assessCameraFrame, estimateFaceShape, faceBounds, FACE_OUTLINE, measureLightAndSharpness } from "@/lib/camera-scan";
 
 const WASM_ROOT = "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.32/wasm";
@@ -47,13 +47,14 @@ export default function CameraScan({ onCapture, onCancel }: { onCapture: (photo:
     const sampleContext = sample.getContext("2d", { willReadFrequently: true });
     let active = true;
     let stream: MediaStream | undefined;
-    let landmarker: FaceLandmarker | undefined;
+    let landmarker: Awaited<ReturnType<typeof createCameraDetector>> | undefined;
     let animation = 0;
     let previousVideoTime = -1;
     let nextSample = 0;
     let startedAt: number | null = null;
     let bestScore = -Infinity;
     let ready = false;
+    let capturePending = false;
 
     function resetSelection() {
       startedAt = null;
@@ -78,14 +79,19 @@ export default function CameraScan({ onCapture, onCancel }: { onCapture: (photo:
       setError(`${message} ${FALLBACK}`);
     }
 
-    function tick(now: number) {
-      if (!active || !landmarker || !frameContext || !bestContext || !sampleContext || !overlay) return;
-      animation = requestAnimationFrame(tick);
-      if (now < nextSample || video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA || video.currentTime === previousVideoTime) return;
+    async function tick(now: number) {
+      if (!active || capturePending || !landmarker || !frameContext || !bestContext || !sampleContext || !overlay) return;
+      if (now < nextSample || video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA || video.currentTime === previousVideoTime) {
+        animation = requestAnimationFrame(tick);
+        return;
+      }
       previousVideoTime = video.currentTime;
       nextSample = now + SAMPLE_MS;
       const width = video.videoWidth, height = video.videoHeight;
-      if (!width || !height) return;
+      if (!width || !height) {
+        animation = requestAnimationFrame(tick);
+        return;
+      }
       if (frame.width !== width || frame.height !== height) {
         frame.width = outline.width = width;
         frame.height = outline.height = height;
@@ -93,7 +99,9 @@ export default function CameraScan({ onCapture, onCancel }: { onCapture: (photo:
       }
       frameContext.drawImage(video, 0, 0, width, height);
       try {
-        const { faceLandmarks, facialTransformationMatrixes } = landmarker.detectForVideo(frame, now);
+        const result = await landmarker.detectForVideo(frame, now);
+        if (!active || capturePending || !result) return;
+        const { faceLandmarks, facialTransformationMatrixes } = result;
         overlay.clearRect(0, 0, width, height);
         const points = faceLandmarks[0];
         const matrix = facialTransformationMatrixes[0]?.data;
@@ -152,6 +160,7 @@ export default function CameraScan({ onCapture, onCancel }: { onCapture: (photo:
           if (faceLandmarks.length > 1) hint = "Pastikan hanya satu wajah terlihat di kamera.";
         }
         setScan((last) => last.hint === hint && last.shape === shape && last.ready === ready ? last : { hint, shape, ready });
+        animation = requestAnimationFrame(tick);
       } catch {
         fail("Pemindaian kamera terhenti.");
       }
@@ -184,12 +193,13 @@ export default function CameraScan({ onCapture, onCancel }: { onCapture: (photo:
         const { FaceLandmarker, FilesetResolver } = await import("@mediapipe/tasks-vision");
         const fileset = await FilesetResolver.forVisionTasks(WASM_ROOT);
         if (!active) return;
-        const detector = await FaceLandmarker.createFromOptions(fileset, {
-          baseOptions: { modelAssetPath: MODEL_URL, delegate: "CPU" },
+        const detector = await createCameraDetector((delegate) => FaceLandmarker.createFromOptions(fileset, {
+          baseOptions: { modelAssetPath: MODEL_URL, delegate },
+          canvas: document.createElement("canvas"),
           runningMode: "VIDEO",
           numFaces: 2,
           outputFacialTransformationMatrixes: true,
-        });
+        }));
         if (!active) {
           detector.close();
           return;
@@ -203,6 +213,7 @@ export default function CameraScan({ onCapture, onCancel }: { onCapture: (photo:
 
     captureRef.current = () => {
       if (!active || !ready) return;
+      capturePending = true;
       captureRef.current = null;
       cancelAnimationFrame(animation);
       setCapturing(true);

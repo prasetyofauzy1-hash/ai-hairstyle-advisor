@@ -1,10 +1,50 @@
 import { expect, test } from "@playwright/test";
 import { readFileSync } from "node:fs";
 import path from "node:path";
+import { createCameraDetector } from "../src/lib/camera-detector";
 import { assessCameraFrame, estimateFaceShape, measureLightAndSharpness } from "../src/lib/camera-scan";
 
 const SAMPLE = path.resolve(__dirname, "../../../ml/datasets/samples/mae_jemison.jpg");
 const SHOTS = process.env.SCREENSHOT_DIR;
+
+test("uses the CPU detector if GPU creation fails", async () => {
+  const delegates: string[] = [];
+  const result = { faceLandmarks: [], faceBlendshapes: [], facialTransformationMatrixes: [] };
+  const detector = await createCameraDetector(async (delegate) => {
+    delegates.push(delegate);
+    if (delegate === "GPU") throw new Error("GPU initialization failed");
+    return { detectForVideo: () => result, close() {} };
+  });
+  await expect(detector.detectForVideo({} as HTMLCanvasElement, 1)).resolves.toBe(result);
+  expect(delegates).toEqual(["GPU", "CPU"]);
+  detector.close();
+});
+
+test("retries a failed GPU frame on the CPU and propagates a subsequent CPU error", async () => {
+  const calls: string[] = [];
+  const frame = {} as HTMLCanvasElement;
+  const result = { faceLandmarks: [], faceBlendshapes: [], facialTransformationMatrixes: [] };
+  const detector = await createCameraDetector(async (delegate) => {
+    calls.push(delegate);
+    return {
+      detectForVideo(input, timestamp) {
+        expect(input).toBe(frame);
+        calls.push(`${delegate} ${timestamp}`);
+        if (delegate === "GPU" || timestamp === 3) throw new Error(`${delegate} inference failed`);
+        return result;
+      },
+      close() {
+        calls.push(`close ${delegate}`);
+        if (delegate === "GPU") throw new Error("GPU context lost");
+      },
+    };
+  });
+  await expect(detector.detectForVideo(frame, 1)).resolves.toBe(result);
+  await expect(detector.detectForVideo(frame, 2)).resolves.toBe(result);
+  await expect(detector.detectForVideo(frame, 3)).rejects.toThrow("CPU inference failed");
+  detector.close();
+  expect(calls).toEqual(["GPU", "GPU 1", "close GPU", "CPU", "CPU 1", "CPU 2", "CPU 3", "close CPU"]);
+});
 
 test("camera guidance rejects poor frames and ranks usable frames", () => {
   const points = Array.from({ length: 478 }, () => ({ x: .5, y: .5 }));
