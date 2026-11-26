@@ -1,7 +1,7 @@
 # Private Kaggle GPU fine-tuning
 
-**Preparation only.** This experiment does not change the app model. Run on Fauzy's free Kaggle Notebook
-GPU, not on his own GPU. Benchmark accuracy is not known until the GPU run and local scoring complete.
+**Research only; the app model is unchanged.** The end-to-end fine-tune improved both metrics on
+FaceBench but fell short of the PR #14 hybrid on Uzy.
 
 The private script fully fine-tunes an ImageNet V1 ResNet-18, including the backbone. It compares AdamW
 learning rates 0.0001 and 0.0003 at five epochs using mean validation macro-F1 on training-only
@@ -92,3 +92,40 @@ after submission, inspect the exact version in Kaggle and download that version'
 workspace before running `python -m ml.training.kaggle_finetune score "$workspace" "$workspace/outputs"`.
 The scorer rejects checkpoints that do not match the training archive and script. Never publish the archives,
 individually attributable metadata, or identity-screening evidence.
+
+## GPU run and local results
+
+Private notebook version 5 reused the existing private training dataset. No holdouts were uploaded.
+The submission requested T4 and the latest environment instead of specifying the prior CPU image.
+Kaggle reported `gcr.io/kaggle-private-byod/python@sha256:fc720c15545eb096a510e1f085b17fc118387a007599424d953a4f327b71cacf`.
+The completed run logged PyTorch `2.11.0+cu130`, CUDA `13.0`, `torch.cuda.is_available()=True`,
+and `Tesla T4, 580.178.04` from `nvidia-smi`. Kaggle's prior CPU-image runs did not train;
+the successful run does not isolate which environment or account change resolved GPU access.
+
+Training used 2,913 crops and five identity-disjoint folds at seed 59. The 0.0001 learning rate
+won on training-only CV (mean macro-F1 0.386 vs 0.370 for 0.0003). The local scorer checked
+the training archive, staged kernel and downloaded checkpoint hashes before scoring.
+
+Each cell is **accuracy / macro-F1**. Gender cohorts use estimates, not self-reported labels.
+
+| Held-out benchmark | Cohort (photos) | Kaggle fine-tune | PR #14 hybrid | App landmarks |
+|---|---|---:|---:|---:|
+| niten19 | All (682) | 48.1% / .489 | 63.6% / .638 | n/a |
+| | Female (675) | 48.0% / .488 | 63.4% / .636 | n/a |
+| | Male (6) | 50.0% / .458 | 83.3% / .833 | n/a |
+| | Unknown (1) | 100.0% / 1.000 | 100.0% / 1.000 | n/a |
+| Uzy | All (101) | 38.6% / .392 | 41.6% / .416 | 22.8% / .321 |
+| | Female (51) | 51.0% / .522 | 45.1% / .413 | 21.6% / .342 |
+| | Male (50) | 26.0% / .263 | 38.0% / .403 | 24.0% / .292 |
+| FaceBench | All (59) | 62.7% / .471 | 50.8% / .349 | 40.7% / .251 |
+| | Female (31) | 67.7% / .577 | 58.1% / .500 | 41.9% / .319 |
+| | Male (28) | 57.1% / .507 | 42.9% / .230 | 39.3% / .248 |
+| Roboflow | All, estimated male (22) | 59.1% / .513 | 63.6% / .481 | 31.8% / .244 |
+
+Per-class precision, recall, F1, support and confusion matrices for every cohort are in the
+[fine-tune metrics](metrics.json) and the [PR #14 reference metrics](../image_backbones/metrics.json)
+(`image_plus_landmarks` and `app_landmarks`). The fine-tune missed the only Diamond example
+in each of FaceBench and Roboflow. Its accuracy is 41.4 percentage points short of 80% on Uzy
+and 17.3 points short on FaceBench. These results measure performance on the existing labels,
+not a ceiling for the task. As in the [prior label-agreement audit](../image_backbones/README.md),
+there are too few independently co-labeled identities to estimate a general ceiling.
